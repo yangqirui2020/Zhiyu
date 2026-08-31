@@ -5,3 +5,25 @@ export {
   type DataMode,
   type Provenance,
 } from "./common.ts";
+
+export {
+  argumentDraftSchema,
+  argumentSchema,
+  classroomSchema,
+  clusterRepresentativeSchema,
+  clusterSchema,
+  evidenceSchema,
+  questionSchema,
+  sourceContentSchema,
+  studentSchema,
+  validateClassroomRelations,
+  type Argument,
+  type ArgumentDraft,
+  type Classroom,
+  type Cluster,
+  type ClusterRepresentative,
+  type Evidence,
+  type Question,
+  type SourceContent,
+  type Student,
+} from "./classroom.ts";

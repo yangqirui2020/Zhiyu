@@ -1,0 +1,683 @@
+.experienceShell {
+  min-height: 100vh;
+  padding: 32px clamp(20px, 3.2vw, 48px) 48px;
+  color: var(--ink);
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 64px,
+    var(--paper);
+}
+
+.classroomHeader {
+  display: flex;
+  max-width: 1600px;
+  margin: 0 auto 24px;
+  padding-bottom: 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.headerCopy {
+  max-width: 900px;
+}
+
+.headerMeta {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.modeBadge {
+  display: inline-flex;
+  min-height: 28px;
+  padding: 5px 10px;
+  align-items: center;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+}
+
+.eyebrow,
+.stageKicker,
+.sheetEyebrow,
+.sectionKicker,
+.tooltipEyebrow {
+  margin: 0 0 8px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.classroomHeader h1 {
+  max-width: 900px;
+  margin: 0;
+  font-size: clamp(28px, 3.4vw, 48px);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+
+.meaningCopy {
+  margin: 16px 0 0;
+  color: var(--ink-muted);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.classroomLegend {
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(2, max-content);
+  gap: 8px 18px;
+  padding-bottom: 4px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.classroomLegend span,
+.rosterGroup h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.classroomLegend i,
+.rosterGroup i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.clusterColor1 { color: var(--cluster-1); }
+.clusterColor2 { color: var(--cluster-2); }
+.clusterColor3 { color: var(--cluster-3); }
+.clusterColor4 { color: var(--cluster-4); }
+.clusterColor5 { color: var(--cluster-5); }
+
+.classroomWorkspace {
+  position: relative;
+  max-width: 1600px;
+  min-height: 620px;
+  margin: 0 auto;
+}
+
+.stage {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  transition: width 280ms ease;
+}
+
+.withSheet .stage {
+  width: calc(100% - 456px);
+}
+
+.stageIntro,
+.rosterIntro {
+  display: flex;
+  min-height: 58px;
+  margin-bottom: 12px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.stageIntro h2,
+.rosterIntro h2,
+.sheetHeader h2,
+.sheetSection h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.stageIntro > p,
+.rosterIntro > p {
+  max-width: 360px;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 14px;
+  text-align: right;
+}
+
+.stageCanvas {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.stageCanvas::before {
+  position: absolute;
+  z-index: 0;
+  inset: 18px;
+  border: 1px solid color-mix(in srgb, var(--line) 66%, transparent);
+  border-radius: var(--radius-section);
+  content: "";
+  pointer-events: none;
+}
+
+.graphAdapter,
+.canvasViewport,
+.canvasLoading {
+  width: 100%;
+  min-height: 520px;
+  height: 520px;
+}
+
+.canvasViewport {
+  position: relative;
+  animation: classroom-enter 680ms ease-out both;
+}
+
+.canvasViewport canvas {
+  display: block;
+}
+
+.canvasLoading {
+  display: grid;
+  place-items: center;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.canvasTooltip {
+  position: absolute;
+  z-index: 4;
+  width: min(280px, calc(100% - 32px));
+  padding: 12px 14px;
+  transform: translate(18px, calc(-100% - 18px));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(25 35 46 / 0.1);
+  pointer-events: none;
+}
+
+.canvasTooltip strong,
+.canvasTooltip span {
+  display: block;
+}
+
+.canvasTooltip strong {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.canvasTooltip > span:last-child {
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doorMarker {
+  position: absolute;
+  z-index: 3;
+  right: 16px;
+  bottom: -1px;
+  width: 74px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-bottom: 4px solid var(--paper);
+  border-radius: 38px 38px 0 0;
+  color: var(--ink-muted);
+  background: var(--paper);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.doorMarker span {
+  position: absolute;
+  top: 15px;
+  right: 23px;
+}
+
+.stageCaption {
+  margin: 12px 0 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.detailSheet {
+  position: absolute;
+  z-index: 8;
+  top: 0;
+  right: 0;
+  width: 432px;
+  max-height: min(720px, calc(100vh - 40px));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-enter 280ms ease-out both;
+}
+
+.sheetHandle {
+  display: none;
+}
+
+.sheetHeader {
+  display: flex;
+  min-height: 80px;
+  padding: 20px 20px 16px 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.closeButton {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  background: var(--paper);
+}
+
+.closeButton:focus-visible,
+.rosterButton:focus-visible,
+.rosterButtonSelected:focus-visible,
+.sourceLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.sheetScroll {
+  max-height: calc(min(720px, 100vh - 40px) - 80px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sheetSection {
+  padding: 24px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.sheetSection:last-child {
+  border-bottom: 0;
+}
+
+.sheetSection p,
+.sheetSection li,
+.sheetSection dd,
+.sheetSection dt {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.clusterPill {
+  display: inline-flex;
+  min-height: 28px;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.conclusion {
+  margin: 12px 0 16px;
+  font-size: 17px !important;
+  font-weight: 500;
+}
+
+.reasonList,
+.plainList {
+  display: grid;
+  margin: 0;
+  padding-left: 20px;
+  gap: 8px;
+}
+
+.sheetSection > p:not(.sectionKicker, .conclusion, .boundaryNote) {
+  margin: 12px 0;
+  color: var(--ink-muted);
+}
+
+.boundaryNote {
+  margin: 18px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px dashed var(--line);
+  color: var(--ink-muted);
+  font-size: 12px !important;
+}
+
+.sourceMeta {
+  display: grid;
+  margin: 18px 0;
+  gap: 8px;
+}
+
+.sourceMeta div {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+}
+
+.sourceMeta dt {
+  color: var(--ink-muted);
+}
+
+.sourceMeta dd {
+  margin: 0;
+}
+
+.sourceLink {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 10px 0;
+  align-items: center;
+  color: var(--zhihu);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sourceLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mockSourceNote {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  color: var(--ink-muted);
+  font-size: 12px !important;
+}
+
+.evidenceQuote {
+  margin: 16px 0 0;
+  padding: 16px;
+  border-left: 3px solid var(--line);
+  background: var(--paper);
+}
+
+.evidenceQuote p {
+  margin: 0;
+}
+
+.evidenceQuote footer {
+  margin-top: 10px;
+  color: var(--ink-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.accessibleRoster {
+  max-width: 1600px;
+  margin: 48px auto 0;
+  padding: 32px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.rosterGroups {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rosterGroup {
+  padding: 0;
+  border: 0;
+}
+
+.rosterGroup h3 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.rosterGroup > p {
+  margin: 4px 0 12px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.rosterGroup ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 6px;
+  list-style: none;
+}
+
+.rosterButton,
+.rosterButtonSelected {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rosterButton:hover,
+.rosterButtonSelected {
+  border-color: var(--ink-muted);
+  background: var(--surface);
+}
+
+.rosterButton span,
+.rosterButton small,
+.rosterButtonSelected span,
+.rosterButtonSelected small {
+  display: block;
+}
+
+.rosterButton span,
+.rosterButtonSelected span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rosterButton small,
+.rosterButtonSelected small {
+  display: -webkit-box;
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-size: 11px;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.provenanceNote {
+  max-width: 1600px;
+  margin: 40px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@keyframes classroom-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheet-enter {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 1080px) {
+  .classroomHeader {
+    display: block;
+  }
+
+  .classroomLegend {
+    display: flex;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .withSheet .stage {
+    width: calc(100% - 420px);
+  }
+
+  .detailSheet {
+    width: 396px;
+  }
+
+  .rosterGroups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
+  }
+}
+
+@media (max-height: 800px) and (min-width: 721px) {
+  .classroomWorkspace {
+    min-height: 510px;
+  }
+
+  .stageCanvas,
+  .graphAdapter,
+  .canvasViewport,
+  .canvasLoading {
+    min-height: 430px;
+    height: 430px;
+  }
+}
+
+@media (max-width: 720px) {
+  .experienceShell {
+    padding: 20px 16px 32px;
+  }
+
+  .classroomHeader {
+    margin-bottom: 16px;
+  }
+
+  .headerMeta,
+  .stageIntro,
+  .rosterIntro {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .classroomHeader h1 {
+    font-size: 28px;
+  }
+
+  .classroomLegend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .classroomWorkspace,
+  .stageCanvas,
+  .graphAdapter,
+  .canvasViewport,
+  .canvasLoading {
+    min-height: 460px;
+    height: 460px;
+  }
+
+  .withSheet .stage {
+    width: 100%;
+  }
+
+  .stageIntro > p,
+  .rosterIntro > p {
+    text-align: left;
+  }
+
+  .detailSheet {
+    position: fixed;
+    z-index: 20;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: min(76vh, 640px);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    animation-name: bottom-sheet-enter;
+  }
+
+  .sheetHandle {
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 2px;
+    background: var(--line);
+  }
+
+  .sheetScroll {
+    max-height: calc(min(76vh, 640px) - 88px);
+  }
+
+  .rosterGroups {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes bottom-sheet-enter {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .canvasViewport,
+  .detailSheet {
+    animation: none;
+    transition: none;
+  }
+}

@@ -27,6 +27,8 @@
 | TASK-002 | Planned | Domain | Schema/API/State Freeze |
 | TASK-003 | Planned | Server | Provider/provenance Freeze |
 | TASK-004 | Planned | Data | H0–2 API/Argument 生死门 |
-| TASK-005…012 | Planned | TBD | 仅在前置合同冻结后生成完整 Task 文件 |
+| TASK-005 | Deferred | Data | 真实 Embedding / Cluster / Snapshot，待 API 资产验证 |
+| TASK-006 | Done | Primary Agent | Vertical Slice 01：Mock Fixture Classroom |
+| TASK-007…012 | Planned | TBD | TASK-006 评估后再进入后续功能 |
 
-不要提前编写 005–012 的实现细节；上游 Spike 可能改变字段与阈值，但不能改变 Golden Path。
+当前用户指令通过 `PROP-0001` 批准 TASK-006 先用显式 Mock Fixture 验证 Classroom；其余 005、007–012 不提前实现。
