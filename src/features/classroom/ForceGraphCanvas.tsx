@@ -13,6 +13,10 @@ import {
   getStudentDetails,
   studentSeatNumber,
 } from "./classroom-selectors";
+import {
+  paintPixelCandidateSeat,
+  paintPixelStudent,
+} from "./pixel-character";
 import styles from "./classroom.module.css";
 
 const CLUSTER_COLORS = [
@@ -47,6 +51,26 @@ function hexWithAlpha(hex: string, alpha: string) {
   return `${hex}${alpha}`;
 }
 
+function paintClippedZone(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  cut: number,
+) {
+  context.beginPath();
+  context.moveTo(x + cut, y);
+  context.lineTo(x + width - cut, y);
+  context.lineTo(x + width, y + cut);
+  context.lineTo(x + width, y + height - cut);
+  context.lineTo(x + width - cut, y + height);
+  context.lineTo(x + cut, y + height);
+  context.lineTo(x, y + height - cut);
+  context.lineTo(x, y + cut);
+  context.closePath();
+}
+
 export default function ForceGraphCanvas({
   classroom,
   width,
@@ -58,12 +82,12 @@ export default function ForceGraphCanvas({
   onSelectStudent,
 }: ForceGraphCanvasProps) {
   const graphRef = useRef<ForceGraphMethods<GraphNode> | undefined>(undefined);
-  const fitPadding = width < 500 ? 8 : 52;
-  const [hoveredStudentId, setHoveredStudentId] = useState<string | null>(
-    null,
-  );
+  const fitPadding = width < 500 ? 12 : 42;
+  const [hoveredStudentId, setHoveredStudentId] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [candidateRevealProgress, setCandidateRevealProgress] = useState(0);
+  const [lifeFrame, setLifeFrame] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   const colorByClusterId = useMemo(
     () =>
@@ -114,17 +138,47 @@ export default function ForceGraphCanvas({
     [classroom.clusters],
   );
 
+  const selectedStudent = selectedStudentId
+    ? classroom.students.find((student) => student.id === selectedStudentId)
+    : undefined;
+  const selectedClusterId =
+    selectedStudent?.assignment.kind === "cluster"
+      ? selectedStudent.assignment.clusterId
+      : null;
+  const seatmateStudent = classroom.students.find(
+    (student) => student.id === seatmateStudentId,
+  );
+  const seatmateClusterId =
+    seatmateStudent?.assignment.kind === "cluster"
+      ? seatmateStudent.assignment.clusterId
+      : null;
   const hovered = hoveredStudentId
     ? getStudentDetails(classroom, hoveredStudentId)
     : null;
 
-  const seatmateStudent = classroom.students.find(
-    (student) => student.id === seatmateStudentId,
-  );
-
   useEffect(() => {
     graphRef.current?.zoomToFit(0, fitPadding);
   }, [fitPadding, height, width]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setReducedMotion(media.matches);
+    syncPreference();
+    media.addEventListener("change", syncPreference);
+
+    if (media.matches) {
+      return () => media.removeEventListener("change", syncPreference);
+    }
+
+    const timer = window.setInterval(() => {
+      setLifeFrame((frame) => (frame + 1) % 117);
+    }, 860);
+
+    return () => {
+      window.clearInterval(timer);
+      media.removeEventListener("change", syncPreference);
+    };
+  }, [reducedMotion]);
 
   useEffect(() => {
     let frameId = 0;
@@ -140,7 +194,6 @@ export default function ForceGraphCanvas({
     }
 
     const startedAt = performance.now();
-
     const reveal = (time: number) => {
       const progress = Math.min(1, (time - startedAt) / 320);
       setCandidateRevealProgress(progress);
@@ -156,136 +209,35 @@ export default function ForceGraphCanvas({
     context: CanvasRenderingContext2D,
     globalScale: number,
   ) {
-    if (typeof node.x !== "number" || typeof node.y !== "number") {
-      return;
-    }
+    if (typeof node.x !== "number" || typeof node.y !== "number") return;
 
-    const unit = 1 / globalScale;
     const isSelected = node.studentId === selectedStudentId;
-    const isHovered = node.studentId === hoveredStudentId;
     const isSeatmate = candidateVisible && node.studentId === seatmateStudentId;
-    const isMuted = Boolean(selectedStudentId && !isSelected);
-    const lookDirection = node.displaySeed % 3 === 0 ? -1 : node.displaySeed % 3 === 1 ? 1 : 0;
-    const propKind = node.displaySeed % 3;
+    const isInFocusedGroup = Boolean(
+      selectedClusterId && node.clusterId === selectedClusterId,
+    );
+    const isRelated = Boolean(
+      candidateVisible &&
+        seatmateClusterId &&
+        node.clusterId === seatmateClusterId &&
+        Math.hypot(node.x - candidatePosition.x, node.y - candidatePosition.y) < 22,
+    );
 
     context.save();
-    context.globalAlpha = isMuted ? 0.38 : 1;
     context.translate(node.x, node.y);
-
-    if (isSelected || isSeatmate) {
-      context.beginPath();
-      context.ellipse(0, 7 * unit, 16 * unit, 9 * unit, 0, 0, Math.PI * 2);
-      context.fillStyle = isSeatmate ? "#D5912A22" : `${node.color}22`;
-      context.fill();
-      context.lineWidth = (isSelected ? 2 : 1.5) * unit;
-      context.strokeStyle = isSeatmate ? "#D5912A" : "#19232E";
-      context.stroke();
-    }
-
-    // Chair back and compact desk establish a seated body, not an avatar dot.
-    context.lineWidth = 1.25 * unit;
-    context.strokeStyle = "#8D8578";
-    context.beginPath();
-    context.moveTo(-5 * unit, 0);
-    context.lineTo(-5 * unit, 11 * unit);
-    context.moveTo(5 * unit, 0);
-    context.lineTo(5 * unit, 11 * unit);
-    context.stroke();
-
-    context.fillStyle = isSeatmate ? "#FFF4DE" : "#EEE7DA";
-    context.strokeStyle = isSeatmate ? "#D5912A" : "#B9B0A2";
-    context.lineWidth = 1.1 * unit;
-    context.beginPath();
-    context.roundRect(-10 * unit, 3 * unit, 20 * unit, 7 * unit, 2 * unit);
-    context.fill();
-    context.stroke();
-
-    // Torso uses cluster color as a small, equal-weight identity cue.
-    context.fillStyle = node.color;
-    context.strokeStyle = "#19232E";
-    context.lineWidth = (isSelected || isHovered ? 1.4 : 0.8) * unit;
-    context.beginPath();
-    context.roundRect(-5.3 * unit, -5 * unit, 10.6 * unit, 10 * unit, 3 * unit);
-    context.fill();
-    context.stroke();
-
-    // Arms react to selection and to the newly revealed neighbor relation.
-    context.strokeStyle = "#19232E";
-    context.lineWidth = 1.4 * unit;
-    context.lineCap = "round";
-    context.beginPath();
-    context.moveTo(-4 * unit, -1 * unit);
-    context.lineTo(-7.5 * unit, 3 * unit);
-    context.moveTo(4 * unit, -1 * unit);
-    if (isSeatmate) {
-      context.lineTo(8 * unit, -7 * unit);
-      context.lineTo(10 * unit, -9 * unit);
-    } else if (isSelected) {
-      context.lineTo(7 * unit, -5 * unit);
-    } else {
-      context.lineTo(7.5 * unit, 3 * unit);
-    }
-    context.stroke();
-
-    const headX = (isSelected || isSeatmate ? 1 : lookDirection) * unit;
-    const headY = (isSelected || isSeatmate ? -11 : -10) * unit;
-    context.fillStyle = "#F3CDB1";
-    context.strokeStyle = "#19232E";
-    context.lineWidth = 0.9 * unit;
-    context.beginPath();
-    context.arc(headX, headY, 4.5 * unit, 0, Math.PI * 2);
-    context.fill();
-    context.stroke();
-
-    context.fillStyle = "#3D332D";
-    context.beginPath();
-    if (node.displaySeed % 2 === 0) {
-      context.arc(headX, headY - 1.3 * unit, 4.6 * unit, Math.PI, Math.PI * 2);
-    } else {
-      context.roundRect(headX - 4.2 * unit, headY - 4.6 * unit, 8.4 * unit, 2.8 * unit, unit);
-    }
-    context.fill();
-
-    context.fillStyle = "#19232E";
-    context.beginPath();
-    context.arc(headX + lookDirection * 0.5 * unit - 1.2 * unit, headY + 0.4 * unit, 0.55 * unit, 0, Math.PI * 2);
-    context.arc(headX + lookDirection * 0.5 * unit + 1.2 * unit, headY + 0.4 * unit, 0.55 * unit, 0, Math.PI * 2);
-    context.fill();
-
-    // A book, notebook, or laptop supplies low-cost individual life cues.
-    context.strokeStyle = node.color;
-    context.fillStyle = "#FFFCF6";
-    context.lineWidth = 0.9 * unit;
-    context.beginPath();
-    if (propKind === 0) {
-      context.roundRect(-5 * unit, 4.2 * unit, 10 * unit, 3.5 * unit, unit);
-    } else if (propKind === 1) {
-      context.moveTo(-5 * unit, 7 * unit);
-      context.lineTo(-3 * unit, 3.5 * unit);
-      context.lineTo(4.5 * unit, 3.5 * unit);
-      context.lineTo(5 * unit, 7 * unit);
-      context.closePath();
-    } else {
-      context.roundRect(-4 * unit, 4 * unit, 8 * unit, 4 * unit, 0.7 * unit);
-    }
-    context.fill();
-    context.stroke();
-
-    context.fillStyle = isSeatmate ? "#D5912A" : "#42505E";
-    context.font = `600 ${7.5 * unit}px ui-sans-serif, system-ui`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(node.seatNumber, 0, 14 * unit);
-
-    if (isSeatmate) {
-      context.fillStyle = "#D5912A";
-      context.beginPath();
-      context.arc(11 * unit, -13 * unit, 5 * unit, 0, Math.PI * 2);
-      context.fill();
-      context.fillStyle = "#FFFCF6";
-      context.font = `700 ${6.5 * unit}px ui-sans-serif, system-ui`;
-      context.fillText("同桌", 11 * unit, -13 * unit);
-    }
+    paintPixelStudent(context, globalScale, {
+      color: node.color,
+      seed: node.displaySeed,
+      seatNumber: node.seatNumber,
+      selected: isSelected,
+      hovered: node.studentId === hoveredStudentId,
+      inFocusedGroup: isInFocusedGroup && !isSelected,
+      seatmate: isSeatmate,
+      related: isRelated && !isSeatmate,
+      muted: Boolean(selectedStudentId && !isSelected && !isInFocusedGroup),
+      lifeFrame,
+      reducedMotion,
+    });
     context.restore();
   }
 
@@ -295,114 +247,125 @@ export default function ForceGraphCanvas({
     context: CanvasRenderingContext2D,
     globalScale: number,
   ) {
-    if (typeof node.x !== "number" || typeof node.y !== "number") {
-      return;
-    }
-
+    if (typeof node.x !== "number" || typeof node.y !== "number") return;
     context.fillStyle = paintColor;
-    context.beginPath();
-    context.arc(node.x, node.y, 23 / globalScale, 0, Math.PI * 2);
-    context.fill();
+    context.fillRect(
+      node.x - 23 / globalScale,
+      node.y - 23 / globalScale,
+      46 / globalScale,
+      46 / globalScale,
+    );
   }
 
-  function paintClusterZones(
+  function paintClassroomScene(
     context: CanvasRenderingContext2D,
     globalScale: number,
   ) {
-    // A restrained blackboard and floor zoning shift the first read toward Classroom.
-    context.fillStyle = "#34463F";
-    context.strokeStyle = "#9E9484";
-    context.lineWidth = 1 / globalScale;
+    const unit = 1 / globalScale;
+    context.save();
+    context.imageSmoothingEnabled = false;
+
+    context.fillStyle = "#F1E9DA";
+    context.fillRect(-4, -6, 108, 110);
+
+    context.fillStyle = "#E5DBC9";
+    context.fillRect(46, 8, 8, 92);
+    context.fillRect(46, 88, 53, 8);
+
+    context.strokeStyle = "rgba(125, 111, 91, 0.16)";
+    context.lineWidth = 0.6 * unit;
+    for (let x = -4; x <= 104; x += 5) {
+      context.beginPath();
+      context.moveTo(x, -6);
+      context.lineTo(x, 104);
+      context.stroke();
+    }
+    for (let y = -6; y <= 104; y += 5) {
+      context.beginPath();
+      context.moveTo(-4, y);
+      context.lineTo(104, y);
+      context.stroke();
+    }
+
+    context.fillStyle = "#88745C";
+    context.fillRect(45, 8, 10, 4);
+    context.fillStyle = "#BBAA91";
+    context.fillRect(47, 12, 6, 3);
+    context.strokeStyle = "rgba(25, 35, 46, 0.22)";
+    context.lineWidth = 1.2 * unit;
+    context.setLineDash([3 * unit, 4 * unit]);
     context.beginPath();
-    context.roundRect(36, 3, 28, 7, 1.2);
-    context.fill();
+    context.moveTo(97, 92);
+    context.lineTo(50, 92);
+    context.lineTo(50, 14);
     context.stroke();
-    context.fillStyle = "#F6F2E8";
-    context.font = `600 ${8 / globalScale}px ui-sans-serif, system-ui`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText("问题黑板", 50, 6.5);
+    context.setLineDash([]);
 
     for (const center of clusterCenters) {
-      context.beginPath();
-      context.ellipse(center.x, center.y + 1, 15.5, 13.5, 0, 0, Math.PI * 2);
-      context.fillStyle = hexWithAlpha(center.color, "0E");
+      const zoneWidth = 27;
+      const zoneHeight = 22;
+      const zoneX = center.x - zoneWidth / 2;
+      const zoneY = center.y - zoneHeight / 2;
+
+      paintClippedZone(context, zoneX, zoneY, zoneWidth, zoneHeight, 2.2);
+      context.fillStyle = hexWithAlpha(center.color, "16");
       context.fill();
-      context.lineWidth = 1 / globalScale;
-      context.strokeStyle = hexWithAlpha(center.color, "35");
-      context.setLineDash([5 / globalScale, 7 / globalScale]);
+      context.lineWidth = 1.2 * unit;
+      context.strokeStyle = hexWithAlpha(center.color, "62");
       context.stroke();
-      context.setLineDash([]);
+
+      context.fillStyle = "#A99479";
+      context.fillRect(center.x - 8, center.y - 2.4, 16, 1.5);
+      context.fillRect(center.x - 8, center.y + 4.4, 16, 1.5);
+      context.fillStyle = "#D8CCBA";
+      context.fillRect(center.x - 7.6, center.y - 2.1, 15.2, 0.8);
+      context.fillRect(center.x - 7.6, center.y + 4.7, 15.2, 0.8);
 
       const label = `${center.label} · ${center.count} 位`;
-      context.font = `600 ${10 / globalScale}px ui-sans-serif, system-ui`;
+      context.font = `700 ${9 * unit}px ui-sans-serif, system-ui`;
       const labelWidth = context.measureText(label).width;
       const labelX = center.x - labelWidth / 2;
-      const labelY = center.y < 30 ? center.y + 18 : center.y - 18;
-      context.fillStyle = "#F6F2E8E8";
+      const labelY = center.y < 40 ? center.y + 14.6 : center.y - 14.5;
+      context.fillStyle = "#FFF9EE";
       context.fillRect(
-        labelX - 4 / globalScale,
-        labelY - 9 / globalScale,
-        labelWidth + 8 / globalScale,
-        14 / globalScale,
+        labelX - 4 * unit,
+        labelY - 7 * unit,
+        labelWidth + 8 * unit,
+        14 * unit,
       );
-      context.fillStyle = "#42505E";
+      context.fillStyle = center.color;
+      context.fillRect(labelX - 4 * unit, labelY - 7 * unit, 3 * unit, 14 * unit);
+      context.fillStyle = "#27333E";
       context.textAlign = "left";
       context.textBaseline = "middle";
-      context.fillText(label, labelX, labelY - 2 / globalScale);
+      context.fillText(label, labelX, labelY);
     }
 
     if (candidateVisible && seatmateStudent) {
+      const midpointX = (candidatePosition.x + seatmateStudent.layout.x) / 2;
       context.beginPath();
       context.moveTo(candidatePosition.x, candidatePosition.y);
+      context.lineTo(midpointX, candidatePosition.y);
+      context.lineTo(midpointX, seatmateStudent.layout.y);
       context.lineTo(seatmateStudent.layout.x, seatmateStudent.layout.y);
-      context.setLineDash([4 / globalScale, 5 / globalScale]);
-      context.lineWidth = 1.4 / globalScale;
-      context.strokeStyle = "#D5912AAA";
+      context.setLineDash([3 * unit, 3 * unit]);
+      context.lineWidth = 2 * unit;
+      context.strokeStyle = "#D5912ACC";
       context.stroke();
       context.setLineDash([]);
     }
+
+    context.restore();
   }
 
-  function paintCandidateSeat(context: CanvasRenderingContext2D, globalScale: number) {
+  function paintCandidateSeat(
+    context: CanvasRenderingContext2D,
+    globalScale: number,
+  ) {
     if (!candidateVisible) return;
-    const unit = 1 / globalScale;
-    const easedProgress = 1 - Math.pow(1 - candidateRevealProgress, 3);
     context.save();
     context.translate(candidatePosition.x, candidatePosition.y);
-    context.globalAlpha = easedProgress;
-    context.scale(0.88 + easedProgress * 0.12, 0.88 + easedProgress * 0.12);
-    if (candidateRevealProgress < 1) {
-      context.beginPath();
-      context.arc(0, 1 * unit, (16 + candidateRevealProgress * 8) * unit, 0, Math.PI * 2);
-      context.fillStyle = `rgba(213, 145, 42, ${0.2 * (1 - candidateRevealProgress)})`;
-      context.fill();
-    }
-    context.fillStyle = "#FFF8E9";
-    context.strokeStyle = "#D5912A";
-    context.lineWidth = 2 * unit;
-    context.beginPath();
-    context.roundRect(-12 * unit, -4 * unit, 24 * unit, 10 * unit, 2.5 * unit);
-    context.fill();
-    context.stroke();
-    context.beginPath();
-    context.moveTo(-8 * unit, 6 * unit);
-    context.lineTo(-8 * unit, 12 * unit);
-    context.moveTo(8 * unit, 6 * unit);
-    context.lineTo(8 * unit, 12 * unit);
-    context.stroke();
-    context.fillStyle = "#D5912A";
-    context.beginPath();
-    context.arc(0, -10 * unit, 4.5 * unit, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = "#FFFCF6";
-    context.font = `700 ${7 * unit}px ui-sans-serif, system-ui`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText("你", 0, -10 * unit);
-    context.fillStyle = "#8A5A16";
-    context.font = `650 ${8 * unit}px ui-sans-serif, system-ui`;
-    context.fillText("你的一席", 0, 17 * unit);
+    paintPixelCandidateSeat(context, globalScale, candidateRevealProgress);
     context.restore();
   }
 
@@ -418,7 +381,7 @@ export default function ForceGraphCanvas({
       const position = graphRef.current.graph2ScreenCoords(node.x, node.y);
       setTooltipPosition({
         x: Math.min(Math.max(16, position.x), Math.max(16, width - 296)),
-        y: Math.max(116, position.y),
+        y: Math.max(148, position.y),
       });
     }
   }
@@ -430,7 +393,7 @@ export default function ForceGraphCanvas({
         width={width}
         height={height}
         graphData={graphData}
-        backgroundColor="#F6F2E8"
+        backgroundColor="#F1E9DA"
         cooldownTicks={0}
         warmupTicks={0}
         enableNodeDrag={false}
@@ -439,7 +402,7 @@ export default function ForceGraphCanvas({
         nodeLabel={() => ""}
         nodeCanvasObject={paintStudent}
         nodePointerAreaPaint={paintPointerArea}
-        onRenderFramePre={paintClusterZones}
+        onRenderFramePre={paintClassroomScene}
         onRenderFramePost={paintCandidateSeat}
         onNodeHover={handleHover}
         onNodeClick={(node) => {

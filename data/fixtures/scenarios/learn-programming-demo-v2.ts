@@ -1,6 +1,16 @@
 export type DemoSeatmateScenario = {
   id: string;
   disclosure: string;
+  campus: {
+    building: string;
+    floor: string;
+    rooms: Array<{
+      number: string;
+      title: string;
+      status: "current" | "preview";
+      note: string;
+    }>;
+  };
   noteText: string;
   claimTitle: string;
   candidate: {
@@ -23,6 +33,36 @@ export type DemoSeatmateScenario = {
 export const learnProgrammingDemoV2Scenario: DemoSeatmateScenario = {
   id: "scenario_learn_programming_v2",
   disclosure: "Demo V2 · Mock 场景",
+  campus: {
+    building: "认知校园 · 新手路径楼",
+    floor: "2F",
+    rooms: [
+      {
+        number: "01",
+        title: "第一门编程语言怎么选？",
+        status: "current",
+        note: "本轮开放",
+      },
+      {
+        number: "02",
+        title: "刷题应该优先还是项目优先？",
+        status: "preview",
+        note: "走廊预告",
+      },
+      {
+        number: "03",
+        title: "考研还是直接就业？",
+        status: "preview",
+        note: "走廊预告",
+      },
+      {
+        number: "04",
+        title: "先做项目还是先打基础？",
+        status: "preview",
+        note: "走廊预告",
+      },
+    ],
+  },
   noteText:
     "第一门语言不必一次选对。可以先用两周做一个足够小的真实项目，记录反馈速度、挫折点和求助成本，再决定继续 Python、转向 C，或补一门更贴近目标的语言。关键不是追随流行度，而是把试学当成一次可复盘的实验。",
   claimTitle: "用短周期试学实验决定第一门语言，而不是一次性押注",

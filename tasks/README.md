@@ -31,5 +31,8 @@
 | TASK-006 | Done | Primary Agent | Vertical Slice 01：Mock Fixture Classroom |
 | TASK-007…012 | Planned | TBD | TASK-006 评估后再进入后续功能 |
 | TASK-013 | Done | Primary Agent | Demo V2 Desktop Classroom + Mock Seatmate Golden Path |
+| TASK-014 | Done | Primary Agent | Pixel Classroom World + Structured Seatmate refinement |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。
+
+当前用户指令通过 `PROP-0003` 批准 TASK-014 在保持 TASK-013 数据、状态与技术边界不变的前提下，把 Experience/Visual/Spatial 层升级为原创像素课堂、多教室入口与结构化同桌闭环。
