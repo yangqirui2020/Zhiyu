@@ -280,7 +280,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
 
             <div className={styles.doorMarker} aria-hidden="true">
               <i />
-              <strong>走廊入口</strong>
+              <strong>通往走廊</strong>
               <span>1F →</span>
             </div>
 

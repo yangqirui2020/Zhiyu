@@ -107,6 +107,7 @@ export default function ForceGraphCanvas({
     : width < 500
       ? -14
       : -7;
+  const floorSafeAnchorY = width < 500 ? 96 : blackboardExpanded ? 102 : 98;
 
   const colorByClusterId = useMemo(
     () =>
@@ -133,6 +134,18 @@ export default function ForceGraphCanvas({
           y: blackboardAnchorY,
           fx: 50,
           fy: blackboardAnchorY,
+        },
+        {
+          id: "__floor_safe_anchor",
+          studentId: "__floor_safe_anchor",
+          seatNumber: "",
+          clusterId: "anchor",
+          color: "transparent",
+          displaySeed: 0,
+          x: 50,
+          y: floorSafeAnchorY,
+          fx: 50,
+          fy: floorSafeAnchorY,
         },
         ...classroom.students.map((student) => {
           const clusterId =
@@ -177,6 +190,7 @@ export default function ForceGraphCanvas({
       colorByClusterId,
       candidateVisible,
       candidatePosition,
+      floorSafeAnchorY,
     ],
   );
 
@@ -365,9 +379,8 @@ export default function ForceGraphCanvas({
     context.fillStyle = "#F1E9DA";
     context.fillRect(-4, -6, 108, 110);
 
-    context.fillStyle = "#E5DBC9";
-    context.fillRect(46, 8, 8, 92);
-    context.fillRect(46, 88, 53, 8);
+    context.fillStyle = "#E9E0D2";
+    context.fillRect(47, 8, 6, 92);
 
     context.strokeStyle = "rgba(125, 111, 91, 0.16)";
     context.lineWidth = 0.6 * unit;
@@ -383,20 +396,6 @@ export default function ForceGraphCanvas({
       context.lineTo(104, y);
       context.stroke();
     }
-
-    context.fillStyle = "#88745C";
-    context.fillRect(45, 8, 10, 4);
-    context.fillStyle = "#BBAA91";
-    context.fillRect(47, 12, 6, 3);
-    context.strokeStyle = "rgba(25, 35, 46, 0.22)";
-    context.lineWidth = 1.2 * unit;
-    context.setLineDash([3 * unit, 4 * unit]);
-    context.beginPath();
-    context.moveTo(97, 92);
-    context.lineTo(50, 92);
-    context.lineTo(50, 14);
-    context.stroke();
-    context.setLineDash([]);
 
     for (const center of clusterCenters) {
       const zoneWidth = 27;
