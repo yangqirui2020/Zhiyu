@@ -1,8 +1,8 @@
 # TASK-016 Verification Report — Interaction and Classroom Layout Hotfix
 
 - Date: 2026-09-01
-- Working branch: `task/TASK-015-learning-loop`（当前环境 `.git` 只读，无法创建要求的 `hotfix/TASK-016-interaction-layout`）
-- Verdict: **VERIFICATION**（5/6 AC 已有运行证据；Reduced Motion 实现与 QA 断言完成，等待可模拟 media preference 的浏览器复验）
+- Working branch: `hotfix/TASK-016-interaction-layout`
+- Verdict: **PASS**（6/6 AC 通过）
 
 ## Commands
 
@@ -13,6 +13,8 @@
 | `npm test` | PASS（16 tests；新增 5 个 session reducer tests） |
 | `npm run build` | PASS |
 | `git diff --check` | PASS |
+| GitHub 干净克隆后 `npm ci` | PASS（398 packages） |
+| 干净克隆后 typecheck / lint / test / build | PASS |
 
 ## Browser QA
 
@@ -42,7 +44,7 @@
 
 - `ClassroomExperience` 监听 `prefers-reduced-motion`；圆桌相位在偏好开启时下一帧直接发送 `roundtable_finish`。
 - `qa-v3.cjs` 已改为点击圆桌入口后 2 秒内等待 Reflection，删除了手动“跳过”动作；若未自动进入会失败。
-- 当前 in-app Browser 的 media preference 为 `false`，且不暴露 media override，因此本轮没有伪造浏览器 PASS。此项保留在 Verification。
+- `verification/TASK-016/reduced-motion-smoke.cjs` 使用真实 Chrome 模拟 `prefers-reduced-motion: reduce`：PASS，自动进入 Reflection，0 console/page error。
 
 ## QA Corrections
 
@@ -50,6 +52,9 @@
 - 102 出口不再吞掉点击失败，而是必须出现 `走廊上的 Classroom 102`。
 - Puppeteer 与 Chrome 路径支持 `PUPPETEER_CORE_PATH` / `CHROME_PATH` 环境变量，不再绑定 WorkBuddy 用户目录。
 
-## Git Limitation
+## Delivery and Rollback
 
-工作区允许修改源码，但 `.git` 为只读；创建 hotfix 分支失败。因此本 Task 未提交或上传，所有改动保留在当前工作区，待用户恢复 Git 写权限后执行提交与推送。
+- GitHub branch: `hotfix/TASK-016-interaction-layout`。
+- 修复前回退标签：`checkpoint/TASK-015-before-interaction-hotfix`，指向 `f1cbcfe`。
+- TASK-014 基线仍为 `fd602fa`；历史任务分支与提交均未删除或重写。
+- 回退 TASK-016：`git switch --detach checkpoint/TASK-015-before-interaction-hotfix`；需要建立可继续开发的回退分支时使用 `git switch -c rollback/TASK-016 checkpoint/TASK-015-before-interaction-hotfix`。

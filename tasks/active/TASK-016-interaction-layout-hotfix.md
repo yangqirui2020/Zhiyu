@@ -1,6 +1,6 @@
 # TASK-016 — Interaction and Classroom Layout Hotfix
 
-- Status: Verification
+- Status: Done
 - Owner: Primary Agent (Codex)
 - Estimate: 3h
 - Freeze deadline: End of current iteration
@@ -64,7 +64,7 @@
 ## Acceptance Criteria
 
 - [x] A. 1440×900、1366×768、390×844 的 exploring/reflection/candidate 状态中，黑板、步骤条与学生/桌组无视觉覆盖。
-- [ ] B. `prefers-reduced-motion: reduce` 下点击圆桌入口后自动进入 reflection，无需等待五句或点击跳过。（实现与 QA 断言已完成；当前内置浏览器不提供 media override，待可控浏览器复验。）
+- [x] B. `prefers-reduced-motion: reduce` 下点击圆桌入口后自动进入 reflection，无需等待五句或点击跳过。
 - [x] C. Candidate 相位高亮“01 空位亮起”，Seatmate 高亮“02”，Challenge 高亮“03”，MySeat 高亮“04”。
 - [x] D. Session reducer 测试覆盖合法路径、非法跳转、空输入、panel 正交、reset、第二次流程。
 - [x] E. QA 对 console error/page error 均返回失败，lint 不再因 QA 文件失败。
