@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 
 import type { Classroom } from "@/domain/schemas";
 import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
@@ -56,6 +56,7 @@ type ClassroomExperienceProps = {
 
 export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperienceProps) {
   const [session, dispatch] = useReducer(sessionReducer, initialSessionState);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const studentButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const restoreStudentIdRef = useRef<string | null>(null);
 
@@ -66,9 +67,23 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
   const isSeated = phaseIsSeated(phase);
   const headcount = classroom.students.length + (isSeated ? 1 : 0);
 
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setPrefersReducedMotion(media.matches);
+    syncPreference();
+    media.addEventListener("change", syncPreference);
+    return () => media.removeEventListener("change", syncPreference);
+  }, []);
+
   // ── 课代表圆桌计时：一轮结构化、可跳过 ─────────────────────
   useEffect(() => {
     if (phase !== "roundtable") return;
+    if (prefersReducedMotion) {
+      const frame = window.requestAnimationFrame(() =>
+        dispatch({ type: "roundtable_finish" }),
+      );
+      return () => window.cancelAnimationFrame(frame);
+    }
     const total = demoScenario.roundtable.speakers.length;
     if (session.roundtableStep >= total) {
       const timer = window.setTimeout(
@@ -82,7 +97,12 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
       ROUNDTABLE_LINE_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [phase, session.roundtableStep, demoScenario.roundtable.speakers.length]);
+  }, [
+    phase,
+    prefersReducedMotion,
+    session.roundtableStep,
+    demoScenario.roundtable.speakers.length,
+  ]);
 
   const focusedStudentId =
     selectedStudentId ?? (hasCandidate ? demoScenario.seatmate.studentId : null);
@@ -137,9 +157,14 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
     session.panel.kind === "note" ||
     (session.panel.kind === "default" && phase === "responded");
 
+  const nextStoryStep = STORY_STEPS.findIndex(
+    (step) => !atLeast(phase, step.phase),
+  );
   const activeStoryStep = isSeated
     ? STORY_STEPS.length
-    : STORY_STEPS.findIndex((step) => !atLeast(phase, step.phase));
+    : nextStoryStep === -1
+      ? STORY_STEPS.length - 1
+      : Math.max(0, nextStoryStep - 1);
 
   return (
     <main className={styles.experienceShell}>
@@ -228,6 +253,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
               candidatePosition={demoScenario.candidate}
               seatmateStudentId={demoScenario.seatmate.studentId}
               seatClaimed={isSeated}
+              blackboardExpanded={atLeast(phase, "reflection")}
               roundtable={{
                 active: phase === "roundtable",
                 speakerIds: roundtableSpeakers,

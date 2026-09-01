@@ -33,6 +33,7 @@
 | TASK-013 | Done | Primary Agent | Demo V2 Desktop Classroom + Mock Seatmate Golden Path |
 | TASK-014 | Done | Primary Agent | Pixel Classroom World + Structured Seatmate refinement |
 | TASK-015 | Verification | Primary Agent | Demo V3 Learning Loop：圆桌 → 黑板三项 → 追问 → 课堂笔记 → 我的一席 → 入席 → 双出口 |
+| TASK-016 | Verification | Primary Agent | 交互与课堂布局热修复：黑板安全区、Reduced Motion、步骤条、状态机测试与 QA |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。
 

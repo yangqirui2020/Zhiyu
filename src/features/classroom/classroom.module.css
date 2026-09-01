@@ -2387,6 +2387,20 @@
     -webkit-line-clamp: 2;
   }
 
+  .blackboardOutcome {
+    gap: 3px;
+  }
+
+  .blackboardOutcome span {
+    margin-bottom: 0;
+    font-size: 7px;
+  }
+
+  .blackboardOutcome p {
+    font-size: 8px;
+    -webkit-line-clamp: 1;
+  }
+
   .roomPlaque {
     top: 132px;
     left: 12px;
@@ -2427,11 +2441,7 @@
   }
 
   .candidateStory {
-    top: 128px;
-    right: 10px;
-    display: grid;
-    padding: 6px 8px;
-    gap: 2px;
+    display: none;
   }
 
   .candidateStory i {

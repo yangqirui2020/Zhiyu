@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * TASK-015 Demo V3 Golden Path Browser QA
  * puppeteer-core + 系统 Chrome（headless），覆盖：
@@ -6,13 +7,15 @@
  *  - Reduced Motion 冒烟（圆桌跳过 + 入席直达）
  *  - console / pageerror 收集
  */
-const puppeteer = require("C:/Users/yang/.workbuddy/binaries/node/workspace/node_modules/puppeteer-core");
+const puppeteer = require(process.env.PUPPETEER_CORE_PATH ?? "puppeteer-core");
 const fs = require("node:fs");
 const path = require("node:path");
 
 const BASE = "http://localhost:3000/classroom/q_learn_programming";
 const OUT = path.join(__dirname, "shots");
-const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
+const CHROME =
+  process.env.CHROME_PATH ??
+  "C:/Program Files/Google/Chrome/Application/chrome.exe";
 
 const consoleErrors = [];
 const pageErrors = [];
@@ -128,13 +131,8 @@ async function goldenPath() {
   await shot(page, "10-exits-zhihudraft-1440");
 
   // 学习出口：102 走廊入口
-  await clickByText(page, "button", "去下一间教室", { exact: false }).catch(() => null);
-  await page.evaluate(() => {
-    const card = [...document.querySelectorAll("button")].find((b) =>
-      (b.textContent || "").includes("102"),
-    );
-    card?.scrollIntoView();
-  });
+  await clickByText(page, "button", "102", { exact: false });
+  await waitForText(page, "走廊上的 Classroom 102", 6000);
   await shot(page, "11-exit-nextroom-1440");
 
   await browser.close();
@@ -210,11 +208,9 @@ async function reducedMotionSmoke() {
   await page.waitForSelector("canvas", { timeout: 15000 });
   await new Promise((r) => setTimeout(r, 800));
 
-  // 跳过圆桌直达黑板
+  // Reduced Motion 自动直达黑板，不依赖手动跳过
   await clickByText(page, "button", "听听各组怎么说");
-  await new Promise((r) => setTimeout(r, 600));
-  await clickByText(page, "button", "跳过，直接看黑板");
-  await waitForText(page, "听完他们，你现在怎么看？", 6000);
+  await waitForText(page, "听完他们，你现在怎么看？", 2000);
   await clickByText(page, "button", "使用示例观点");
   await clickByText(page, "button", "找到我的一席");
   await new Promise((r) => setTimeout(r, 400));
@@ -248,7 +244,7 @@ async function reducedMotionSmoke() {
   console.log(pageErrors.length ? pageErrors.join("\n") : "(none)");
   console.log(`done in ${((Date.now() - startedAt) / 1000).toFixed(1)}s`);
 
-  if (pageErrors.length > 0) process.exit(2);
+  if (consoleErrors.length > 0 || pageErrors.length > 0) process.exit(2);
 })().catch((err) => {
   console.error("QA FAILED:", err.message);
   console.log("\n=== console errors ===");

@@ -46,6 +46,7 @@ type ForceGraphCanvasProps = {
   candidatePosition: { x: number; y: number };
   seatmateStudentId: string;
   seatClaimed: boolean;
+  blackboardExpanded: boolean;
   roundtable: {
     active: boolean;
     speakerIds: string[];
@@ -87,6 +88,7 @@ export default function ForceGraphCanvas({
   candidatePosition,
   seatmateStudentId,
   seatClaimed,
+  blackboardExpanded,
   roundtable,
   onSelectStudent,
 }: ForceGraphCanvasProps) {
@@ -98,6 +100,13 @@ export default function ForceGraphCanvas({
   const [seatRevealProgress, setSeatRevealProgress] = useState(0);
   const [lifeFrame, setLifeFrame] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const blackboardAnchorY = blackboardExpanded
+    ? width < 500
+      ? -42
+      : -18
+    : width < 500
+      ? -14
+      : -7;
 
   const colorByClusterId = useMemo(
     () =>
@@ -113,6 +122,18 @@ export default function ForceGraphCanvas({
   const graphData = useMemo<GraphData<GraphNode>>(
     () => ({
       nodes: [
+        {
+          id: "__blackboard_anchor",
+          studentId: "__blackboard_anchor",
+          seatNumber: "",
+          clusterId: "anchor",
+          color: "transparent",
+          displaySeed: 0,
+          x: 50,
+          y: blackboardAnchorY,
+          fx: 50,
+          fy: blackboardAnchorY,
+        },
         ...classroom.students.map((student) => {
           const clusterId =
             student.assignment.kind === "cluster"
@@ -150,7 +171,13 @@ export default function ForceGraphCanvas({
       ],
       links: [],
     }),
-    [classroom, colorByClusterId, candidateVisible, candidatePosition],
+    [
+      blackboardAnchorY,
+      classroom,
+      colorByClusterId,
+      candidateVisible,
+      candidatePosition,
+    ],
   );
 
   const clusterCenters = useMemo(
@@ -185,7 +212,7 @@ export default function ForceGraphCanvas({
 
   useEffect(() => {
     graphRef.current?.zoomToFit(0, fitPadding);
-  }, [fitPadding, height, width]);
+  }, [blackboardExpanded, fitPadding, height, width]);
 
   // 候选座出现 / 入席后重新取景，把琥珀座位纳入画面
   useEffect(() => {
@@ -194,7 +221,7 @@ export default function ForceGraphCanvas({
       80,
     );
     return () => window.clearTimeout(timer);
-  }, [candidateVisible, seatClaimed, fitPadding]);
+  }, [blackboardExpanded, candidateVisible, seatClaimed, fitPadding]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
