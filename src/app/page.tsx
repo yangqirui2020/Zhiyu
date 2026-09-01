@@ -9,7 +9,7 @@ export default function HomePage() {
     <main className={styles.page}>
       <nav className={styles.nav} aria-label="主导航">
         <span className={styles.wordmark}>知遇 · 一席</span>
-        <span className={styles.phase}>Demo V2 · Classroom alive</span>
+        <span className={styles.phase}>Demo V3 · Learning loop</span>
       </nav>
 
       <section className={styles.hero} aria-labelledby="home-title">
@@ -20,12 +20,12 @@ export default function HomePage() {
           看看观点坐在哪里。
         </h1>
         <p className={styles.lede}>
-          回答不再排成一条信息流。它们化作教室里的学生，论证相近的人自然坐到了一起。
+          回答不再排成一条信息流。它们化作教室里的学生——先听五个小组吵一轮，再找到你的一席，让同桌追问你一次，最后带着属于自己的说法入席。
         </p>
 
         <div className={styles.actions}>
           <Link className={styles.primaryAction} href={classroomHref}>
-            进入 Demo V2 教室
+            走进 Classroom 101
             <span aria-hidden="true">→</span>
           </Link>
           <span className={styles.disclosure}>当前为人工构造的 Mock 演示数据</span>

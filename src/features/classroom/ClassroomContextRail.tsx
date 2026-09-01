@@ -1,86 +1,117 @@
 "use client";
 
+import { useState } from "react";
+
 import type { Classroom } from "@/domain/schemas";
-import type { DemoSeatmateScenario } from "../../../data/fixtures/scenarios/learn-programming-demo-v2";
+import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
 
 import { getStudentDetails, studentSeatNumber } from "./classroom-selectors";
 import {
   PixelStudentPortrait,
   PIXEL_CLUSTER_COLORS,
 } from "./PixelStudentPortrait";
+import {
+  noteProgressVisible,
+  noteSectionStatus,
+  type SessionState,
+} from "./session-machine";
 import styles from "./classroom.module.css";
-
-export type ContextPanel =
-  | { kind: "overview" }
-  | { kind: "note" }
-  | { kind: "candidate" }
-  | { kind: "seatmate" }
-  | { kind: "conversation" }
-  | { kind: "campus"; roomNumber: string };
 
 type ClassroomContextRailProps = {
   classroom: Classroom;
-  scenario: DemoSeatmateScenario;
-  panel: ContextPanel;
-  noteText: string;
-  onOpenNote: () => void;
-  onEditNote: (value: string) => void;
-  onUseSample: () => void;
-  onAnalyze: () => void;
+  scenario: DemoScenarioV3;
+  state: SessionState;
+  onStartRoundtable: () => void;
+  onEditOpinion: (value: string) => void;
+  onUseSampleOpinion: () => void;
+  onSubmitOpinion: () => void;
   onOpenSeatmate: () => void;
-  onAskSeatmate: () => void;
-  onBackToCandidate: () => void;
-  onReturnToClassroom: () => void;
+  onStartChallenge: () => void;
+  onEditAnswer: (value: string) => void;
+  onUseSampleAnswer: () => void;
+  onSubmitAnswer: () => void;
+  onOpenNote: () => void;
+  onClaimSeat: () => void;
+  onOpenCampusRoom: (roomNumber: string, isCurrent: boolean) => void;
   onReset: () => void;
 };
 
 export function ClassroomContextRail({
   classroom,
   scenario,
-  panel,
-  noteText,
-  onOpenNote,
-  onEditNote,
-  onUseSample,
-  onAnalyze,
+  state,
+  onStartRoundtable,
+  onEditOpinion,
+  onUseSampleOpinion,
+  onSubmitOpinion,
   onOpenSeatmate,
-  onAskSeatmate,
-  onBackToCandidate,
-  onReturnToClassroom,
+  onStartChallenge,
+  onEditAnswer,
+  onUseSampleAnswer,
+  onSubmitAnswer,
+  onOpenNote,
+  onClaimSeat,
+  onOpenCampusRoom,
   onReset,
 }: ClassroomContextRailProps) {
+  const [draftCopied, setDraftCopied] = useState(false);
+
   const seatmate = getStudentDetails(classroom, scenario.seatmate.studentId);
-  const sampleMatches = noteText.trim() === scenario.noteText;
+  const sampleMatches = state.opinionText.trim() === scenario.noteText.trim();
   const seatmateClusterIndex = seatmate?.cluster
     ? classroom.clusters.findIndex((cluster) => cluster.id === seatmate.cluster?.id)
     : -1;
-  const seatmateColor = PIXEL_CLUSTER_COLORS[
-    Math.max(0, seatmateClusterIndex) % PIXEL_CLUSTER_COLORS.length
-  ];
+  const seatmateColor =
+    PIXEL_CLUSTER_COLORS[
+      Math.max(0, seatmateClusterIndex) % PIXEL_CLUSTER_COLORS.length
+    ];
 
+  const noteProgress = noteProgressVisible(state.phase) ? (
+    <NoteProgressStrip state={state} onOpenNote={onOpenNote} />
+  ) : null;
+
+  // ── 走廊门牌（正交 panel）────────────────────────────────
+  const panel = state.panel;
   if (panel.kind === "campus") {
-    const room = scenario.campus.rooms.find((item) => item.number === panel.roomNumber);
+    const roomNumber = panel.roomNumber;
+    const targetRoom = scenario.campus.rooms.find((item) => item.number === roomNumber);
+    const isNextRoom = roomNumber === scenario.nextClassroom.number;
+
     return (
       <aside className={styles.contextRail} aria-labelledby="campus-panel-title">
         <RailHeader
           id="campus-panel-title"
           eyebrow={`${scenario.campus.building} · ${scenario.campus.floor}`}
-          title={`走廊上的 Classroom ${room?.number ?? panel.roomNumber}`}
+          title={`走廊上的 Classroom ${roomNumber}`}
         />
         <div className={styles.railBody}>
           <section className={styles.roomPreviewCard}>
-            <span className={styles.roomPreviewNumber}>{room?.number ?? panel.roomNumber}</span>
+            <span className={styles.roomPreviewNumber}>{roomNumber}</span>
             <div>
-              <p>{room?.note ?? "走廊预告"}</p>
-              <h3>{room?.title ?? "另一间认知教室"}</h3>
+              <p>{targetRoom?.note ?? "走廊预告"}</p>
+              <h3>{targetRoom?.title ?? "另一间认知教室"}</h3>
             </div>
           </section>
+          {isNextRoom ? (
+            <div className={styles.causalNote}>
+              <strong>为什么推荐它</strong>
+              <p>{scenario.nextClassroom.causalNote}</p>
+              <p className={styles.causalQuestion}>
+                本班尚未解决：{scenario.blackboard.openQuestion}
+              </p>
+            </div>
+          ) : null}
           <p className={styles.railLead}>
-            这一轮只开放 Classroom 01。其他门牌用于建立认知校园的入口感，不会伪装成已经加载的数据或可用课堂。
+            {isNextRoom
+              ? scenario.nextClassroom.statusNote + "；门牌用于演示「一个答案会长出新问题」，不会伪装成已加载的课堂。"
+              : "这一轮只完整开放 Classroom 101。其他门牌用于建立认知校园的入口感，不会伪装成已经加载的数据。"}
           </p>
-          <div className={styles.floorDirectory} aria-label="二层教室目录">
+          <div className={styles.floorDirectory} aria-label="楼层教室目录">
             {scenario.campus.rooms.map((item) => (
-              <div key={item.number} className={item.status === "current" ? styles.floorRoomCurrent : styles.floorRoom}>
+              <div
+                key={item.number}
+                className={item.status === "current" ? styles.floorRoomCurrent : styles.floorRoom}
+              >
                 <strong>{item.number}</strong>
                 <span>{item.title}</span>
                 <small>{item.note}</small>
@@ -89,8 +120,12 @@ export function ClassroomContextRail({
           </div>
         </div>
         <footer className={styles.railFooter}>
-          <button type="button" className={styles.primaryAction} onClick={onReturnToClassroom}>
-            返回 Classroom 01
+          <button
+            type="button"
+            className={styles.primaryAction}
+            onClick={() => onOpenCampusRoom("101", true)}
+          >
+            返回 Classroom 101
             <span aria-hidden="true">→</span>
           </button>
         </footer>
@@ -98,28 +133,97 @@ export function ClassroomContextRail({
     );
   }
 
-  if (panel.kind === "note") {
+  // ── Phase: roundtable ────────────────────────────────────
+  if (state.phase === "roundtable") {
     return (
-      <aside className={styles.contextRail} aria-labelledby="note-panel-title">
-        <RailHeader id="note-panel-title" eyebrow="把知识带进来" title="先放下一段学习笔记" />
+      <aside className={styles.contextRail} aria-labelledby="roundtable-panel-title">
+        <RailHeader
+          id="roundtable-panel-title"
+          eyebrow="Classroom 101 · 课代表圆桌"
+          title="五个小组正在互相听对方说话"
+        />
         <div className={styles.railBody}>
           <p className={styles.railLead}>
-            Demo V2 只为一条示例笔记准备了稳定结果，不会把任意输入套进预计算座位。
+            每个学习组派一名课代表，把本组最核心的一句话摆到讲台上。讨论结束后，黑板会写下全班的三项结论。
           </p>
+          <ul className={styles.roundtableRoster}>
+            {scenario.roundtable.speakers.map((speaker, index) => {
+              const details = getStudentDetails(classroom, speaker.studentId);
+              const clusterIndex = classroom.clusters.findIndex(
+                (cluster) => cluster.id === speaker.clusterId,
+              );
+              const color =
+                PIXEL_CLUSTER_COLORS[
+                  Math.max(0, clusterIndex) % PIXEL_CLUSTER_COLORS.length
+                ];
+              const status =
+                index < state.roundtableStep
+                  ? styles.rosterSpoke
+                  : index === state.roundtableStep
+                    ? styles.rosterSpeaking
+                    : styles.rosterWaiting;
+              return (
+                <li key={speaker.studentId} className={status}>
+                  <i style={{ background: color }} aria-hidden="true" />
+                  <span>{details?.cluster?.label ?? "观点组"}</span>
+                  <small>
+                    {index < state.roundtableStep
+                      ? "已发言"
+                      : index === state.roundtableStep
+                        ? "正在发言"
+                        : "等待"}
+                  </small>
+                </li>
+              );
+            })}
+          </ul>
+          <p className={styles.privacyNote}>
+            <strong>演示边界</strong>
+            <span>本轮讨论为预生成内容，课代表是 AI 归纳，不是真实答主。</span>
+          </p>
+        </div>
+      </aside>
+    );
+  }
+
+  // ── Phase: reflection ────────────────────────────────────
+  if (state.phase === "reflection") {
+    return (
+      <aside className={styles.contextRail} aria-labelledby="reflection-title">
+        <RailHeader
+          id="reflection-title"
+          eyebrow="黑板已经写下三件事"
+          title="听完他们，你现在怎么看？"
+        />
+        <div className={styles.railBody}>
+          <div className={styles.blackboardRecap}>
+            <section>
+              <span>全班共识</span>
+              <p>{scenario.blackboard.consensus}</p>
+            </section>
+            <section>
+              <span>核心争议</span>
+              <p>{scenario.blackboard.controversy}</p>
+            </section>
+            <section>
+              <span>尚未解决的问题</span>
+              <p>{scenario.blackboard.openQuestion}</p>
+            </section>
+          </div>
           <label className={styles.noteField}>
-            <span>你的笔记</span>
+            <span>你的初始观点</span>
             <textarea
-              value={noteText}
-              onChange={(event) => onEditNote(event.target.value)}
-              placeholder="使用下方示例，体验 Candidate Seat → 同桌"
+              value={state.opinionText}
+              onChange={(event) => onEditOpinion(event.target.value)}
+              placeholder="听完五个小组的讨论，写下你现在的判断……"
             />
           </label>
-          <button type="button" className={styles.secondaryAction} onClick={onUseSample}>
-            使用示例笔记
+          <button type="button" className={styles.secondaryAction} onClick={onUseSampleOpinion}>
+            使用示例观点
           </button>
-          {!sampleMatches && noteText ? (
+          {!sampleMatches && state.opinionText ? (
             <p className={styles.inlineNotice} role="status">
-              当前 Mock 只支持这条示例笔记；恢复示例后可继续演示。
+              当前 Mock 只支持这条示例观点；恢复示例后可继续演示。
             </p>
           ) : null}
           <div className={styles.privacyNote}>
@@ -132,9 +236,9 @@ export function ClassroomContextRail({
             type="button"
             className={styles.primaryAction}
             disabled={!sampleMatches}
-            onClick={onAnalyze}
+            onClick={onSubmitOpinion}
           >
-            分析示例笔记
+            找到我的一席
             <span aria-hidden="true">→</span>
           </button>
         </footer>
@@ -142,12 +246,21 @@ export function ClassroomContextRail({
     );
   }
 
-  if (panel.kind === "candidate") {
+  // ── Phase: candidate ─────────────────────────────────────
+  if (state.phase === "candidate") {
     return (
       <aside className={`${styles.contextRail} ${styles.candidateRail}`} aria-labelledby="candidate-title">
-        <RailHeader id="candidate-title" eyebrow="Candidate Seat · 空位已亮起" title={scenario.candidate.title} />
+        <RailHeader
+          id="candidate-title"
+          eyebrow="Candidate Seat · 空位已亮起"
+          title={scenario.candidate.title}
+        />
         <div className={styles.railBody}>
           <p className={styles.candidateClaim}>{scenario.claimTitle}</p>
+          <div className={styles.positionRationale}>
+            <span>为什么你坐在这里</span>
+            <p>{scenario.candidate.positionRationale}</p>
+          </div>
           <div className={styles.evidenceChecklist}>
             {scenario.candidate.evidence.map((item, index) => (
               <div key={item.label}>
@@ -174,23 +287,29 @@ export function ClassroomContextRail({
               <i aria-hidden="true">→</i>
             </button>
           ) : null}
+          {noteProgress}
         </div>
         <footer className={styles.railFooter}>
           <button type="button" className={styles.primaryAction} onClick={onOpenSeatmate}>
-            看看我的同桌
+            认识我的同桌
             <span aria-hidden="true">→</span>
           </button>
-          <button type="button" className={styles.textAction} onClick={onReset}>重新放入笔记</button>
+          <button type="button" className={styles.textAction} onClick={onReset}>重新开始</button>
         </footer>
       </aside>
     );
   }
 
-  if ((panel.kind === "seatmate" || panel.kind === "conversation") && seatmate) {
+  // ── Phase: seatmate ──────────────────────────────────────
+  if (state.phase === "seatmate" && seatmate) {
     const seatNumber = studentSeatNumber(classroom, seatmate.student.id);
     return (
       <aside className={styles.contextRail} aria-labelledby="seatmate-title">
-        <RailHeader id="seatmate-title" eyebrow="你的同桌 · 邻座关系已成立" title={`坐在你旁边的学生 ${seatNumber}`} />
+        <RailHeader
+          id="seatmate-title"
+          eyebrow="你的同桌 · 邻座关系已成立"
+          title={`坐在你旁边的学生 ${seatNumber}`}
+        />
         <div className={styles.railBody}>
           <section className={styles.seatmateIdentityCard}>
             <PixelStudentPortrait
@@ -214,57 +333,225 @@ export function ClassroomContextRail({
             <p>{scenario.seatmate.rationale}</p>
           </section>
 
-          {panel.kind === "seatmate" ? (
-            <div className={styles.relationshipGrid}>
-              <section>
-                <span aria-hidden="true">＝</span>
-                <div><strong>共同点</strong><p>{scenario.seatmate.commonGround}</p></div>
-              </section>
-              <section>
-                <span aria-hidden="true">≠</span>
-                <div><strong>差异点</strong><p>{scenario.seatmate.difference}</p></div>
-              </section>
-              <section>
-                <span aria-hidden="true">?</span>
-                <div><strong>值得讨论</strong><p>{scenario.seatmate.prompt}</p></div>
-              </section>
-            </div>
-          ) : null}
+          <div className={styles.relationshipGrid}>
+            <section>
+              <span aria-hidden="true">＝</span>
+              <div><strong>共同点</strong><p>{scenario.seatmate.commonGround}</p></div>
+            </section>
+            <section>
+              <span aria-hidden="true">≠</span>
+              <div><strong>差异点</strong><p>{scenario.seatmate.difference}</p></div>
+            </section>
+          </div>
 
-          <section className={styles.interactionCard}>
+          <section className={styles.challengeTeaser}>
             <div className={styles.interactionHeading}>
-              <span>一轮互动</span>
-              <small>预设对话 · 非实时 AI 回复</small>
+              <span>一次有效认知摩擦</span>
+              <small>预设追问 · 针对你的观点漏洞 · 非实时 AI 回复</small>
             </div>
-            <p className={styles.presetQuestion}>{scenario.seatmate.prompt}</p>
-            {panel.kind === "conversation" ? (
-              <div className={styles.seatmateReply} aria-live="polite">
-                <div>
-                  <PixelStudentPortrait seed={seatmate.student.displaySeed} color={seatmateColor} role="seatmate" />
-                  <strong>同桌回答</strong>
-                </div>
-                <p>{scenario.seatmate.response}</p>
-              </div>
-            ) : (
-              <button type="button" className={styles.presetAskButton} onClick={onAskSeatmate}>
-                用这个问题问问同桌 <span aria-hidden="true">→</span>
-              </button>
-            )}
+            <p>
+              同桌的职责不是陪聊，而是帮你发现自己还没想完整的地方。
+            </p>
           </section>
+          {noteProgress}
         </div>
         <footer className={styles.railFooter}>
-          <button type="button" className={styles.secondaryAction} onClick={onBackToCandidate}>
-            回看我的一席
+          <button type="button" className={styles.primaryAction} onClick={onStartChallenge}>
+            让他追问我
+            <span aria-hidden="true">→</span>
           </button>
-          <button type="button" className={styles.textAction} onClick={onReset}>结束这次演示</button>
+          <button type="button" className={styles.textAction} onClick={onReset}>重新开始</button>
         </footer>
       </aside>
     );
   }
 
+  // ── Phase: challenge ─────────────────────────────────────
+  if (state.phase === "challenge" && seatmate) {
+    const seatNumber = studentSeatNumber(classroom, seatmate.student.id);
+    return (
+      <aside className={styles.contextRail} aria-labelledby="challenge-title">
+        <RailHeader
+          id="challenge-title"
+          eyebrow="同桌追问 · 一次认知摩擦"
+          title="他指出了你还没想完整的地方"
+        />
+        <div className={styles.railBody}>
+          <section className={styles.challengeCard}>
+            <div className={styles.challengeSpeaker}>
+              <PixelStudentPortrait
+                seed={seatmate.student.displaySeed}
+                color={seatmateColor}
+                role="seatmate"
+              />
+              <span>学生 {seatNumber} 追问你</span>
+            </div>
+            <p className={styles.challengeText}>{scenario.seatmate.challenge}</p>
+          </section>
+
+          <label className={styles.noteField}>
+            <span>你的回应</span>
+            <textarea
+              value={state.answerText}
+              onChange={(event) => onEditAnswer(event.target.value)}
+              placeholder="认真回答这个追问——它会写进你的课堂笔记……"
+            />
+          </label>
+          <button type="button" className={styles.secondaryAction} onClick={onUseSampleAnswer}>
+            使用演示答案
+          </button>
+          {noteProgress}
+        </div>
+        <footer className={styles.railFooter}>
+          <button
+            type="button"
+            className={styles.primaryAction}
+            disabled={!state.answerText.trim()}
+            onClick={onSubmitAnswer}
+          >
+            写下我的回应
+            <span aria-hidden="true">→</span>
+          </button>
+        </footer>
+      </aside>
+    );
+  }
+
+  // ── Phase: mySeat ────────────────────────────────────────
+  if (state.phase === "mySeat") {
+    return (
+      <aside className={`${styles.contextRail} ${styles.mySeatRail}`} aria-labelledby="myseat-title">
+        <RailHeader
+          id="myseat-title"
+          eyebrow="课堂笔记 → 沉淀"
+          title="《我的一席》"
+        />
+        <div className={styles.railBody}>
+          <section className={styles.mySeatBlock}>
+            <span>我的观点</span>
+            <p className={styles.mySeatViewpoint}>{scenario.mySeat.viewpoint}</p>
+          </section>
+          <section className={styles.mySeatBlock}>
+            <span>我的理由</span>
+            <p>{scenario.mySeat.reasons}</p>
+          </section>
+          <section className={styles.mySeatBlock}>
+            <span>我补上的条件</span>
+            <p>{scenario.mySeat.addedCondition}</p>
+          </section>
+          <section className={styles.mySeatBlock}>
+            <span>与已有讨论相比</span>
+            <p>{scenario.mySeat.delta}</p>
+          </section>
+          <p className={styles.mySeatNote}>
+            这不是 AI 代写的回答——它来自你的初始观点、你听到的讨论，以及你对同桌追问的回应。
+          </p>
+          {noteProgress}
+        </div>
+        <footer className={styles.railFooter}>
+          <button type="button" className={styles.primaryAction} onClick={onClaimSeat}>
+            留下我的这一席
+            <span aria-hidden="true">→</span>
+          </button>
+          <button type="button" className={styles.textAction} onClick={onOpenNote}>
+            回看课堂笔记
+          </button>
+        </footer>
+      </aside>
+    );
+  }
+
+  // ── Phase: seated（双出口）───────────────────────────────
+  if (state.phase === "seated") {
+    const draftText = [
+      scenario.zhihuDraft.title,
+      "",
+      ...scenario.zhihuDraft.outline.map((item) => `【${item.label}】${item.text}`),
+    ].join("\n");
+
+    return (
+      <aside className={`${styles.contextRail} ${styles.exitsRail}`} aria-labelledby="exits-title">
+        <RailHeader
+          id="exits-title"
+          eyebrow="你已入席 · 本班 41 人"
+          title="这一席，接下来可以去两个地方"
+        />
+        <div className={styles.railBody}>
+          <section className={styles.exitCard}>
+            <div className={styles.exitCardHeading}>
+              <span>A</span>
+              <div>
+                <h3>去知乎写下这一席</h3>
+                <p>课堂里完成的是「形成观点」，知乎负责最终「公开表达」。</p>
+              </div>
+            </div>
+            <details className={styles.zhihuDraft}>
+              <summary>查看回答提纲（Mock 草稿）</summary>
+              <div className={styles.zhihuDraftBody}>
+                <strong>{scenario.zhihuDraft.title}</strong>
+                {scenario.zhihuDraft.outline.map((item) => (
+                  <p key={item.label}>
+                    <b>{item.label}</b>
+                    {item.text}
+                  </p>
+                ))}
+                <small>{scenario.zhihuDraft.note}</small>
+              </div>
+            </details>
+            <button
+              type="button"
+              className={styles.secondaryAction}
+              onClick={() => {
+                void navigator.clipboard?.writeText(draftText).then(() => {
+                  setDraftCopied(true);
+                  window.setTimeout(() => setDraftCopied(false), 1600);
+                });
+              }}
+            >
+              {draftCopied ? "已复制提纲" : "复制提纲，去知乎完成它"}
+            </button>
+          </section>
+
+          <section className={styles.exitCard}>
+            <div className={styles.exitCardHeading}>
+              <span>B</span>
+              <div>
+                <h3>去下一间教室</h3>
+                <p>一个答案，会继续长出一个新的问题。</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.nextRoomCard}
+              onClick={() => onOpenCampusRoom(scenario.nextClassroom.number, false)}
+            >
+              <span className={styles.nextRoomNumber}>{scenario.nextClassroom.number}</span>
+              <span className={styles.nextRoomBody}>
+                <strong>{scenario.nextClassroom.title}</strong>
+                <small>{scenario.nextClassroom.causalNote}</small>
+              </span>
+              <i aria-hidden="true">→</i>
+            </button>
+          </section>
+          {noteProgress}
+        </div>
+        <footer className={styles.railFooter}>
+          <button type="button" className={styles.textAction} onClick={onReset}>
+            重新开始这节课
+          </button>
+        </footer>
+      </aside>
+    );
+  }
+
+  // ── Phase: exploring（默认 overview）─────────────────────
   return (
     <aside className={styles.contextRail} aria-labelledby="overview-panel-title">
-      <RailHeader id="overview-panel-title" eyebrow="Classroom 01 · 正在上课" title="先认识这间像素教室" />
+      <RailHeader
+        id="overview-panel-title"
+        eyebrow="Classroom 101 · 正在上课"
+        title="先认识这间像素教室"
+      />
       <div className={styles.railBody}>
         <p className={styles.railLead}>
           每位像素学生代表一条演示来源。学生围桌而坐；位置越近，论证越相似。
@@ -288,17 +575,60 @@ export function ClassroomContextRail({
         </div>
         <div className={styles.nextStep}>
           <span>02</span>
-          <p>带入示例笔记，让空位亮起并认识邻桌。</p>
+          <p>听五个小组的课代表吵一轮，再写下你怎么看。</p>
         </div>
-        <p className={styles.campusHint}>门外还有 Classroom 02–04；顶部走廊门牌可查看预告。</p>
+        <p className={styles.campusHint}>
+          门外还有 Classroom 102–103；102 是本班「尚未解决的问题」长出来的下一间教室。
+        </p>
       </div>
       <footer className={styles.railFooter}>
-        <button type="button" className={styles.primaryAction} onClick={onOpenNote}>
-          把我的笔记带进来
+        <button type="button" className={styles.primaryAction} onClick={onStartRoundtable}>
+          听听各组怎么说
           <span aria-hidden="true">→</span>
         </button>
       </footer>
     </aside>
+  );
+}
+
+function NoteProgressStrip({
+  state,
+  onOpenNote,
+}: {
+  state: SessionState;
+  onOpenNote: () => void;
+}) {
+  const sections = noteSectionStatus(state.phase);
+  const items = [
+    { key: "before", label: "上课前", state: sections.before },
+    { key: "heard", label: "我听到了", state: sections.heard },
+    { key: "changed", label: "重新思考", state: sections.changed },
+    { key: "after", label: "现在认为", state: sections.after },
+  ];
+  const allReady = items.every((item) => item.state === "ready");
+
+  return (
+    <div className={styles.noteStrip}>
+      <div className={styles.noteStripHeader}>
+        <span>课堂笔记 · 生长中</span>
+        {allReady ? (
+          <button type="button" onClick={onOpenNote}>
+            查看完整笔记 →
+          </button>
+        ) : null}
+      </div>
+      <ol>
+        {items.map((item) => (
+          <li
+            key={item.key}
+            className={item.state === "ready" ? styles.noteStripDone : styles.noteStripLocked}
+          >
+            <i aria-hidden="true" />
+            {item.label}
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
 

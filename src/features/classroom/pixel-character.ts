@@ -185,6 +185,47 @@ export function paintPixelStudent(
   context.restore();
 }
 
+/**
+ * 入席后的用户角色：复用学生绘制语言，琥珀色 shirt + “你”字名牌。
+ * progress 驱动一次轻微下落淡入；Reduced Motion 直接以 progress=1 调用。
+ */
+export function paintPixelSeatedUser(
+  context: CanvasRenderingContext2D,
+  globalScale: number,
+  progress: number,
+  lifeFrame: number,
+  reducedMotion: boolean,
+) {
+  const unit = 1 / globalScale;
+  const eased = 1 - Math.pow(1 - progress, 3);
+
+  context.save();
+  context.imageSmoothingEnabled = false;
+  context.globalAlpha = eased;
+  context.translate(0, (1 - eased) * -10 * unit);
+
+  paintPixelStudent(context, globalScale, {
+    color: "#D5912A",
+    seed: 3,
+    seatNumber: "你",
+    selected: false,
+    hovered: false,
+    inFocusedGroup: false,
+    seatmate: false,
+    related: false,
+    muted: false,
+    lifeFrame,
+    reducedMotion,
+  });
+
+  context.fillStyle = "#8A5A16";
+  context.font = `700 ${8 * unit}px ui-sans-serif, system-ui`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText("你的一席 · 已入席", 0, 25 * unit);
+  context.restore();
+}
+
 export function paintPixelCandidateSeat(
   context: CanvasRenderingContext2D,
   globalScale: number,

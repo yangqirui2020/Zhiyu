@@ -32,7 +32,10 @@
 | TASK-007…012 | Planned | TBD | TASK-006 评估后再进入后续功能 |
 | TASK-013 | Done | Primary Agent | Demo V2 Desktop Classroom + Mock Seatmate Golden Path |
 | TASK-014 | Done | Primary Agent | Pixel Classroom World + Structured Seatmate refinement |
+| TASK-015 | Verification | Primary Agent | Demo V3 Learning Loop：圆桌 → 黑板三项 → 追问 → 课堂笔记 → 我的一席 → 入席 → 双出口 |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。
 
 当前用户指令通过 `PROP-0003` 批准 TASK-014 在保持 TASK-013 数据、状态与技术边界不变的前提下，把 Experience/Visual/Spatial 层升级为原创像素课堂、多教室入口与结构化同桌闭环。
+
+当前用户指令（Demo V3 收束稿，2026-09-01）通过 `PDR-0004` 批准 TASK-015 在不改 Domain Schema、40 人 fixture 与技术栈的前提下，把主流程收束为完整学习闭环：课代表圆桌 → 黑板三项 → 用户表达 → Candidate Seat → 同桌追问 → 用户回应 → 课堂笔记 → 《我的一席》→ 入席 → 双出口（知乎草稿 / 下一教室 102）。

@@ -15,6 +15,7 @@ import {
 } from "./classroom-selectors";
 import {
   paintPixelCandidateSeat,
+  paintPixelSeatedUser,
   paintPixelStudent,
 } from "./pixel-character";
 import styles from "./classroom.module.css";
@@ -44,6 +45,12 @@ type ForceGraphCanvasProps = {
   candidateVisible: boolean;
   candidatePosition: { x: number; y: number };
   seatmateStudentId: string;
+  seatClaimed: boolean;
+  roundtable: {
+    active: boolean;
+    speakerIds: string[];
+    currentSpeakerId: string | null;
+  };
   onSelectStudent: (studentId: string) => void;
 };
 
@@ -79,6 +86,8 @@ export default function ForceGraphCanvas({
   candidateVisible,
   candidatePosition,
   seatmateStudentId,
+  seatClaimed,
+  roundtable,
   onSelectStudent,
 }: ForceGraphCanvasProps) {
   const graphRef = useRef<ForceGraphMethods<GraphNode> | undefined>(undefined);
@@ -86,6 +95,7 @@ export default function ForceGraphCanvas({
   const [hoveredStudentId, setHoveredStudentId] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [candidateRevealProgress, setCandidateRevealProgress] = useState(0);
+  const [seatRevealProgress, setSeatRevealProgress] = useState(0);
   const [lifeFrame, setLifeFrame] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -102,28 +112,45 @@ export default function ForceGraphCanvas({
 
   const graphData = useMemo<GraphData<GraphNode>>(
     () => ({
-      nodes: classroom.students.map((student) => {
-        const clusterId =
-          student.assignment.kind === "cluster"
-            ? student.assignment.clusterId
-            : "independent";
+      nodes: [
+        ...classroom.students.map((student) => {
+          const clusterId =
+            student.assignment.kind === "cluster"
+              ? student.assignment.clusterId
+              : "independent";
 
-        return {
-          id: student.id,
-          studentId: student.id,
-          seatNumber: studentSeatNumber(classroom, student.id),
-          clusterId,
-          color: colorByClusterId.get(clusterId) ?? "#627080",
-          displaySeed: student.displaySeed,
-          x: student.layout.x,
-          y: student.layout.y,
-          fx: student.layout.x,
-          fy: student.layout.y,
-        };
-      }),
+          return {
+            id: student.id,
+            studentId: student.id,
+            seatNumber: studentSeatNumber(classroom, student.id),
+            clusterId,
+            color: colorByClusterId.get(clusterId) ?? "#627080",
+            displaySeed: student.displaySeed,
+            x: student.layout.x,
+            y: student.layout.y,
+            fx: student.layout.x,
+            fy: student.layout.y,
+          };
+        }),
+        // 隐形锚点：让 zoomToFit 在候选座出现后把它纳入取景，避免贴边裁切
+        ...(candidateVisible
+          ? [{
+              id: "__candidate_anchor",
+              studentId: "__candidate_anchor",
+              seatNumber: "",
+              clusterId: "anchor",
+              color: "transparent",
+              displaySeed: 0,
+              x: candidatePosition.x,
+              y: candidatePosition.y + 4,
+              fx: candidatePosition.x,
+              fy: candidatePosition.y + 4,
+            }]
+          : []),
+      ],
       links: [],
     }),
-    [classroom, colorByClusterId],
+    [classroom, colorByClusterId, candidateVisible, candidatePosition],
   );
 
   const clusterCenters = useMemo(
@@ -159,6 +186,15 @@ export default function ForceGraphCanvas({
   useEffect(() => {
     graphRef.current?.zoomToFit(0, fitPadding);
   }, [fitPadding, height, width]);
+
+  // 候选座出现 / 入席后重新取景，把琥珀座位纳入画面
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => graphRef.current?.zoomToFit(380, fitPadding),
+      80,
+    );
+    return () => window.clearTimeout(timer);
+  }, [candidateVisible, seatClaimed, fitPadding]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -204,11 +240,36 @@ export default function ForceGraphCanvas({
     return () => window.cancelAnimationFrame(frameId);
   }, [candidateVisible]);
 
+  useEffect(() => {
+    let frameId = 0;
+
+    if (!seatClaimed) {
+      frameId = window.requestAnimationFrame(() => setSeatRevealProgress(0));
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      frameId = window.requestAnimationFrame(() => setSeatRevealProgress(1));
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    const startedAt = performance.now();
+    const reveal = (time: number) => {
+      const progress = Math.min(1, (time - startedAt) / 420);
+      setSeatRevealProgress(progress);
+      if (progress < 1) frameId = window.requestAnimationFrame(reveal);
+    };
+
+    frameId = window.requestAnimationFrame(reveal);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [seatClaimed]);
+
   function paintStudent(
     node: NodeObject<GraphNode>,
     context: CanvasRenderingContext2D,
     globalScale: number,
   ) {
+    if (node.clusterId === "anchor") return;
     if (typeof node.x !== "number" || typeof node.y !== "number") return;
 
     const isSelected = node.studentId === selectedStudentId;
@@ -222,6 +283,11 @@ export default function ForceGraphCanvas({
         node.clusterId === seatmateClusterId &&
         Math.hypot(node.x - candidatePosition.x, node.y - candidatePosition.y) < 22,
     );
+    // 课代表圆桌：发言人聚焦，其余课代表保持可读，普通学生降噪
+    const isSpeaker = roundtable.active && roundtable.speakerIds.includes(node.studentId);
+    const isCurrentSpeaker =
+      roundtable.active && node.studentId === roundtable.currentSpeakerId;
+    const mutedByRoundtable = roundtable.active && !isSpeaker;
 
     context.save();
     context.translate(node.x, node.y);
@@ -229,12 +295,15 @@ export default function ForceGraphCanvas({
       color: node.color,
       seed: node.displaySeed,
       seatNumber: node.seatNumber,
-      selected: isSelected,
+      selected: isSelected || isCurrentSpeaker,
       hovered: node.studentId === hoveredStudentId,
-      inFocusedGroup: isInFocusedGroup && !isSelected,
+      inFocusedGroup:
+        (isInFocusedGroup && !isSelected) || (isSpeaker && !isCurrentSpeaker),
       seatmate: isSeatmate,
       related: isRelated && !isSeatmate,
-      muted: Boolean(selectedStudentId && !isSelected && !isInFocusedGroup),
+      muted:
+        mutedByRoundtable ||
+        Boolean(selectedStudentId && !isSelected && !isInFocusedGroup),
       lifeFrame,
       reducedMotion,
     });
@@ -247,6 +316,7 @@ export default function ForceGraphCanvas({
     context: CanvasRenderingContext2D,
     globalScale: number,
   ) {
+    if (node.clusterId === "anchor") return;
     if (typeof node.x !== "number" || typeof node.y !== "number") return;
     context.fillStyle = paintColor;
     context.fillRect(
@@ -365,11 +435,22 @@ export default function ForceGraphCanvas({
     if (!candidateVisible) return;
     context.save();
     context.translate(candidatePosition.x, candidatePosition.y);
-    paintPixelCandidateSeat(context, globalScale, candidateRevealProgress);
+    if (seatClaimed) {
+      paintPixelSeatedUser(
+        context,
+        globalScale,
+        seatRevealProgress,
+        lifeFrame,
+        reducedMotion,
+      );
+    } else {
+      paintPixelCandidateSeat(context, globalScale, candidateRevealProgress);
+    }
     context.restore();
   }
 
   function handleHover(node: NodeObject<GraphNode> | null) {
+    if (node?.clusterId === "anchor") return;
     setHoveredStudentId(node?.studentId ?? null);
 
     if (
@@ -406,6 +487,7 @@ export default function ForceGraphCanvas({
         onRenderFramePost={paintCandidateSeat}
         onNodeHover={handleHover}
         onNodeClick={(node) => {
+          if (node.clusterId === "anchor") return;
           setHoveredStudentId(null);
           onSelectStudent(node.studentId);
         }}

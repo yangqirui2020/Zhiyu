@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { mockClassroomFixture } from "../../../../data/fixtures/classrooms/learn-programming.ts";
-import { learnProgrammingDemoV2Scenario } from "../../../../data/fixtures/scenarios/learn-programming-demo-v2.ts";
+import { learnProgrammingDemoV3Scenario } from "../../../../data/fixtures/scenarios/learn-programming-demo-v3.ts";
 import { classroomSchema } from "@/domain/schemas";
 import { ClassroomExperience } from "@/features/classroom";
 
@@ -19,10 +19,16 @@ const classroom = classroomSchema.parse(mockClassroomFixture);
 
 if (
   !classroom.students.some(
-    (student) => student.id === learnProgrammingDemoV2Scenario.seatmate.studentId,
+    (student) => student.id === learnProgrammingDemoV3Scenario.seatmate.studentId,
   )
 ) {
-  throw new Error("Demo V2 scenario references a missing Seatmate Student.");
+  throw new Error("Demo V3 scenario references a missing Seatmate Student.");
+}
+
+for (const speaker of learnProgrammingDemoV3Scenario.roundtable.speakers) {
+  if (!classroom.students.some((student) => student.id === speaker.studentId)) {
+    throw new Error("Demo V3 roundtable references a missing speaker Student.");
+  }
 }
 
 export const dynamicParams = false;
@@ -41,7 +47,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
   return (
     <ClassroomExperience
       classroom={classroom}
-      demoScenario={learnProgrammingDemoV2Scenario}
+      demoScenario={learnProgrammingDemoV3Scenario}
     />
   );
 }

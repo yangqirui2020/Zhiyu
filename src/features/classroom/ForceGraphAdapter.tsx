@@ -20,6 +20,12 @@ type ForceGraphAdapterProps = {
   candidateVisible: boolean;
   candidatePosition: { x: number; y: number };
   seatmateStudentId: string;
+  seatClaimed: boolean;
+  roundtable: {
+    active: boolean;
+    speakerIds: string[];
+    currentSpeakerId: string | null;
+  };
   onSelectStudent: (studentId: string) => void;
 };
 
@@ -29,6 +35,8 @@ export function ForceGraphAdapter({
   candidateVisible,
   candidatePosition,
   seatmateStudentId,
+  seatClaimed,
+  roundtable,
   onSelectStudent,
 }: ForceGraphAdapterProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -67,6 +75,8 @@ export function ForceGraphAdapter({
           candidateVisible={candidateVisible}
           candidatePosition={candidatePosition}
           seatmateStudentId={seatmateStudentId}
+          seatClaimed={seatClaimed}
+          roundtable={roundtable}
           onSelectStudent={onSelectStudent}
         />
       ) : (

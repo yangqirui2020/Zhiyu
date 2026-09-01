@@ -5,7 +5,7 @@ import styles from "./classroom.module.css";
 type PixelStudentPortraitProps = {
   seed: number;
   color: string;
-  role?: "student" | "seatmate" | "candidate";
+  role?: "student" | "seatmate" | "candidate" | "representative" | "self";
   label?: string;
 };
 
@@ -58,6 +58,8 @@ export function PixelStudentPortrait({
       <i className={styles.portraitDesk} />
       <i className={styles.portraitBook} />
       {role === "seatmate" ? <b>同桌</b> : null}
+      {role === "representative" ? <b>课代表</b> : null}
+      {role === "self" ? <b>你</b> : null}
     </span>
   );
 }
