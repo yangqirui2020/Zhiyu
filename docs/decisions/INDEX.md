@@ -12,4 +12,5 @@ Accepted Records are immutable in conclusion. A later decision must create a new
 | PDR-0002 | Accepted | Candidate Seat 不表示知识空白；“掌握”改为笔记依据 |
 | UXDR-0001 | Accepted | Candidate Seat 在原教室内出现 |
 | UXDR-0002 | Accepted | Student/Cluster/Candidate 使用 Sheet 保留空间上下文 |
-
+| PDR-0003 | Accepted | Demo V2 加入显式 Mock 的 Candidate → 同桌体验闭环 |
+| UXDR-0003 | Accepted | Desktop 使用教室主场景 + 单一上下文栏；Student 升级为 Character |

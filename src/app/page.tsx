@@ -9,7 +9,7 @@ export default function HomePage() {
     <main className={styles.page}>
       <nav className={styles.nav} aria-label="主导航">
         <span className={styles.wordmark}>知遇 · 一席</span>
-        <span className={styles.phase}>Vertical Slice 01</span>
+        <span className={styles.phase}>Demo V2 · Classroom alive</span>
       </nav>
 
       <section className={styles.hero} aria-labelledby="home-title">
@@ -25,7 +25,7 @@ export default function HomePage() {
 
         <div className={styles.actions}>
           <Link className={styles.primaryAction} href={classroomHref}>
-            进入预设教室
+            进入 Demo V2 教室
             <span aria-hidden="true">→</span>
           </Link>
           <span className={styles.disclosure}>当前为人工构造的 Mock 演示数据</span>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { mockClassroomFixture } from "../../../../data/fixtures/classrooms/learn-programming.ts";
+import { learnProgrammingDemoV2Scenario } from "../../../../data/fixtures/scenarios/learn-programming-demo-v2.ts";
 import { classroomSchema } from "@/domain/schemas";
 import { ClassroomExperience } from "@/features/classroom";
 
@@ -16,6 +17,14 @@ export const metadata: Metadata = {
 
 const classroom = classroomSchema.parse(mockClassroomFixture);
 
+if (
+  !classroom.students.some(
+    (student) => student.id === learnProgrammingDemoV2Scenario.seatmate.studentId,
+  )
+) {
+  throw new Error("Demo V2 scenario references a missing Seatmate Student.");
+}
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -29,5 +38,10 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
     notFound();
   }
 
-  return <ClassroomExperience classroom={classroom} />;
+  return (
+    <ClassroomExperience
+      classroom={classroom}
+      demoScenario={learnProgrammingDemoV2Scenario}
+    />
+  );
 }

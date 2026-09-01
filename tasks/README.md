@@ -30,5 +30,6 @@
 | TASK-005 | Deferred | Data | 真实 Embedding / Cluster / Snapshot，待 API 资产验证 |
 | TASK-006 | Done | Primary Agent | Vertical Slice 01：Mock Fixture Classroom |
 | TASK-007…012 | Planned | TBD | TASK-006 评估后再进入后续功能 |
+| TASK-013 | Done | Primary Agent | Demo V2 Desktop Classroom + Mock Seatmate Golden Path |
 
-当前用户指令通过 `PROP-0001` 批准 TASK-006 先用显式 Mock Fixture 验证 Classroom；其余 005、007–012 不提前实现。
+当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。

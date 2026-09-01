@@ -17,12 +17,18 @@ const ForceGraphCanvas = dynamic(() => import("./ForceGraphCanvas"), {
 type ForceGraphAdapterProps = {
   classroom: Classroom;
   selectedStudentId: string | null;
+  candidateVisible: boolean;
+  candidatePosition: { x: number; y: number };
+  seatmateStudentId: string;
   onSelectStudent: (studentId: string) => void;
 };
 
 export function ForceGraphAdapter({
   classroom,
   selectedStudentId,
+  candidateVisible,
+  candidatePosition,
+  seatmateStudentId,
   onSelectStudent,
 }: ForceGraphAdapterProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -58,6 +64,9 @@ export function ForceGraphAdapter({
           width={size.width}
           height={size.height}
           selectedStudentId={selectedStudentId}
+          candidateVisible={candidateVisible}
+          candidatePosition={candidatePosition}
+          seatmateStudentId={seatmateStudentId}
           onSelectStudent={onSelectStudent}
         />
       ) : (
