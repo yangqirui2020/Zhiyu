@@ -3387,3 +3387,243 @@
     animation: none;
   }
 }
+
+/* TASK-019 · Backend-ready interaction states and evidence inspection */
+.clusterIndex > button {
+  display: grid;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid transparent;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.clusterIndex > button:hover,
+.clusterIndex > button:focus-visible {
+  border-color: var(--ink);
+  background: #fffaf1;
+  outline: none;
+}
+
+.clusterIndex > button i {
+  width: 9px;
+  height: 9px;
+}
+
+.clusterIndex > button span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.clusterIndex > button small {
+  color: var(--ink-muted);
+  font-size: 10px;
+}
+
+.analysisStatus,
+.analysisError,
+.analysisEmpty {
+  margin: 10px 0 0;
+  padding: 11px 12px;
+  border: 1px solid #c9b991;
+  background: #fff8df;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.analysisStatus {
+  border-left: 4px solid var(--candidate);
+}
+
+.analysisError {
+  border-color: #a85b52;
+  background: #fff2ef;
+}
+
+.analysisEmpty {
+  border-color: #7c8790;
+  background: #f3f5f5;
+}
+
+.analysisError strong,
+.analysisEmpty strong {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.analysisError p,
+.analysisEmpty p {
+  margin: 0 0 5px;
+}
+
+.candidateEvidenceSources {
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.candidateEvidenceSources li {
+  margin-top: 4px;
+  padding: 6px 8px;
+  color: var(--ink-muted);
+  background: rgb(255 255 255 / 0.62);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 9.5px;
+  line-height: 1.45;
+}
+
+.sampleResultDisclosure {
+  margin: -5px 0 12px !important;
+  padding: 7px 9px;
+  border: 1px dashed #c49852;
+  color: #7a5721 !important;
+  background: #fff7e4;
+  font-size: 10px !important;
+}
+
+.zhihuAction {
+  display: flex;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px solid var(--ink);
+  color: #fffaf2;
+  background: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.zhihuAction:hover,
+.zhihuAction:focus-visible {
+  color: var(--ink);
+  background: var(--candidate-soft);
+  outline: 2px solid var(--candidate);
+  outline-offset: 2px;
+}
+
+.clusterSourceList {
+  display: grid;
+  margin: 10px 0 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+.clusterSourceList li,
+.representativeExample {
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  background: #fffaf2;
+}
+
+.clusterSourceList strong,
+.clusterSourceList span,
+.clusterSourceList small,
+.representativeExample strong,
+.representativeExample small {
+  display: block;
+}
+
+.clusterSourceList span,
+.representativeExample p {
+  margin: 5px 0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.clusterSourceList small,
+.representativeExample small {
+  color: var(--ink-muted);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 9px;
+}
+
+.representativeExample + .representativeExample {
+  margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+  .experienceShell {
+    padding-bottom: 50dvh;
+  }
+
+  .classroomWorkspace {
+    display: block;
+  }
+
+  .stageCanvas,
+  .graphAdapter,
+  .canvasViewport,
+  .canvasLoading {
+    min-height: 420px;
+    height: calc(100dvh - 150px);
+    max-height: none;
+  }
+
+  .contextRail,
+  .detailSheet {
+    position: fixed;
+    z-index: 40;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 0;
+    height: 48dvh;
+    max-height: 48dvh;
+    border-width: 2px 0 0;
+    box-shadow: 0 -10px 30px rgb(34 42 47 / 0.22);
+  }
+
+  .detailSheet {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .railHeader,
+  .sheetHeader {
+    flex: none;
+    padding-top: 10px;
+    padding-bottom: 9px;
+  }
+
+  .railBody,
+  .sheetScroll {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .railFooter {
+    position: sticky;
+    bottom: 0;
+    flex: none;
+    padding-top: 8px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    background: #f8f1e4;
+  }
+
+  .contextRail .primaryAction,
+  .contextRail .secondaryAction,
+  .zhihuAction {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .candidateRail,
+  .candidateEvidenceSources li {
+    animation: none !important;
+    transition: none !important;
+  }
+}

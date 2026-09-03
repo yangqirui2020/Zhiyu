@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 
+import { analysisApiSuccessSchema, apiFailureSchema } from "@/contracts";
 import type { Classroom } from "@/domain/schemas";
 import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
 
@@ -12,6 +13,7 @@ import {
 import { ForceGraphAdapter } from "./ForceGraphAdapter";
 import { ClassroomContextRail } from "./ClassroomContextRail";
 import { ClassroomNotePanel } from "./ClassroomNotePanel";
+import { ClusterDetailSheet } from "./ClusterDetailSheet";
 import { RoundtableOverlay } from "./RoundtableOverlay";
 import { StudentDetailSheet } from "./StudentDetailSheet";
 import {
@@ -59,6 +61,8 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const studentButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const restoreStudentIdRef = useRef<string | null>(null);
+  const restoreClusterIdRef = useRef<string | null>(null);
+  const candidateAbortRef = useRef<AbortController | null>(null);
 
   const { phase } = session;
   const selectedStudentId =
@@ -147,10 +151,70 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
 
   const closeSheet = useCallback(() => {
     const studentId = restoreStudentIdRef.current;
+    const clusterId = restoreClusterIdRef.current;
     dispatch({ type: "close_panel" });
     window.requestAnimationFrame(() => {
       if (studentId) studentButtonRefs.current.get(studentId)?.focus();
+      if (clusterId) document.getElementById(`cluster-trigger-${clusterId}`)?.focus();
     });
+  }, []);
+
+  const selectCluster = useCallback((clusterId: string) => {
+    restoreStudentIdRef.current = null;
+    restoreClusterIdRef.current = clusterId;
+    dispatch({ type: "select_cluster", clusterId });
+  }, []);
+
+  const submitOpinion = useCallback(
+    async (noteText: string) => {
+      candidateAbortRef.current?.abort();
+      const controller = new AbortController();
+      candidateAbortRef.current = controller;
+      const requestId = `req_client_${crypto.randomUUID().replaceAll("-", "")}`;
+      dispatch({ type: "submit_opinion", requestId });
+
+      try {
+        const sampleMatches = noteText.trim() === demoScenario.noteText.trim();
+        const response = await fetch("/api/v1/candidate-seat", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            schemaVersion: classroom.schemaVersion,
+            questionId: classroom.question.id,
+            classroomRevision: classroom.revision,
+            noteText,
+            sampleId: sampleMatches ? "sample_learn_programming_v1" : undefined,
+            idempotencyKey: requestId,
+          }),
+          signal: controller.signal,
+        });
+        const body: unknown = await response.json();
+        if (!response.ok) {
+          const failure = apiFailureSchema.parse(body);
+          throw new Error(failure.error.message);
+        }
+        const success = analysisApiSuccessSchema.parse(body);
+        dispatch({ type: "resolve_opinion", requestId, result: success.data });
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        dispatch({
+          type: "reject_opinion",
+          requestId,
+          message: error instanceof Error ? error.message : "分析没有完成，请重试。",
+        });
+      } finally {
+        if (candidateAbortRef.current === controller) candidateAbortRef.current = null;
+      }
+    },
+    [classroom.question.id, classroom.revision, classroom.schemaVersion, demoScenario.noteText],
+  );
+
+  useEffect(() => () => candidateAbortRef.current?.abort(), []);
+
+  const resetSession = useCallback(() => {
+    candidateAbortRef.current?.abort();
+    candidateAbortRef.current = null;
+    dispatch({ type: "reset" });
   }, []);
 
   const showNotePanel =
@@ -311,6 +375,12 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
             studentId={session.panel.studentId}
             onClose={closeSheet}
           />
+        ) : session.panel.kind === "cluster" ? (
+          <ClusterDetailSheet
+            classroom={classroom}
+            clusterId={session.panel.clusterId}
+            onClose={closeSheet}
+          />
         ) : showNotePanel ? (
           <ClassroomNotePanel
             scenario={demoScenario}
@@ -329,20 +399,32 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
             onUseSampleOpinion={() =>
               dispatch({ type: "use_sample_opinion", value: demoScenario.noteText })
             }
-            onSubmitOpinion={() => dispatch({ type: "submit_opinion" })}
+            onSubmitOpinion={() => void submitOpinion(session.opinionText)}
+            onRetryOpinion={() => {
+              if (session.candidate.status !== "error") return;
+              const submittedText = session.candidate.submittedText;
+              void submitOpinion(submittedText);
+            }}
             onOpenSeatmate={() => dispatch({ type: "open_seatmate" })}
             onStartChallenge={() => dispatch({ type: "start_challenge" })}
             onEditAnswer={(value) => dispatch({ type: "edit_answer", value })}
             onUseSampleAnswer={() =>
               dispatch({ type: "use_sample_answer", value: demoScenario.seatmate.sampleAnswer })
             }
-            onSubmitAnswer={() => dispatch({ type: "submit_answer" })}
+            onSubmitAnswer={() =>
+              dispatch({
+                type: "submit_answer",
+                sampleMatches:
+                  session.answerText.trim() === demoScenario.seatmate.sampleAnswer.trim(),
+              })
+            }
+            onSelectCluster={selectCluster}
             onOpenNote={() => dispatch({ type: "open_note" })}
             onClaimSeat={() => dispatch({ type: "claim_seat" })}
             onOpenCampusRoom={(roomNumber, isCurrent) =>
               dispatch({ type: "open_campus_room", roomNumber, isCurrent })
             }
-            onReset={() => dispatch({ type: "reset" })}
+            onReset={resetSession}
           />
         )}
       </div>

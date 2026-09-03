@@ -35,6 +35,7 @@ type GraphNode = {
   clusterId: string;
   color: string;
   displaySeed: number;
+  entryIndex: number;
 };
 
 type ForceGraphCanvasProps = {
@@ -98,6 +99,7 @@ export default function ForceGraphCanvas({
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [candidateRevealProgress, setCandidateRevealProgress] = useState(0);
   const [seatRevealProgress, setSeatRevealProgress] = useState(0);
+  const [entranceProgress, setEntranceProgress] = useState(0);
   const [lifeFrame, setLifeFrame] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const blackboardAnchorY = blackboardExpanded
@@ -130,6 +132,7 @@ export default function ForceGraphCanvas({
           clusterId: "anchor",
           color: "transparent",
           displaySeed: 0,
+          entryIndex: -1,
           x: 50,
           y: blackboardAnchorY,
           fx: 50,
@@ -142,12 +145,13 @@ export default function ForceGraphCanvas({
           clusterId: "anchor",
           color: "transparent",
           displaySeed: 0,
+          entryIndex: -1,
           x: 50,
           y: floorSafeAnchorY,
           fx: 50,
           fy: floorSafeAnchorY,
         },
-        ...classroom.students.map((student) => {
+        ...classroom.students.map((student, entryIndex) => {
           const clusterId =
             student.assignment.kind === "cluster"
               ? student.assignment.clusterId
@@ -160,6 +164,7 @@ export default function ForceGraphCanvas({
             clusterId,
             color: colorByClusterId.get(clusterId) ?? "#627080",
             displaySeed: student.displaySeed,
+            entryIndex,
             x: student.layout.x,
             y: student.layout.y,
             fx: student.layout.x,
@@ -175,6 +180,7 @@ export default function ForceGraphCanvas({
               clusterId: "anchor",
               color: "transparent",
               displaySeed: 0,
+              entryIndex: -1,
               x: candidatePosition.x,
               y: candidatePosition.y + 4,
               fx: candidatePosition.x,
@@ -259,6 +265,29 @@ export default function ForceGraphCanvas({
 
   useEffect(() => {
     let frameId = 0;
+    const storageKey = `zhiyu-classroom-entered:${classroom.question.id}:${classroom.revision}`;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (media.matches || window.sessionStorage.getItem(storageKey) === "1") {
+      frameId = window.requestAnimationFrame(() => setEntranceProgress(1));
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    const startedAt = performance.now();
+    const reveal = (time: number) => {
+      const progress = Math.min(1, (time - startedAt) / 2200);
+      setEntranceProgress(progress);
+      if (progress < 1) {
+        frameId = window.requestAnimationFrame(reveal);
+      } else {
+        window.sessionStorage.setItem(storageKey, "1");
+      }
+    };
+    frameId = window.requestAnimationFrame(reveal);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [classroom.question.id, classroom.revision]);
+
+  useEffect(() => {
+    let frameId = 0;
 
     if (!candidateVisible) {
       frameId = window.requestAnimationFrame(() => setCandidateRevealProgress(0));
@@ -272,7 +301,7 @@ export default function ForceGraphCanvas({
 
     const startedAt = performance.now();
     const reveal = (time: number) => {
-      const progress = Math.min(1, (time - startedAt) / 320);
+      const progress = Math.min(1, (time - startedAt) / 1900);
       setCandidateRevealProgress(progress);
       if (progress < 1) frameId = window.requestAnimationFrame(reveal);
     };
@@ -330,8 +359,19 @@ export default function ForceGraphCanvas({
       roundtable.active && node.studentId === roundtable.currentSpeakerId;
     const mutedByRoundtable = roundtable.active && !isSpeaker;
 
+    const batch = Math.floor(node.entryIndex / 8);
+    const arrivalProgress = Math.max(
+      0,
+      Math.min(1, (entranceProgress - 0.16 - batch * 0.065) / 0.42),
+    );
+    const easedArrival = 1 - Math.pow(1 - arrivalProgress, 3);
+    const entryX = 96;
+    const entryY = 95;
+    const renderX = entryX + (node.x - entryX) * easedArrival;
+    const renderY = entryY + (node.y - entryY) * easedArrival;
+
     context.save();
-    context.translate(node.x, node.y);
+    context.translate(renderX, renderY);
     paintPixelStudent(context, globalScale, {
       color: node.color,
       seed: node.displaySeed,
@@ -345,6 +385,7 @@ export default function ForceGraphCanvas({
       muted:
         mutedByRoundtable ||
         Boolean(selectedStudentId && !isSelected && !isInFocusedGroup),
+      opacity: arrivalProgress,
       lifeFrame,
       reducedMotion,
     });
@@ -357,7 +398,7 @@ export default function ForceGraphCanvas({
     context: CanvasRenderingContext2D,
     globalScale: number,
   ) {
-    if (node.clusterId === "anchor") return;
+    if (node.clusterId === "anchor" || entranceProgress < 1) return;
     if (typeof node.x !== "number" || typeof node.y !== "number") return;
     context.fillStyle = paintColor;
     context.fillRect(
@@ -397,7 +438,10 @@ export default function ForceGraphCanvas({
       context.stroke();
     }
 
+    const clusterProgress = Math.max(0, Math.min(1, (entranceProgress - 0.58) / 0.42));
     for (const center of clusterCenters) {
+      context.save();
+      context.globalAlpha = clusterProgress;
       const zoneWidth = 27;
       const zoneHeight = 22;
       const zoneX = center.x - zoneWidth / 2;
@@ -435,9 +479,10 @@ export default function ForceGraphCanvas({
       context.textAlign = "left";
       context.textBaseline = "middle";
       context.fillText(label, labelX, labelY);
+      context.restore();
     }
 
-    if (candidateVisible && seatmateStudent) {
+    if (candidateVisible && seatmateStudent && candidateRevealProgress > 0.64) {
       const midpointX = (candidatePosition.x + seatmateStudent.layout.x) / 2;
       context.beginPath();
       context.moveTo(candidatePosition.x, candidatePosition.y);
@@ -460,8 +505,8 @@ export default function ForceGraphCanvas({
   ) {
     if (!candidateVisible) return;
     context.save();
-    context.translate(candidatePosition.x, candidatePosition.y);
     if (seatClaimed) {
+      context.translate(candidatePosition.x, candidatePosition.y);
       paintPixelSeatedUser(
         context,
         globalScale,
@@ -470,7 +515,23 @@ export default function ForceGraphCanvas({
         reducedMotion,
       );
     } else {
-      paintPixelCandidateSeat(context, globalScale, candidateRevealProgress);
+      const travelProgress = Math.min(1, candidateRevealProgress / 0.52);
+      const easedTravel = 1 - Math.pow(1 - travelProgress, 3);
+      const startX = 58;
+      const startY = blackboardExpanded ? -2 : 4;
+      const tokenX = startX + (candidatePosition.x - startX) * easedTravel;
+      const tokenY = startY + (candidatePosition.y - startY) * easedTravel;
+      if (candidateRevealProgress < 0.58) {
+        const unit = 1 / globalScale;
+        context.fillStyle = "#D5912A";
+        context.fillRect(tokenX - 3 * unit, tokenY - 3 * unit, 6 * unit, 6 * unit);
+      }
+      const seatProgress = Math.max(
+        0,
+        Math.min(1, (candidateRevealProgress - 0.42) / 0.58),
+      );
+      context.translate(candidatePosition.x, candidatePosition.y);
+      paintPixelCandidateSeat(context, globalScale, seatProgress);
     }
     context.restore();
   }

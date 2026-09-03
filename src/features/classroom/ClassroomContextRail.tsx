@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import type { Classroom } from "@/domain/schemas";
+import type { AnalysisResult, Classroom } from "@/domain/schemas";
 import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
 
 import { getStudentDetails, studentSeatNumber } from "./classroom-selectors";
@@ -25,11 +25,13 @@ type ClassroomContextRailProps = {
   onEditOpinion: (value: string) => void;
   onUseSampleOpinion: () => void;
   onSubmitOpinion: () => void;
+  onRetryOpinion: () => void;
   onOpenSeatmate: () => void;
   onStartChallenge: () => void;
   onEditAnswer: (value: string) => void;
   onUseSampleAnswer: () => void;
   onSubmitAnswer: () => void;
+  onSelectCluster: (clusterId: string) => void;
   onOpenNote: () => void;
   onClaimSeat: () => void;
   onOpenCampusRoom: (roomNumber: string, isCurrent: boolean) => void;
@@ -44,20 +46,25 @@ export function ClassroomContextRail({
   onEditOpinion,
   onUseSampleOpinion,
   onSubmitOpinion,
+  onRetryOpinion,
   onOpenSeatmate,
   onStartChallenge,
   onEditAnswer,
   onUseSampleAnswer,
   onSubmitAnswer,
+  onSelectCluster,
   onOpenNote,
   onClaimSeat,
   onOpenCampusRoom,
   onReset,
 }: ClassroomContextRailProps) {
-  const [draftCopied, setDraftCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
   const seatmate = getStudentDetails(classroom, scenario.seatmate.studentId);
   const sampleMatches = state.opinionText.trim() === scenario.noteText.trim();
+  const sampleAnswerMatches =
+    state.answerText.trim() === scenario.seatmate.sampleAnswer.trim();
+  const canSubmitOpinion = state.opinionText.trim().length >= 50;
   const seatmateClusterIndex = seatmate?.cluster
     ? classroom.clusters.findIndex((cluster) => cluster.id === seatmate.cluster?.id)
     : -1;
@@ -215,16 +222,47 @@ export function ClassroomContextRail({
             <textarea
               value={state.opinionText}
               onChange={(event) => onEditOpinion(event.target.value)}
+              disabled={state.candidate.status === "analyzing"}
               placeholder="听完五个小组的讨论，写下你现在的判断……"
             />
           </label>
-          <button type="button" className={styles.secondaryAction} onClick={onUseSampleOpinion}>
+          <button
+            type="button"
+            className={styles.secondaryAction}
+            onClick={onUseSampleOpinion}
+            disabled={state.candidate.status === "analyzing"}
+          >
             使用示例观点
           </button>
-          {!sampleMatches && state.opinionText ? (
+          {!canSubmitOpinion && state.opinionText ? (
             <p className={styles.inlineNotice} role="status">
-              当前 Mock 只支持这条示例观点；恢复示例后可继续演示。
+              再写一点（至少 50 字），系统才有足够内容检查你的观点。
             </p>
+          ) : null}
+          {!sampleMatches && canSubmitOpinion ? (
+            <p className={styles.inlineNotice} role="status">
+              可以提交任意观点；当前 Mock 会诚实返回「样本不足」，不会套用示例结论。
+            </p>
+          ) : null}
+          {state.candidate.status === "analyzing" ? (
+            <p className={styles.analysisStatus} role="status">
+              正在分析你的观点与当前课堂的关系…
+            </p>
+          ) : null}
+          {state.candidate.status === "error" ? (
+            <div className={styles.analysisError} role="alert">
+              <strong>这次分析没有完成，你的输入已经保留。</strong>
+              <p>{state.candidate.message}</p>
+              <button type="button" className={styles.textAction} onClick={onRetryOpinion}>
+                重试刚才的观点
+              </button>
+            </div>
+          ) : null}
+          {state.candidate.status === "no_candidate" ? (
+            <div className={styles.analysisEmpty} role="status">
+              <strong>当前演示分析没有找到可核验的一席。</strong>
+              <p>{state.candidate.result.warnings[0] ?? "保留你的输入；可以重试或使用示例继续体验。"}</p>
+            </div>
           ) : null}
           <div className={styles.privacyNote}>
             <strong>演示边界</strong>
@@ -235,10 +273,10 @@ export function ClassroomContextRail({
           <button
             type="button"
             className={styles.primaryAction}
-            disabled={!sampleMatches}
+            disabled={!canSubmitOpinion || state.candidate.status === "analyzing"}
             onClick={onSubmitOpinion}
           >
-            找到我的一席
+            {state.candidate.status === "analyzing" ? "正在寻找…" : "找到我的一席"}
             <span aria-hidden="true">→</span>
           </button>
         </footer>
@@ -248,31 +286,58 @@ export function ClassroomContextRail({
 
   // ── Phase: candidate ─────────────────────────────────────
   if (state.phase === "candidate") {
+    const result = state.candidate.status === "resolved" ? state.candidate.result : null;
+    const candidateSeat = result?.candidateSeats[0];
+    const claim = result?.claims.find((item) => item.id === candidateSeat?.claimId);
+    const assessment = result?.assessments.find(
+      (item) => item.claimId === candidateSeat?.claimId,
+    );
+
+    if (!result || !candidateSeat || !claim || !assessment) return null;
+
     return (
       <aside className={`${styles.contextRail} ${styles.candidateRail}`} aria-labelledby="candidate-title">
         <RailHeader
           id="candidate-title"
           eyebrow="Candidate Seat · 空位已亮起"
-          title={scenario.candidate.title}
+          title={candidateSeat.title}
         />
         <div className={styles.railBody}>
-          <p className={styles.candidateClaim}>{scenario.claimTitle}</p>
+          <p className={styles.candidateClaim}>{claim.text}</p>
           <div className={styles.positionRationale}>
             <span>为什么你坐在这里</span>
-            <p>{scenario.candidate.positionRationale}</p>
+            <p>{assessment.coverage.explanation}</p>
           </div>
           <div className={styles.evidenceChecklist}>
-            {scenario.candidate.evidence.map((item, index) => (
-              <div key={item.label}>
-                <span>{index + 1}</span>
-                <div>
-                  <strong>{item.label}</strong>
-                  <p>{item.explanation}</p>
-                </div>
-              </div>
-            ))}
+            <CandidateEvidenceItem
+              index={1}
+              label="相关性"
+              explanation={assessment.relevance.explanation}
+              evidenceIds={candidateSeat.evidencePanel.relevanceEvidenceIds}
+              classroom={classroom}
+              result={result}
+            />
+            <CandidateEvidenceItem
+              index={2}
+              label="笔记支持"
+              explanation={assessment.noteSupport.explanation}
+              evidenceIds={candidateSeat.evidencePanel.noteSupportEvidenceIds}
+              classroom={classroom}
+              result={result}
+            />
+            <CandidateEvidenceItem
+              index={3}
+              label="样本覆盖"
+              explanation={assessment.coverage.explanation}
+              evidenceIds={candidateSeat.evidencePanel.coverageEvidenceIds}
+              classroom={classroom}
+              result={result}
+            />
           </div>
-          <p className={styles.coverageDisclosure}>{scenario.candidate.coverageDisclosure}</p>
+          <p className={styles.coverageDisclosure}>{candidateSeat.disclosure}</p>
+          {result.warnings.map((warning) => (
+            <p className={styles.sampleResultDisclosure} key={warning}>{warning}</p>
+          ))}
           {seatmate ? (
             <button type="button" className={styles.seatmateTeaser} onClick={onOpenSeatmate}>
               <PixelStudentPortrait
@@ -400,13 +465,18 @@ export function ClassroomContextRail({
           <button type="button" className={styles.secondaryAction} onClick={onUseSampleAnswer}>
             使用演示答案
           </button>
+          {!sampleAnswerMatches && state.answerText ? (
+            <p className={styles.inlineNotice} role="status">
+              当前 Demo 只为示例回应准备了后续学习产物；恢复示例后可继续。这样不会把固定结果冒充成你的回答。
+            </p>
+          ) : null}
           {noteProgress}
         </div>
         <footer className={styles.railFooter}>
           <button
             type="button"
             className={styles.primaryAction}
-            disabled={!state.answerText.trim()}
+            disabled={!sampleAnswerMatches}
             onClick={onSubmitAnswer}
           >
             写下我的回应
@@ -501,15 +571,32 @@ export function ClassroomContextRail({
             <button
               type="button"
               className={styles.secondaryAction}
-              onClick={() => {
-                void navigator.clipboard?.writeText(draftText).then(() => {
-                  setDraftCopied(true);
-                  window.setTimeout(() => setDraftCopied(false), 1600);
-                });
+              onClick={async () => {
+                try {
+                  if (!navigator.clipboard) throw new Error("clipboard unavailable");
+                  await navigator.clipboard.writeText(draftText);
+                  setCopyStatus("copied");
+                  window.setTimeout(() => setCopyStatus("idle"), 1600);
+                } catch {
+                  setCopyStatus("error");
+                }
               }}
             >
-              {draftCopied ? "已复制提纲" : "复制提纲，去知乎完成它"}
+              {copyStatus === "copied" ? "已复制提纲" : "复制提纲"}
             </button>
+            {copyStatus === "error" ? (
+              <p className={styles.inlineNotice} role="alert">
+                浏览器没有允许复制。请展开提纲后手动复制。
+              </p>
+            ) : null}
+            <a
+              className={styles.zhihuAction}
+              href={classroom.question.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              打开知乎，亲自完成回答 <span aria-hidden="true">↗</span>
+            </a>
           </section>
 
           <section className={styles.exitCard}>
@@ -562,11 +649,16 @@ export function ClassroomContextRail({
         </div>
         <div className={styles.clusterIndex} aria-label="观点组">
           {classroom.clusters.map((cluster, index) => (
-            <div key={cluster.id}>
+            <button
+              id={`cluster-trigger-${cluster.id}`}
+              type="button"
+              key={cluster.id}
+              onClick={() => onSelectCluster(cluster.id)}
+            >
               <i className={styles[`clusterColor${index + 1}`]} />
               <span>{cluster.label}</span>
               <small>{cluster.studentIds.length} 位</small>
-            </div>
+            </button>
           ))}
         </div>
         <div className={styles.nextStep}>
@@ -628,6 +720,50 @@ function NoteProgressStrip({
           </li>
         ))}
       </ol>
+    </div>
+  );
+}
+
+function CandidateEvidenceItem({
+  index,
+  label,
+  explanation,
+  evidenceIds,
+  classroom,
+  result,
+}: {
+  index: number;
+  label: string;
+  explanation: string;
+  evidenceIds: string[];
+  classroom: Classroom;
+  result: AnalysisResult;
+}) {
+  const details = evidenceIds.flatMap((evidenceId) => {
+    const evidence = result.evidence.find((item) => item.id === evidenceId);
+    if (!evidence) return [];
+    if (evidence.kind === "note_excerpt") {
+      const excerpt = evidence.text.length > 68
+        ? `${evidence.text.slice(0, 68)}…`
+        : evidence.text;
+      return [`${evidence.id} · 你的笔记 ${evidence.start}–${evidence.end} 字：「${excerpt}」`];
+    }
+    const source = classroom.sources.find(
+      (item) => item.id === evidence.sourceContentId,
+    );
+    return [`${evidence.id} · ${source?.title ?? evidence.sourceContentId}：「${evidence.text}」`];
+  });
+
+  return (
+    <div>
+      <span>{index}</span>
+      <div>
+        <strong>{label}</strong>
+        <p>{explanation}</p>
+        <ul className={styles.candidateEvidenceSources}>
+          {details.map((detail) => <li key={detail}>{detail}</li>)}
+        </ul>
+      </div>
     </div>
   );
 }

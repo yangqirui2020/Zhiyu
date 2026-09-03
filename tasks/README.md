@@ -36,9 +36,12 @@
 | TASK-016 | Done | Primary Agent | 交互与课堂布局热修复：黑板安全区、Reduced Motion、步骤条、状态机测试与 QA |
 | TASK-017 | Done | Primary Agent | 课堂构图热修复：桌组安全留白、移除无解释动线、走廊门牌顺序 |
 | TASK-018 | Done | Primary Agent | 项目 README：玩法、理念、Demo 功能、诚实边界与运行方式 |
+| TASK-019 | Done | Primary Agent | 后端就绪的诚实 Demo 闭环：Contract/BFF、证据、Cluster、移动端与语义动画 |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。
 
 当前用户指令通过 `PROP-0003` 批准 TASK-014 在保持 TASK-013 数据、状态与技术边界不变的前提下，把 Experience/Visual/Spatial 层升级为原创像素课堂、多教室入口与结构化同桌闭环。
 
 当前用户指令（Demo V3 收束稿，2026-09-01）通过 `PDR-0004` 批准 TASK-015 在不改 Domain Schema、40 人 fixture 与技术栈的前提下，把主流程收束为完整学习闭环：课代表圆桌 → 黑板三项 → 用户表达 → Candidate Seat → 同桌追问 → 用户回应 → 课堂笔记 → 《我的一席》→ 入席 → 双出口（知乎草稿 / 下一教室 102）。
+
+当前用户指令（2026-09-02 修复 review 问题）通过 `PROP-0004` 批准 TASK-019 吸收 TASK-002/003 中与本 Demo 垂直切片直接相关的 Contract/Provider 子集；完整 Snapshot/Live Provider Gate 仍保留在原任务，不以 Mock 冒充完成。

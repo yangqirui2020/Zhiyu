@@ -8,6 +8,7 @@ export type PixelCharacterState = {
   seatmate: boolean;
   related: boolean;
   muted: boolean;
+  opacity: number;
   lifeFrame: number;
   reducedMotion: boolean;
 };
@@ -81,7 +82,7 @@ export function paintPixelStudent(
 
   context.save();
   context.imageSmoothingEnabled = false;
-  context.globalAlpha = state.muted ? 0.34 : 1;
+  context.globalAlpha = state.opacity * (state.muted ? 0.34 : 1);
 
   if (state.selected || state.seatmate || state.inFocusedGroup || state.related) {
     const bracketColor = state.seatmate || state.related ? "#D5912A" : state.selected ? "#19232E" : state.color;
@@ -214,6 +215,7 @@ export function paintPixelSeatedUser(
     seatmate: false,
     related: false,
     muted: false,
+    opacity: 1,
     lifeFrame,
     reducedMotion,
   });

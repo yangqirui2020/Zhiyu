@@ -22,11 +22,32 @@ describe("mock Classroom fixture", () => {
     assert.equal(mockClassroomFixture.arguments.length, 40);
     assert.equal(mockClassroomFixture.evidence.length, 40);
     assert.equal(mockClassroomFixture.clusters.length, 5);
+    assert.equal(mockClassroomFixture.representatives.length, 5);
     assert.deepEqual(
       mockClassroomFixture.clusters.map((cluster) => cluster.studentIds.length),
       [8, 8, 8, 8, 8],
     );
     assert.deepEqual(validateClassroomRelations(mockClassroomFixture), []);
+  });
+
+  it("gives every cluster an inspectable representative with resolvable evidence", () => {
+    const sourceIds = new Set(mockClassroomFixture.sources.map((source) => source.id));
+    const evidenceIds = new Set(mockClassroomFixture.evidence.map((item) => item.id));
+    for (const cluster of mockClassroomFixture.clusters) {
+      const representative = mockClassroomFixture.representatives.find(
+        (item) => item.clusterId === cluster.id,
+      );
+      assert.ok(representative);
+      assert.equal(
+        representative.representativeSourceIds.every((id) => sourceIds.has(id)),
+        true,
+      );
+      assert.equal(
+        representative.exampleResponses.flatMap((item) => item.evidenceIds)
+          .every((id) => evidenceIds.has(id)),
+        true,
+      );
+    }
   });
 
   it("places every student close to the declared center of its cluster", () => {

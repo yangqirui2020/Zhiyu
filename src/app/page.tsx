@@ -35,7 +35,7 @@ export default function HomePage() {
       <footer className={styles.footer}>
         <span>40 位学生</span>
         <span>5 个观点簇</span>
-        <span>每条证据均可回溯</span>
+        <span>演示证据关系可检查</span>
       </footer>
     </main>
   );
