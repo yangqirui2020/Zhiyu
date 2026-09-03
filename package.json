@@ -12,7 +12,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "node --test tests/contract/common-schema.test.ts tests/contract/classroom-schema.test.ts tests/unit/session-machine.test.ts"
+    "test": "node --test tests/contract/common-schema.test.ts tests/contract/classroom-schema.test.ts tests/contract/candidate-schema.test.ts tests/contract/api-envelope.test.ts tests/unit/session-machine.test.ts"
   },
   "dependencies": {
     "next": "16.3.3",

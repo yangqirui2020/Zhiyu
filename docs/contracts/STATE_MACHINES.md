@@ -77,3 +77,10 @@ type CandidateState =
 
 合法/非法事件、stale response、retry、cancel、reset、第二次提交、切题、revision mismatch、Reduced Motion、partial/noCandidate、Canvas fallback。
 
+## TASK-019 Demo Slice Implementation（2026-09-02）
+
+- Demo Session 内嵌 Candidate 判别状态：`idle | analyzing | error | no_candidate | resolved`。
+- 新提交会 abort 旧请求，Reducer 只接受当前 requestId；error/no_candidate 均保留输入，Reset 会 abort 并清空结果。
+- 只有合法 `success + candidateSeats.length > 0` 才进入 Candidate 相位。
+- Student、Cluster、Note、Campus 均为正交 Panel；Cluster Inspector 关闭后恢复到触发按钮。
+- 同桌回应的固定下游产物增加精确 Sample guard；任意回应保持 Challenge，不伪造因果。

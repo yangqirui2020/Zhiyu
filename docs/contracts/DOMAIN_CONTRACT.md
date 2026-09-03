@@ -136,3 +136,6 @@ AnalysisResult = {
 
 TASK-002 必须创建 Zod schema、valid/invalid fixtures、跨引用完整性测试，并决定最低有效 source 数、ID 正则与 exact schemaVersion 后，本合同转 Frozen。
 
+## TASK-019 Demo Slice Implementation（2026-09-02）
+
+`src/domain/schemas/candidate.ts` 已实现 Claim、ClaimAssessment、CandidateSeat 与 AnalysisResult 的可执行 Schema，并校验 Claim/Assessment/Seat/Evidence 跨引用、Candidate guard、状态与 note range。40 人 Mock Classroom 现在为每个 Cluster 提供一个可检查的 Representative。完整 TASK-002 Freeze Gate（尤其生产最低 source 数与 SnapshotManifest）仍未宣称完成。

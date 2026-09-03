@@ -88,3 +88,10 @@ INTERNAL_ERROR             500
 - Provider timeout 与 AbortSignal 必须贯穿。
 - Client 可见 mode 不能仅存在日志；UI 必须渲染。
 
+## TASK-019 Demo Slice Implementation（2026-09-02）
+
+- 两条冻结 Route 已实现，响应在返回前再次通过 Envelope Zod Schema 校验。
+- Classroom Route 当前只提供 `q_learn_programming` 的显式 `mock` Fixture；不存在时返回统一 `ApiFailure`。
+- Candidate Route 校验 Content-Type、声明长度、实际 UTF-8 payload、schema、question/revision 与 deadline。
+- `sampleId=sample_learn_programming_v1` 且规范化笔记精确匹配时返回 `mode: sample + success`；其他合法笔记返回 `mode: mock + no_candidate`，不套用 Sample。
+- 进程内 idempotency 仅是 30 秒 best-effort；全局幂等与真实 Provider 消耗控制仍属于 TASK-003。

@@ -208,6 +208,38 @@ const clusters: Classroom["clusters"] = clusterSeeds.map((cluster, clusterIndex)
   };
 });
 
+const representatives: Classroom["representatives"] = clusters.map(
+  (cluster, clusterIndex) => {
+    const firstOrdinal = clusterIndex * 8 + 1;
+    const sourceIds = [firstOrdinal, firstOrdinal + 1].map(
+      (ordinal) => `src_mock_${String(ordinal).padStart(2, "0")}`,
+    );
+    const evidenceIds = [firstOrdinal, firstOrdinal + 1].map(
+      (ordinal) => `ev_mock_${String(ordinal).padStart(2, "0")}`,
+    );
+
+    return {
+      clusterId: cluster.id,
+      title: `${cluster.label}课代表`,
+      commonReasons: [...cluster.commonReasons],
+      representativeSourceIds: sourceIds,
+      exampleResponses: [
+        {
+          promptKey: "cross_cluster" as const,
+          text: `从本组材料看：${cluster.summary}仍需要和其他组的学习目标与反馈周期一起比较。`,
+          evidenceIds: [evidenceIds[0]],
+        },
+        {
+          promptKey: "out_of_scope" as const,
+          text: "现有演示材料不足以支持超出本组论证范围的判断，需要补充来源后再回答。",
+          evidenceIds: [evidenceIds[1]],
+        },
+      ],
+      disclosure: "AI 基于本组演示样本归纳，不代表真实答主、知乎立场、正确性或支持率。",
+    };
+  },
+);
+
 const rawMockClassroom = {
   schemaVersion,
   revision: "mock-classroom-v1",
@@ -231,7 +263,7 @@ const rawMockClassroom = {
   arguments: argumentsList,
   students,
   clusters,
-  representatives: [],
+  representatives,
 };
 
 export const mockClassroomFixture = classroomSchema.parse(rawMockClassroom);

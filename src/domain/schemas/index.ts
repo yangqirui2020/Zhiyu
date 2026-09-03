@@ -27,3 +27,16 @@ export {
   type SourceContent,
   type Student,
 } from "./classroom.ts";
+
+export {
+  analysisResultSchema,
+  candidateSeatSchema,
+  claimAssessmentSchema,
+  claimSchema,
+  isCandidateAssessment,
+  validateAnalysisRelations,
+  type AnalysisResult,
+  type CandidateSeat,
+  type Claim,
+  type ClaimAssessment,
+} from "./candidate.ts";
