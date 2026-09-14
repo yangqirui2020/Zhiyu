@@ -1,0 +1,27 @@
+{
+  "release": "2026-09-15-three-classrooms",
+  "team": "知乎有你一席",
+  "leader": "杨骐瑞",
+  "school": "湖北师范大学",
+  "branch": "task/TASK-027-three-classroom-submission",
+  "sourceCommit": "808756061fb6abc958637a8c2f330946a0533d26",
+  "productCommit": "2327583",
+  "deploymentId": "dpl_F4UTjwFEWsLMfcq9K4dGJJBtxord",
+  "deploymentUrl": "https://zhiyu-yixi-l3jjojrjv-qirui-era.vercel.app",
+  "productionUrl": "https://zhiyu-yixi.vercel.app",
+  "repositoryUrl": "https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-027-three-classroom-submission",
+  "snapshotId": "snap_zhihu_20260914185414007",
+  "classrooms": [
+    {"number": "101", "sourceCount": 12, "groups": 2, "source": "real_zhihu_summary_snapshot"},
+    {"number": "102", "sourceCount": 24, "groups": 4, "source": "authored_synthetic"},
+    {"number": "103", "sourceCount": 24, "groups": 4, "source": "authored_synthetic"}
+  ],
+  "pdfPages": 6,
+  "video": {"seconds": 129.92, "width": 1366, "height": 768, "fps": 25, "audio": false, "execution": "exact_examples", "recordedOn": "local_production_build"},
+  "publicAssets": [
+    {"path": "/product-plan.pdf", "bytes": 558985, "sha256": "7348be19b82f7d52482580d50c6376d848c344fcf468487d9701efee1c96ac79"},
+    {"path": "/demo.webm", "bytes": 10668444, "sha256": "b4837237101869f888eef3db368c1b7b1d59bfe99c32d9d90ee5036d3cb41d93"}
+  ],
+  "submissionReceipt": "not_received",
+  "submitted": false
+}

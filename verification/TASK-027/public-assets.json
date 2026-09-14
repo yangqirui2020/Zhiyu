@@ -1,0 +1,21 @@
+{
+  "testedAt": "2026-09-14T20:49:34.310Z",
+  "origin": "https://zhiyu-yixi.vercel.app",
+  "authenticated": false,
+  "results": [
+    {
+      "path": "/product-plan.pdf",
+      "status": 200,
+      "contentType": "application/pdf",
+      "bytes": 558985,
+      "sha256": "7348be19b82f7d52482580d50c6376d848c344fcf468487d9701efee1c96ac79"
+    },
+    {
+      "path": "/demo.webm",
+      "status": 200,
+      "contentType": "video/webm",
+      "bytes": 10668444,
+      "sha256": "b4837237101869f888eef3db368c1b7b1d59bfe99c32d9d90ee5036d3cb41d93"
+    }
+  ]
+}

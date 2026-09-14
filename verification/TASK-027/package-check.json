@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "808756061fb6abc958637a8c2f330946a0533d26",
+  "sourceFileCount": 260,
+  "packageFileCount": 24,
+  "sourceBytes": 11028384,
+  "packageBytes": 21948812,
+  "packageSha256": "ba2f86079e5923dbbbcb51bb7fc1eb8cac82197da537824cd7b69033470b0cc5",
+  "sourceSha256": "65214b516c507bd16c314b172eefa86fe451d25100d43b3861a6ff25ef6bcf76",
+  "zipIntegrity": "PASS",
+  "credentialScan": "PASS",
+  "requiredFiles": "PASS",
+  "gitPublicAssetsMatchWorkingFiles": true
+}

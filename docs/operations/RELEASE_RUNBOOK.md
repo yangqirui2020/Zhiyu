@@ -2,13 +2,15 @@
 
 当前生产地址：https://zhiyu-yixi.vercel.app
 
+当前为 TASK-027 三教室版本：101 真实 Snapshot，102/103 合成目录；均支持完整个人学习与笔记下载。部署 dpl_F4UTjwFEWsLMfcq9K4dGJJBtxord，代码/附件提交 808756061fb6abc958637a8c2f330946a0533d26。当前验收与 SHA-256 见 verification/TASK-027；下文首次发布记录为历史恢复点。
+
 项目：qirui-era / zhiyu-yixi。运行地区 hkg1（已从生产响应 x-vercel-id 核实）；构建机器地区 iad1 与运行地区不同。首次发布 ID：dpl_8T9PS2CqfvdR2ZY2KuweT9kyE1Co。
 
 ## 运行配置
 
 生产仅配置 STRUCTURED_OUTPUT_PROVIDER、STRUCTURED_OUTPUT_BASE_URL、STRUCTURED_OUTPUT_MODEL、STRUCTURED_OUTPUT_API_KEY、LEARNING_SESSION_SECRET、DATA_MODE。模型为 deepseek-v4-pro。API 密钥及签名密钥以 Vercel Secret 保存，仅通过标准输入上传。知乎采集密钥、本机备用密钥与向量模型缓存未上传。
 
-`.vercelignore` 排除本机环境文件、依赖缓存、浏览器记录、文档与测试；只读 Snapshot 随应用构建。Vercel 不运行采集或 Embedding。`vercel.json` 使用 Next.js 构建，安装 npm ci，无新增依赖。
+`.vercelignore` 排除本机环境文件、依赖缓存、浏览器记录、文档与测试；只读 Snapshot 随应用构建；102/103 的合成材料是静态 TypeScript import，随服务端代码打包，不需额外落盘。Vercel 不运行采集或 Embedding。`vercel.json` 使用 Next.js 构建，安装 npm ci，无新增依赖。
 
 ## 发版检查
 
@@ -34,4 +36,4 @@
 
 [Vercel CLI 发布](https://vercel.com/docs/cli/deploy)、[环境变量](https://vercel.com/docs/cli/env)、[运行区域](https://vercel.com/docs/regions)。本机 CLI 59.16.0 与官方文档核验于 2026-09-15。
 
-最终含静态材料部署：dpl_Fv5pRx6VJRg4ajB3pMYsgkwAwp3w（2026-09-15 03:26）。公开 /product-plan.pdf 与 /demo.webm 均已验证 HTTP 200。
+历史单教室静态材料部署：dpl_Fv5pRx6VJRg4ajB3pMYsgkwAwp3w（2026-09-15 03:26）。公开 /product-plan.pdf 与 /demo.webm 均已验证 HTTP 200。

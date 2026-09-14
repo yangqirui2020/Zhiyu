@@ -1,0 +1,39 @@
+{
+  "testedAt": "2026-09-14T20:49:30.692Z",
+  "origin": "https://zhiyu-yixi.vercel.app",
+  "syntheticQaInput": true,
+  "classroomMode": "mock",
+  "sourceCount": 24,
+  "results": [
+    {
+      "name": "synthetic_classroom",
+      "status": 200,
+      "mode": "mock",
+      "durationMs": 670
+    },
+    {
+      "name": "live_candidate",
+      "status": 200,
+      "mode": "live",
+      "resultStatus": "no_candidate",
+      "durationMs": 4584
+    },
+    {
+      "name": "live_prepare",
+      "status": 200,
+      "mode": "live",
+      "stage": "prepared",
+      "durationMs": 3825
+    },
+    {
+      "name": "live_complete",
+      "status": 200,
+      "mode": "live",
+      "stage": "completed",
+      "durationMs": 7576
+    }
+  ],
+  "inputPreserved": true,
+  "evidenceInCurrentClassroom": true,
+  "candidateDecision": "not_candidate"
+}
