@@ -28,7 +28,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
       requestId: `page_${questionId}`,
       signal: controller.signal,
       deadlineAt: Number.POSITIVE_INFINITY,
-      mode: "mock",
+      mode: "snapshot",
     }).catch(() => null),
     loadDemoNarrative(questionId),
   ]);

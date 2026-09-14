@@ -430,7 +430,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
       </div>
 
       <details className={styles.accessibleRoster}>
-        <summary>打开 Canvas 等价文字视图（40 位学生）</summary>
+        <summary>打开 Canvas 等价文字视图（{classroom.students.length} 位学生）</summary>
         <section aria-labelledby="roster-title">
           <div className={styles.rosterIntro}>
             <div>
@@ -479,7 +479,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
       </details>
 
       <footer className={styles.provenanceNote}>
-        本页使用人工构造的演示数据，仅用于验证教室体验；102–103 为走廊预告与 Mock 入口，不代表已加载真实课堂。
+        {classroom.provenance.mode === "mock" ? "本页使用人工 Mock 演示数据。" : `本班使用 ${classroom.sources.length} 条真实知乎回答摘要，由 AI 整理观点。来源采集于 ${new Date(classroom.provenance.capturedAt!).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}，不代表知乎全站。`} 102–103 为教室预告，尚未开放。
       </footer>
     </main>
   );

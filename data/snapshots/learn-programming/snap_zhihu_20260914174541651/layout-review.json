@@ -1,0 +1,6 @@
+{
+  "derivedFrom": "snap_zhihu_20260914174134317",
+  "reason": "Keep all seats above the existing mobile context panel",
+  "centerY": 25,
+  "modelGenerationUnchanged": true
+}

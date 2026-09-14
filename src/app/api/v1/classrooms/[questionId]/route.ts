@@ -17,7 +17,7 @@ export async function GET(
       requestId,
       signal: controller.signal,
       deadlineAt: Date.now() + 5_000,
-      mode: "mock",
+      mode: "snapshot",
     });
     const body = classroomApiSuccessSchema.parse({
       ok: true,
@@ -26,10 +26,12 @@ export async function GET(
         requestId,
         mode: classroom.provenance.mode,
         servedAt: new Date().toISOString(),
+        snapshotId: classroom.provenance.snapshotId,
+        capturedAt: classroom.provenance.capturedAt,
         warnings: classroom.provenance.warnings,
       },
     });
-    return Response.json(body);
+    return Response.json(body, { headers: { "Cache-Control": "public, max-age=60" } });
   } catch (error) {
     const appError = toAppError(error);
     const body = apiFailureSchema.parse({

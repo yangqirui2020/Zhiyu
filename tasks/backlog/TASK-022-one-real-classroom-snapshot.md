@@ -1,6 +1,6 @@
 # TASK-022 — 一题真实知乎 Classroom Snapshot
 
-- Status: Planned
+- Status: Done
 - Owner: Primary Agent (Codex)
 - Estimate: 2h
 - Freeze deadline: 见交付计划对应时间门
@@ -24,6 +24,9 @@
 - Allowed Files: `scripts/precompute/**`、`scripts/validate-snapshots/**`、`src/server/pipelines/classroom/**`、`src/server/providers/snapshot/**`、`src/server/use-cases/load-classroom.ts`、`src/server/use-cases/load-demo-narrative.ts`、`data/snapshots/**`、`data/samples/**`、`tests/**`、本 Task、任务板、`verification/TASK-022/**`。
 - Forbidden Files: 密钥、用户真实笔记、既有 Accepted Record 原地改结论、Frozen Design Token 值。
 - Non-Scope: 通用自由聊天、多 Agent、长期记忆、数据库、多教室 Live、自动发布知乎回答。
+- Allowed Files 补充（PROP-0005 已批准真实来源/实际分母绑定）：`src/domain/schemas/classroom-generation.ts`、`package.json`、`package-lock.json`、`docs/proposals/PROP-0005-real-data-delivery.md`、`docs/decisions/adr/ADR-0009-real-classroom-generation.md`、`docs/decisions/INDEX.md`、`src/app/page.tsx`、`src/app/classroom/[questionId]/page.tsx`、`src/app/api/v1/classrooms/[questionId]/route.ts`、`src/features/classroom/{StudentDetailSheet,ClassroomExperience,ClassroomContextRail}.tsx`，仅实际数据/标签/数量连接，不改视觉布局和个人学习状态机。
+- `next.config.ts` 仅增加 Snapshot 只读 JSON 的 outputFileTracingIncludes，保证 Vercel 运行时携带资产。
+- 浏览器验证产物：`output/playwright/**`、`.playwright-cli/**`（工具会话输出，仅任务验证使用，不部署）。
 
 ## Contracts & Decisions
 
@@ -43,11 +46,13 @@ PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。�
 
 ## Acceptance Criteria
 
-- [ ] 每条 source 的问题关联、externalId、URL 和内容类型可核验；不抓取网页或凑满 40 位学生。
-- [ ] 聚类输入为论证；归一化、距离与 linkage 相容，人数/簇数不硬设。
-- [ ] 所有引文从服务端已存材料解引用；黑板/圆桌引用绑定同一 Snapshot。
-- [ ] Manifest/schema/checksum/跨引用验证 PASS；重复执行生成新版本且可复现选定资产。
-- [ ] 真实资产可被加载；明确 Sample 输入与真实课堂绑定，保底 Candidate 结果由 TASK-023 产出并在最终 Golden Path 验收；未把 Mock 改名 Snapshot。
+- [x] 每条 source 的问题关联、externalId、URL 和内容类型可核验；不抓取网页或凑满 40 位学生。
+- [x] 聚类输入为论证；归一化、距离与 linkage 相容，人数/簇数不硬设。
+- [x] 所有引文从服务端已存材料解引用；黑板/圆桌引用绑定同一 Snapshot。
+- [x] Manifest/schema/checksum/跨引用验证 PASS；重复执行生成新版本且可复现选定资产。
+- [x] 真实资产可被加载；明确 Sample 输入与真实课堂绑定，保底 Candidate 结果由 TASK-023 产出并在最终 Golden Path 验收；未把 Mock 改名 Snapshot。
+
+Evidence：verification/TASK-022/report.md。当前为 12 条真实来源 / 2 个低区分度组；读资料路径验收，完整个人闭环未宣称完成。
 
 ## Verification
 

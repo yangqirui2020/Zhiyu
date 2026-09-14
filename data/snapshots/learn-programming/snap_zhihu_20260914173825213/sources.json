@@ -1,0 +1,266 @@
+[
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_2030360414194770313",
+    "provider": "zhihu",
+    "externalId": "2030360414194770313",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "还是要看你的目标呀。 如果你想走科班路线，想深入地学习计算机科学知识，那就从 C/C++ 开始。如果你只是想随便玩玩，体验体验编程，并搞几个稍微好玩一点的例子的话，那就学 Python，还可以搞搞办公自动化、数据分析啥的。 如果确定目标是做 Web 开发，那就学 Java 。",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/2030360414194770313",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1999471724153046560",
+    "provider": "zhihu",
+    "externalId": "1999471724153046560",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "从js开始，尤其别听那些说从c开始的，这就是冲着放弃去的。。。 以及建议你私信我试听一下我的课，反正也不要钱 [图片] [图片] [图片]",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1999471724153046560",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1999894777827717947",
+    "provider": "zhihu",
+    "externalId": "1999894777827717947",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "建议学c开始，就算是你c只学了个一知半解，对你以后转码永远有益处。",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1999894777827717947",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1997960419244015820",
+    "provider": "zhihu",
+    "externalId": "1997960419244015820",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "科班建议学c或python，非科班建议学python。根据自己情况选择即可。如果需要编程指导，我可以帮助你少走一些弯路！",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1997960419244015820",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1997664458839974972",
+    "provider": "zhihu",
+    "externalId": "1997664458839974972",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "看未来的发展方向了。 如果涉及到系统底层，那么推荐C类的语言，比如C，C++。 如果是Web开发，那么推荐Java和Javascript。 如果是搞AI，算法或者是系统运维类的，推荐Python。 如果是芯片设计，大概率是Perl和TCL/Tk。",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1997664458839974972",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1999485687951550352",
+    "provider": "zhihu",
+    "externalId": "1999485687951550352",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "计算机相关专业，学习过相关基础课程的，建议从C开始。如果没有，可以考虑Python。当然这是后端，如果要前端入手，我不懂，不作推荐。",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1999485687951550352",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1998103400735348031",
+    "provider": "zhihu",
+    "externalId": "1998103400735348031",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "Python 最是简单易用，建议从他入手。Bilibili 上有非常多的课程",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1998103400735348031",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_2080326940892968127",
+    "provider": "zhihu",
+    "externalId": "2080326940892968127",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "不要一上来纠结语言。先问自己想干啥。 想做网站、App 后台，Java 或 Go 都行。Java 工作多，教材也多，零基础好入手。Go 更轻，但入门岗位相对少一点。 想做数据分析、爬虫、AI 玩票，Python 几乎是唯一答案。语法简单，跑起来快。 想做前端页面，JavaScript 跑不掉。浏览器里开 F12 就能练。 如果真的什么目标都没有，就 Python。不是因为它最牛，是因为你前两周就能写出能跑的东西，不易丢。 语言只是工具。真正决定能不能坚…",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/2080326940892968127",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_2039646173980570959",
+    "provider": "zhihu",
+    "externalId": "2039646173980570959",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "首选推荐：Python为什么适合零基础：语法最接近英语，不用写大量标点符号和大括号。比如打印“Hello World”，Python 只需 print(“Hello World”)，而其他语言可能要写好几行。优势：学习曲线平缓，能让你快速体会到编程乐趣。资源极多，学会后能用于数据分析、人工智能、自动化办公、爬虫等多个热门领域。缺点：运行效率相对较低（但对初学者无影响），部分高级特性较特殊。一句话建议：如果你没有特定目标，只是好奇或想提升…",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/2039646173980570959",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_2036939663831736642",
+    "provider": "zhihu",
+    "externalId": "2036939663831736642",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "对于完全零基础、只想先“入门编程思维”的人来说， Python 通常是最合适的第一门语言。它语法接近自然语言，不用先搞懂复杂概念就能把想法变成代码；上手后能很快做出小工具、自动处理文件、爬点数据、画个图，成就感强。等你有了基础，再学第二门语言会快很多。下面给你一个“能直接跑起来”的起步示例，并顺便解释它在帮你建立什么编程思维。 1）先建立最基础的“变量 + 打印” name = \"小明\" age = 18 print(\"我叫\", name, \"…",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/2036939663831736642",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_2000245829546558793",
+    "provider": "zhihu",
+    "externalId": "2000245829546558793",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "学了快2年编程，我现在感觉可以先从AI做点小项目试试，基本不用代码，然后cs61a开始学python，这个学完直接all in c++就行，或者看你具体情况，可以做java方向的，不过感觉现在java快被python替代了，反正先学python和c++是对的",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/2000245829546558793",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  },
+  {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "src_zhihu_1997985770540136394",
+    "provider": "zhihu",
+    "externalId": "1997985770540136394",
+    "contentType": "answer",
+    "questionId": "q_learn_programming",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "excerpt": "我做过Java，PHP，python，C#，前端。 你想用编程来工作吗？如果是想做的编程的工作，得根据你想做的工作来选。 python 一门好像什么都能做的语言：web开发（简单理解为建站），人工智能，大数据、运维（简单理解为管理服务器）。方向很多，真的工作你可能先只能选一个方向，以后可以拓展到其他方向。 就业来说，大城市好一些，三四线需求量不大。毕竟人工智能、大数据、运维这些，小公司搞不了或者用不着。 Java永远的神。Java…",
+    "textKind": "answer_summary",
+    "url": "https://www.zhihu.com/question/1997626624837951772/answer/1997985770540136394",
+    "author": {
+      "displayName": "未提供作者信息",
+      "badge": null,
+      "authorityLevel": null
+    },
+    "metrics": {
+      "voteUpCount": null,
+      "commentCount": null
+    },
+    "capturedAt": "2026-09-14T17:38:25.213Z"
+  }
+]

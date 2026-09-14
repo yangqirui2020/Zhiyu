@@ -39,7 +39,7 @@
 | TASK-019 | Done | Primary Agent | 后端就绪的诚实 Demo 闭环：Contract/BFF、证据、Cluster、移动端与语义动画 |
 | TASK-020 | Done | Primary Agent | 截止前交付审计、基线验证与 Agent 求职路线；真实接入尚未开始 |
 | TASK-021 | Done | Primary Agent | 真实知乎/模型/Embedding 通过；rc.2 资产与学习合同冻结，41 tests PASS |
-| TASK-022 | Planned | Primary Agent | 一题真实来源、Embedding/聚类与不可变 Snapshot |
+| TASK-022 | Done | Primary Agent | 12 条真实回答摘要 / 2 组；资产、阅读路径、三视口验证及 44 tests PASS |
 | TASK-023 | Planned | Primary Agent | Live Candidate 分析、证据约束与精准 Sample 恢复 |
 | TASK-024 | Planned | Primary Agent | 用户自己的观点/回应 → 一次追问 → 个人学习产物 |
 | TASK-025 | Planned | Primary Agent | 公网发布、Golden Path QA、材料包与提交回执 |

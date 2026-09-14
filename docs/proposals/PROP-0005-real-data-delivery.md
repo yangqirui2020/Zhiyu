@@ -14,6 +14,8 @@ TASK-019 明确排除了真实 Provider、Snapshot 与第三条 Learning API。l
 
 ## Impact
 
+TASK-022 实施：新增已批准的开发依赖 `ml-hclust@4.0.0`，仅本机对归一化论证向量计算 Ward 聚类；在 2–5 个候选簇数上比较轮廓分数，并记录选择与人工质量检查，不能把簇解释为共识。真实课堂仍使用稳定内部 ID q_learn_programming，Question.externalId/url/title 改为已验证真实问题。默认 DATA_MODE=snapshot；Mock 仅显式非生产配置。页面同步摘要标签和真实人数，个人 Candidate/学习实现继续由后续任务验收。
+
 021B 提案定稿：为免增加外部 Embedding 账号，新增开发依赖 `@huggingface/transformers@4.2.0`，只在本机预计算使用 `Xenova/bge-small-zh-v1.5` 的固定版本 ONNX q8 权重，CLS pooling + L2 normalization。官方 Hub 在本机网络超时，镜像可读；锁定 revision 与文件校验和，权重不提交 Git、不进入浏览器或 Vercel 函数。当前单题仅 15 条材料，运行时 Candidate 直接对全部已校验 Argument 进行结构化覆盖判断，避免在 Vercel 加载大模型，也避免粗筛漏掉覆盖证据。未来多题/大语料时再启用检索召回。这是对 ARCH-001 的有限单题调整，见 ADR-0006。
 
 1. 在 TASK-021 冻结真实 Provider/Manifest 所需子集和 Learning Result 合同，保留既有 P0 Schema/可信度语义。

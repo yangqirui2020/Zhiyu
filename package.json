@@ -17,6 +17,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "node --conditions=react-server scripts/validate-snapshots/check.ts",
+    "precompute:classroom": "node --env-file=.env.local --conditions=react-server scripts/precompute/build-classroom.ts",
+    "setup:embedding": "node scripts/precompute/download-model.ts",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -40,6 +43,7 @@
     "@types/react-dom": "19.2.5",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.3",
+    "ml-hclust": "4.0.0",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3"
   }

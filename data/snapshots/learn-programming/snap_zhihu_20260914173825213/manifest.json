@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0-rc.2",
+  "snapshotId": "snap_zhihu_20260914173825213",
+  "questionId": "q_learn_programming",
+  "classroomRevision": "snap_zhihu_20260914173825213",
+  "generatedAt": "2026-09-14T17:38:39.474Z",
+  "capturedAt": "2026-09-14T17:38:25.213Z",
+  "sourceProvider": "zhihu_question_answers",
+  "sourceCount": 12,
+  "fetchedCount": 15,
+  "queryHistory": [
+    {
+      "endpoint": "https://developer.zhihu.com/api/v1/content/question_answers",
+      "questionUrl": "https://www.zhihu.com/question/1997626624837951772",
+      "offset": 0,
+      "limit": 50,
+      "capturedAt": "2026-09-14T17:38:25.213Z"
+    }
+  ],
+  "pipelineVersion": "classroom-v1",
+  "promptVersions": {
+    "argument": "argument-v1",
+    "label": "label-v1",
+    "narrative": "narrative-v1"
+  },
+  "modelVersions": {
+    "structured": "deepseek-flash"
+  },
+  "embeddingModel": {
+    "id": "Xenova/bge-small-zh-v1.5",
+    "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dimensions": 512,
+    "pooling": "cls",
+    "normalized": true
+  },
+  "clustering": {
+    "algorithm": "agglomerative",
+    "linkage": "ward",
+    "distance": "euclidean",
+    "clusterCount": 2,
+    "seed": 42
+  },
+  "checksums": {
+    "sources.json": "470e0cc29d739235edde886c46768d7b74018e57f211b08c2a68a0c58a6c634f",
+    "classroom.json": "fcd492e71f79f0988f9d2a0f60535a3e46d8b6948156a82246620426ad97877d",
+    "narrative.json": "2fa8bdeec867a4f883f29a7c4c0c976e671820c706ef766adc4bb8334585ca66",
+    "raw.json": "b6fe7f4315d8c05f2b31c9ee7758d7e2881a3924dbf4fbe3aaad98cb7465ea01",
+    "embeddings.json": "fb099752d4795e2feaa53241cbad3e8bb012086d6b561d5255a700c5f596a041",
+    "generation-report.json": "2f782343dbb4bf6745ac46e7ed415cd3893b8d5d88972936f6fa8a4ca6c561be"
+  },
+  "exclusions": [
+    {
+      "externalId": "1998067154461946768",
+      "reason": "摘要仅泛泛谈论自学编程需有人指导、能否熬过困难及入职后的挑战，未针对‘零基础应从哪门语言入门’给出明确结论或可支持的理由，属于跑题且无相关论证。"
+    },
+    {
+      "externalId": "1997703781597607523",
+      "reason": "人工复核：只推荐工具和练习任务，未说明选择理由；模型曾将结论重述为理由，故排除。"
+    },
+    {
+      "externalId": "2021468982868223299",
+      "reason": "摘要内容为情绪化感慨和个人观点，未针对'零基础应从哪门语言开始入门'给出任何明确结论或可支持的理由，属于跑题且无相关论证。"
+    }
+  ]
+}

@@ -147,7 +147,7 @@ export function ClassroomContextRail({
         <RailHeader
           id="roundtable-panel-title"
           eyebrow="Classroom 101 · 课代表圆桌"
-          title="五个小组正在互相听对方说话"
+          title={`${classroom.clusters.length} 个小组正在互相听对方说话`}
         />
         <div className={styles.railBody}>
           <p className={styles.railLead}>
@@ -223,7 +223,7 @@ export function ClassroomContextRail({
               value={state.opinionText}
               onChange={(event) => onEditOpinion(event.target.value)}
               disabled={state.candidate.status === "analyzing"}
-              placeholder="听完五个小组的讨论，写下你现在的判断……"
+              placeholder="听完各组的讨论，写下你现在的判断……"
             />
           </label>
           <button
@@ -241,7 +241,7 @@ export function ClassroomContextRail({
           ) : null}
           {!sampleMatches && canSubmitOpinion ? (
             <p className={styles.inlineNotice} role="status">
-              可以提交任意观点；当前 Mock 会诚实返回「样本不足」，不会套用示例结论。
+              观点需要有自己的判断和理由；材料不足时会保留输入并说明原因。
             </p>
           ) : null}
           {state.candidate.status === "analyzing" ? (
@@ -266,7 +266,7 @@ export function ClassroomContextRail({
           ) : null}
           <div className={styles.privacyNote}>
             <strong>演示边界</strong>
-            <span>本页不发送第三方模型，也不持久化输入；结果来自本地确定性 Mock 场景。</span>
+            <span>{classroom.provenance.mode === "mock" ? "开发模式使用本地 Mock；输入不持久化。" : "个人分析接入中；当前课堂来自真实摘要，示例结果有明确标记。请勿输入个人敏感信息。"}</span>
           </div>
         </div>
         <footer className={styles.railFooter}>
@@ -543,7 +543,7 @@ export function ClassroomContextRail({
       <aside className={`${styles.contextRail} ${styles.exitsRail}`} aria-labelledby="exits-title">
         <RailHeader
           id="exits-title"
-          eyebrow="你已入席 · 本班 41 人"
+          eyebrow={`你已入席 · 本班 ${classroom.students.length + 1} 人`}
           title="这一席，接下来可以去两个地方"
         />
         <div className={styles.railBody}>
@@ -641,7 +641,7 @@ export function ClassroomContextRail({
       />
       <div className={styles.railBody}>
         <p className={styles.railLead}>
-          每位像素学生代表一条演示来源。学生围桌而坐；位置越近，论证越相似。
+          每位像素学生代表一条来源。学生围桌而坐；位置越近，论证越相似。
         </p>
         <div className={styles.overviewStats}>
           <span><strong>{classroom.students.length}</strong> 位学生</span>
@@ -667,7 +667,7 @@ export function ClassroomContextRail({
         </div>
         <div className={styles.nextStep}>
           <span>02</span>
-          <p>听五个小组的课代表吵一轮，再写下你怎么看。</p>
+          <p>听各组课代表交流，再写下你怎么看。</p>
         </div>
         <p className={styles.campusHint}>
           门外还有 Classroom 102–103；102 是本班「尚未解决的问题」长出来的下一间教室。

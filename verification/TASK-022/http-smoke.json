@@ -1,0 +1,21 @@
+[
+  {
+    "path": "/",
+    "status": 200
+  },
+  {
+    "path": "/classroom/q_learn_programming",
+    "status": 200
+  },
+  {
+    "path": "/api/v1/classrooms/q_learn_programming",
+    "status": 200,
+    "mode": "snapshot",
+    "count": 12,
+    "snapshotId": "snap_zhihu_20260914174541651"
+  },
+  {
+    "path": "/api/v1/classrooms/q_missing",
+    "status": 404
+  }
+]

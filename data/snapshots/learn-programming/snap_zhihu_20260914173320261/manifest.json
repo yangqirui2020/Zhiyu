@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0.0-rc.2",
+  "snapshotId": "snap_zhihu_20260914173320261",
+  "questionId": "q_learn_programming",
+  "classroomRevision": "snap_zhihu_20260914173320261",
+  "generatedAt": "2026-09-14T17:33:36.774Z",
+  "capturedAt": "2026-09-14T17:33:20.261Z",
+  "sourceProvider": "zhihu_question_answers",
+  "sourceCount": 13,
+  "fetchedCount": 15,
+  "queryHistory": [
+    {
+      "endpoint": "https://developer.zhihu.com/api/v1/content/question_answers",
+      "questionUrl": "https://www.zhihu.com/question/1997626624837951772",
+      "offset": 0,
+      "limit": 50,
+      "capturedAt": "2026-09-14T17:33:20.261Z"
+    }
+  ],
+  "pipelineVersion": "classroom-v1",
+  "promptVersions": {
+    "argument": "argument-v1",
+    "label": "label-v1",
+    "narrative": "narrative-v1"
+  },
+  "modelVersions": {
+    "structured": "deepseek-flash"
+  },
+  "embeddingModel": {
+    "id": "Xenova/bge-small-zh-v1.5",
+    "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dimensions": 512,
+    "pooling": "cls",
+    "normalized": true
+  },
+  "clustering": {
+    "algorithm": "agglomerative",
+    "linkage": "ward",
+    "distance": "euclidean",
+    "clusterCount": 2,
+    "seed": 42
+  },
+  "checksums": {
+    "sources.json": "20b5dbb4d492f1619489c903c2d0c97415eec9aca320de502c0208157ebb019a",
+    "classroom.json": "24381ef5746bf515c6cbf71cdf52b1724d026bd5c6f1ef48744c323703b866fe",
+    "narrative.json": "c89952a063c5a5db22bf726eee4c06a20954eadf838cb82dfc8b1e4582496239",
+    "raw.json": "b6fe7f4315d8c05f2b31c9ee7758d7e2881a3924dbf4fbe3aaad98cb7465ea01",
+    "embeddings.json": "d199335676dde53d59845d5ce8aa628495ed843eb86fd07521376d8958450f7f",
+    "generation-report.json": "0eaedb96d46ae064de55d5684ec70e3d770a665b5cb17104c48c229a7bcd2dd4"
+  },
+  "exclusions": [
+    {
+      "externalId": "1998067154461946768",
+      "reason": "摘要仅泛泛谈论自学编程需有人指导、能否熬过困难及入职后的挑战，未针对‘零基础应从哪门语言入门’给出明确结论或可支持的理由，属于跑题且无相关论证。"
+    },
+    {
+      "externalId": "2021468982868223299",
+      "reason": "摘要内容为情绪化感慨和个人观点，未针对'零基础应从哪门语言开始入门'给出任何明确结论或可支持的理由，属于跑题且无相关论证。"
+    }
+  ]
+}

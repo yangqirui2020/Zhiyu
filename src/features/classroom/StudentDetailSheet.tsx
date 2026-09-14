@@ -190,11 +190,11 @@ export function StudentDetailSheet({
 
         <section className={styles.sheetSection}>
           <p className={styles.sectionKicker}>证据</p>
-          <h3>搜索摘要片段</h3>
+          <h3>{source.textKind === "answer_summary" ? "知乎回答摘要" : source.textKind === "full_text" ? "已核验来源片段" : "搜索摘要片段"}</h3>
           {evidence.map((item) => (
             <blockquote key={item.id} className={styles.evidenceQuote}>
               <p>{item.text}</p>
-              <footer>已通过 {item.id} 回溯至这条来源的搜索摘要</footer>
+              <footer>已核验为这条来源的{source.textKind === "answer_summary" ? "回答摘要" : "资料片段"}；摘要不等于全文。</footer>
             </blockquote>
           ))}
         </section>
