@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-09-14T17:08:42.588Z",
+  "elapsedMs": 1440,
+  "sourceUrl": "https://www.zhihu.com/question/1997626624837951772/answer/2030360414194770313",
+  "data": {
+    "conclusion": "零基础学编程从哪门语言入门取决于你的目标",
+    "reasons": [
+      "想走科班路线、深入学习计算机科学知识就从C/C++开始",
+      "只是随便玩玩、体验编程并搞几个好玩例子就学Python，还可做办公自动化、数据分析",
+      "确定目标是做Web开发就学Java"
+    ],
+    "evidenceIds": [
+      "ev_smoke"
+    ],
+    "qualifiers": [
+      "摘要未说明其他入门语言或更多场景"
+    ]
+  },
+  "metadata": {
+    "provider": "deepseek",
+    "modelId": "deepseek-flash",
+    "generatedAt": "2026-09-14T17:08:42.586Z",
+    "inputTokens": 349,
+    "outputTokens": 94
+  }
+}

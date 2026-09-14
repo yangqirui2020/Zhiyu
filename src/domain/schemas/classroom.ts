@@ -27,7 +27,7 @@ export const sourceContentSchema = z.object({
   questionId: stableId("q"),
   title: z.string().min(1),
   excerpt: z.string().min(1),
-  textKind: z.enum(["search_excerpt", "full_text"]),
+  textKind: z.enum(["search_excerpt", "answer_summary", "full_text"]),
   url: httpsUrlSchema,
   author: z.object({
     displayName: z.string().min(1),
@@ -46,7 +46,7 @@ export const sourceContentSchema = z.object({
     commentCount: z.number().int().nonnegative().nullable(),
   }),
   capturedAt: z.iso.datetime(),
-});
+}).refine((source) => source.textKind !== "answer_summary" || source.schemaVersion === "1.0.0-rc.2", "Answer summaries require schema rc.2");
 
 const sourceExcerptEvidenceSchema = z.object({
   id: stableId("ev"),

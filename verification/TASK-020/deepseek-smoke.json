@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-09-15T00:48:59+0800",
+  "baseUrl": "https://api.deepseek.com",
+  "configuredModel": "deepseek-flash",
+  "localConfigSaved": true,
+  "tests": [
+    {
+      "name": "models",
+      "httpStatus": 200,
+      "elapsedMs": 773,
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ]
+    },
+    {
+      "name": "json_completion",
+      "httpStatus": 200,
+      "elapsedMs": 986,
+      "returnedModel": "deepseek-flash",
+      "validExpectedJson": true,
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 48,
+        "completion_tokens": 5,
+        "total_tokens": 53,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 48
+      }
+    }
+  ]
+}

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { learningTurnResultSchema } from "../domain/schemas/learning.ts";
+export { learningTurnRequestSchema } from "../domain/schemas/learning.ts";
 
 import {
   analysisResultSchema,
@@ -59,6 +61,7 @@ export function apiSuccessSchema<T extends z.ZodType>(dataSchema: T) {
 
 export const classroomApiSuccessSchema = apiSuccessSchema(classroomSchema);
 export const analysisApiSuccessSchema = apiSuccessSchema(analysisResultSchema);
+export const learningApiSuccessSchema = apiSuccessSchema(learningTurnResultSchema);
 
 export const candidateSeatRequestSchema = z.object({
   schemaVersion: schemaVersionSchema,

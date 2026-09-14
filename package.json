@@ -6,22 +6,34 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "overrides": {
+    "@huggingface/transformers": {
+      "sharp": "0.35.4"
+    },
+    "onnxruntime-node": {
+      "adm-zip": "0.6.1"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "node --test tests/contract/common-schema.test.ts tests/contract/classroom-schema.test.ts tests/contract/candidate-schema.test.ts tests/contract/api-envelope.test.ts tests/unit/session-machine.test.ts"
+    "test": "node --conditions=react-server --test tests/contract/*.test.ts tests/integration/*.test.ts tests/unit/*.test.ts"
   },
   "dependencies": {
+    "@ai-sdk/deepseek": "3.0.44",
+    "ai": "7.0.85",
     "next": "16.3.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-force-graph-2d": "1.29.1",
+    "server-only": "0.0.1",
     "zod": "4.5.4"
   },
   "devDependencies": {
+    "@huggingface/transformers": "4.2.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "26.4.0",
     "@types/react": "19.2.18",

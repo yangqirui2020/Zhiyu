@@ -8,6 +8,10 @@ Accepted Records are immutable in conclusion. A later decision must create a new
 | ADR-0002 | Accepted | Zod 单一合同；AI SDK 只在 Adapter，结构化输出用当前 API |
 | ADR-0003 | Accepted | 外部能力全部经过最小 Provider Ports |
 | ADR-0004 | Accepted | Snapshot-first Demo 与诚实 provenance |
+| ADR-0005 | Accepted | DeepSeek 结构化输出与知乎官方回答传输适配 |
+| ADR-0006 | Accepted | 本机中文 Embedding；单题在线完整证据比较 |
+| ADR-0007 | Accepted | BGE 中文模型维度修正为实测 512；间接依赖安全版本 |
+| ADR-0008 | Accepted | rc.2 回答摘要、真实 Snapshot 与受约束学习 API |
 | PDR-0001 | Accepted | V1 P0=6+1；阿问 A；课代表为静态示例推演 |
 | PDR-0002 | Accepted | Candidate Seat 不表示知识空白；“掌握”改为笔记依据 |
 | UXDR-0001 | Accepted | Candidate Seat 在原教室内出现 |

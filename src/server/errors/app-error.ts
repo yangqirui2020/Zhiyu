@@ -9,15 +9,24 @@ export type Recovery =
   | "none";
 
 export class AppError extends Error {
+  public readonly code: ErrorCode;
+  public readonly status: number;
+  public readonly retryable: boolean;
+  public readonly recovery: Recovery;
+
   constructor(
-    public readonly code: ErrorCode,
+    code: ErrorCode,
     message: string,
-    public readonly status: number,
-    public readonly retryable: boolean,
-    public readonly recovery: Recovery,
+    status: number,
+    retryable: boolean,
+    recovery: Recovery,
   ) {
     super(message);
     this.name = "AppError";
+    this.code = code;
+    this.status = status;
+    this.retryable = retryable;
+    this.recovery = recovery;
   }
 }
 export function toAppError(error: unknown): AppError {

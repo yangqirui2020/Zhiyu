@@ -37,6 +37,12 @@
 | TASK-017 | Done | Primary Agent | 课堂构图热修复：桌组安全留白、移除无解释动线、走廊门牌顺序 |
 | TASK-018 | Done | Primary Agent | 项目 README：玩法、理念、Demo 功能、诚实边界与运行方式 |
 | TASK-019 | Done | Primary Agent | 后端就绪的诚实 Demo 闭环：Contract/BFF、证据、Cluster、移动端与语义动画 |
+| TASK-020 | Done | Primary Agent | 截止前交付审计、基线验证与 Agent 求职路线；真实接入尚未开始 |
+| TASK-021 | Done | Primary Agent | 真实知乎/模型/Embedding 通过；rc.2 资产与学习合同冻结，41 tests PASS |
+| TASK-022 | Planned | Primary Agent | 一题真实来源、Embedding/聚类与不可变 Snapshot |
+| TASK-023 | Planned | Primary Agent | Live Candidate 分析、证据约束与精准 Sample 恢复 |
+| TASK-024 | Planned | Primary Agent | 用户自己的观点/回应 → 一次追问 → 个人学习产物 |
+| TASK-025 | Planned | Primary Agent | 公网发布、Golden Path QA、材料包与提交回执 |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。
 
@@ -45,3 +51,5 @@
 当前用户指令（Demo V3 收束稿，2026-09-01）通过 `PDR-0004` 批准 TASK-015 在不改 Domain Schema、40 人 fixture 与技术栈的前提下，把主流程收束为完整学习闭环：课代表圆桌 → 黑板三项 → 用户表达 → Candidate Seat → 同桌追问 → 用户回应 → 课堂笔记 → 《我的一席》→ 入席 → 双出口（知乎草稿 / 下一教室 102）。
 
 当前用户指令（2026-09-02 修复 review 问题）通过 `PROP-0004` 批准 TASK-019 吸收 TASK-002/003 中与本 Demo 垂直切片直接相关的 Contract/Provider 子集；完整 Snapshot/Live Provider Gate 仍保留在原任务，不以 Mock 冒充完成。
+
+2026-09-15 用户要求先调研并制定 10 点前交付计划，再在用户补齐外部配置后实施。计划见 `docs/operations/SUBMISSION_SPRINT_2026-09-15.md`，范围建议见 PROP-0005；TASK-021 → 022 → 023 → 024 → 025 顺序推进，不把 TASK-002/003/004 的未完成 Gate 绕过或直接标 Done。具体 Provider/新学习合同未定稿，实施任务暂保持 Planned。

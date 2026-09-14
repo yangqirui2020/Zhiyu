@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const schemaVersionSchema = z.literal("1.0.0-rc.1");
+export const schemaVersionSchema = z.enum(["1.0.0-rc.1", "1.0.0-rc.2"]);
 
 export const dataModeSchema = z.enum(["live", "snapshot", "sample", "mock"]);
 
@@ -18,4 +18,3 @@ export const provenanceSchema = z.object({
 
 export type DataMode = z.infer<typeof dataModeSchema>;
 export type Provenance = z.infer<typeof provenanceSchema>;
-

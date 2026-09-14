@@ -1,0 +1,12 @@
+import { writeFile } from "node:fs/promises";
+import { LocalBgeEmbeddingProvider } from "../../src/server/providers/embedding/local-bge-embedding-provider.ts";
+const texts = ["先用 Python 做小项目，快速建立学习反馈。", "用 Python 完成简单项目，可以更快获得成就感。", "明天带雨伞，注意大雨天气。"];
+const started = Date.now();
+const result = await new LocalBgeEmbeddingProvider().embed({ texts }, { requestId: "req_embedding_smoke", mode: "live", signal: new AbortController().signal, deadlineAt: started + 45_000 });
+const dot = (a: number[], b: number[]) => a.reduce((sum, x, i) => sum + x * b[i], 0);
+const related = dot(result.vectors[0], result.vectors[1]);
+const unrelated = dot(result.vectors[0], result.vectors[2]);
+if (related <= unrelated) throw new Error("Semantic smoke ranking failed");
+const report = { checkedAt: new Date().toISOString(), elapsedMs: Date.now() - started, modelId: result.modelId, revision: result.revision, dimensions: result.dimensions, related, unrelated, scope: "Three-sentence smoke only; not a retrieval benchmark." };
+await writeFile(new URL("./embedding-smoke.json", import.meta.url), JSON.stringify(report, null, 2) + "\n");
+console.log(JSON.stringify(report));

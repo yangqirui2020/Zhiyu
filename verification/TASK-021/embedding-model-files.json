@@ -1,0 +1,37 @@
+{
+  "downloadedAt": "2026-09-14T17:13:42Z",
+  "modelId": "Xenova/bge-small-zh-v1.5",
+  "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+  "files": [
+    {
+      "file": "config.json",
+      "sha256": "d4193ead3a810fd694fa8a31d7fc72fbaebc0668b603e398734bf2f6538ff42f",
+      "bytes": 716,
+      "url": "https://hf-mirror.com/Xenova/bge-small-zh-v1.5/resolve/75c43b069aac4d136ba6bc1122f995fedcfd2781/config.json"
+    },
+    {
+      "file": "tokenizer.json",
+      "sha256": "48cea5d44424912a6fd1ea647bf4fe50b55ab8b1e5879c3275f80e339e8fae26",
+      "bytes": 439125,
+      "url": "https://hf-mirror.com/Xenova/bge-small-zh-v1.5/resolve/75c43b069aac4d136ba6bc1122f995fedcfd2781/tokenizer.json"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "sha256": "e6f3b96db926a37d4039995fbf5ad17de158dfb8f6343d607e4dbaad18d75f5a",
+      "bytes": 367,
+      "url": "https://hf-mirror.com/Xenova/bge-small-zh-v1.5/resolve/75c43b069aac4d136ba6bc1122f995fedcfd2781/tokenizer_config.json"
+    },
+    {
+      "file": "special_tokens_map.json",
+      "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "bytes": 125,
+      "url": "https://hf-mirror.com/Xenova/bge-small-zh-v1.5/resolve/75c43b069aac4d136ba6bc1122f995fedcfd2781/special_tokens_map.json"
+    },
+    {
+      "file": "onnx/model_quantized.onnx",
+      "sha256": "15b717c382bcb518ba457b93ea6850ede7f4f1cd8937454aa06972366cd19bcc",
+      "bytes": 24010842,
+      "url": "https://hf-mirror.com/Xenova/bge-small-zh-v1.5/resolve/75c43b069aac4d136ba6bc1122f995fedcfd2781/onnx/model_quantized.onnx"
+    }
+  ]
+}

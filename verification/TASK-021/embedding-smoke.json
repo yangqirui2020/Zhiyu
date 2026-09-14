@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-09-14T17:23:52.042Z",
+  "elapsedMs": 837,
+  "modelId": "Xenova/bge-small-zh-v1.5",
+  "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+  "dimensions": 512,
+  "related": 0.7639619542965916,
+  "unrelated": 0.4246971794446976,
+  "scope": "Three-sentence smoke only; not a retrieval benchmark."
+}
