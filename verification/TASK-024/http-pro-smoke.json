@@ -1,0 +1,45 @@
+{
+  "testedAt": "2026-09-14T19:00:25.518Z",
+  "model": "deepseek-v4-pro",
+  "revision": "snap_zhihu_20260914185414007",
+  "results": [
+    {
+      "name": "sample_prepare",
+      "status": 200,
+      "mode": "sample",
+      "stage": "prepared",
+      "durationMs": 46,
+      "noStore": true
+    },
+    {
+      "name": "sample_complete",
+      "status": 200,
+      "mode": "sample",
+      "stage": "completed",
+      "durationMs": 7,
+      "noStore": true
+    },
+    {
+      "name": "tampered_token",
+      "status": 400,
+      "code": "INVALID_INPUT",
+      "durationMs": 5,
+      "noStore": true
+    },
+    {
+      "name": "stale_revision",
+      "status": 409,
+      "code": "CLASSROOM_REVISION_MISMATCH",
+      "durationMs": 5,
+      "noStore": true
+    },
+    {
+      "name": "live_prepare_pro",
+      "status": 200,
+      "mode": "live",
+      "stage": "prepared",
+      "durationMs": 3169,
+      "noStore": true
+    }
+  ]
+}

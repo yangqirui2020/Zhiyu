@@ -1,0 +1,29 @@
+{
+  "testedAt": "2026-09-14T18:58:01.832Z",
+  "model": "deepseek-v4-pro",
+  "revision": "snap_zhihu_20260914185414007",
+  "syntheticQa": true,
+  "results": [
+    {
+      "name": "environment",
+      "durationMs": 4624,
+      "mode": "live",
+      "status": "success",
+      "candidateCount": 1
+    },
+    {
+      "name": "covered",
+      "durationMs": 4783,
+      "mode": "live",
+      "status": "no_candidate",
+      "candidateCount": 0
+    },
+    {
+      "name": "unrelated",
+      "durationMs": 2436,
+      "mode": "live",
+      "status": "no_candidate",
+      "candidateCount": 0
+    }
+  ]
+}

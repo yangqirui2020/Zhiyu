@@ -1,0 +1,25 @@
+{
+  "derivedFrom": "snap_zhihu_20260914181742485",
+  "unchanged": [
+    "sources",
+    "embeddings",
+    "clusters",
+    "candidate assessment"
+  ],
+  "candidateRevisionRebound": true,
+  "sampleAnswerOrigin": "explicit authored learning example",
+  "questionMetadata": {
+    "provider": "deepseek",
+    "modelId": "deepseek-flash",
+    "generatedAt": "2026-09-14T18:17:45.329Z",
+    "inputTokens": 4511,
+    "outputTokens": 336
+  },
+  "completionMetadata": {
+    "provider": "deepseek",
+    "modelId": "deepseek-v4-pro",
+    "generatedAt": "2026-09-14T18:54:20.476Z",
+    "inputTokens": 5275,
+    "outputTokens": 844
+  }
+}

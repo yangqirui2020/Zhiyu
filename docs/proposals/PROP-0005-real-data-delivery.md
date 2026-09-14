@@ -14,6 +14,8 @@ TASK-019 明确排除了真实 Provider、Snapshot 与第三条 Learning API。l
 
 ## Impact
 
+TASK-024 实施细则：保留 rc.2 prepare/complete 合同，HMAC 签名绑定一小时追问会话；UI 在 Candidate 内按需准备同桌，pending/error 禁止跳到固定 Scenario，成功后用当前结果覆盖后半段。新增 learning 子态 preparing/prepared/completing/completed/error；请求 ID 与阶段守卫处理 Reset/stale。Sample 学习资产按原笔记和回应双重 hash、原文、revision、追问精确匹配。展示“AI 整理草稿”，原始观点/回应可核对；不要求用户一定改变观点，也不把 AI 建议当作已接受条件。无数据库和长期存储，实例内短期缓存。见 ADR-0011。
+
 TASK-023 实施：一期每次分析笔记的一条主要主张，UI 明确范围；模型只选择服务端枚举的笔记区间及完整课堂的 evidenceId，服务端执行 Candidate guard。在线预算 25 秒，不进行任意输入预计算替代。精确 Sample note + 指定 ID 可直接读示例资产；自然输入只在同 hash 真实调用失败时回退并披露。保持 Analysis/API envelope，use case 返回实际执行 meta。幂等只提供实例内有界缓存，不声称分布式保证。真实模式黑板“全班共识”改为“样本共同点”，避免小样本粗分组被理解为一致认同，见 ADR-0010。
 
 TASK-022 实施：新增已批准的开发依赖 `ml-hclust@4.0.0`，仅本机对归一化论证向量计算 Ward 聚类；在 2–5 个候选簇数上比较轮廓分数，并记录选择与人工质量检查，不能把簇解释为共识。真实课堂仍使用稳定内部 ID q_learn_programming，Question.externalId/url/title 改为已验证真实问题。默认 DATA_MODE=snapshot；Mock 仅显式非生产配置。页面同步摘要标签和真实人数，个人 Candidate/学习实现继续由后续任务验收。

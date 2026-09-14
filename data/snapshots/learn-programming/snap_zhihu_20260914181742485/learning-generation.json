@@ -1,0 +1,24 @@
+{
+  "derivedFrom": "snap_zhihu_20260914180513051",
+  "unchanged": [
+    "sources",
+    "embeddings",
+    "clusters",
+    "candidate assessment"
+  ],
+  "candidateRevisionRebound": true,
+  "questionMetadata": {
+    "provider": "deepseek",
+    "modelId": "deepseek-flash",
+    "generatedAt": "2026-09-14T18:17:45.329Z",
+    "inputTokens": 4511,
+    "outputTokens": 336
+  },
+  "completionMetadata": {
+    "provider": "deepseek",
+    "modelId": "deepseek-flash",
+    "generatedAt": "2026-09-14T18:17:48.979Z",
+    "inputTokens": 5238,
+    "outputTokens": 551
+  }
+}

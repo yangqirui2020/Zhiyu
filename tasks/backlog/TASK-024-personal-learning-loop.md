@@ -1,6 +1,6 @@
 # TASK-024 — 真实同桌追问与个人学习闭环
 
-- Status: Planned
+- Status: Done
 - Owner: Primary Agent (Codex)
 - Estimate: 2h
 - Freeze deadline: 见交付计划对应时间门
@@ -25,7 +25,11 @@
 - Forbidden Files: 密钥、用户真实笔记、既有 Accepted Record 原地改结论、Frozen Design Token 值。
 - Non-Scope: 通用自由聊天、多 Agent、长期记忆、数据库、多教室 Live、自动发布知乎回答。
 
+- Allowed Files 补充：`src/domain/schemas/learning-sample.ts`、`scripts/precompute/build-learning-sample.ts`、`data/snapshots/**`（新增版本与 active pin）、`docs/proposals/PROP-0005-real-data-delivery.md`、`docs/decisions/adr/ADR-0011-personal-learning-state.md`、`docs/decisions/INDEX.md`、`docs/contracts/REAL_DELIVERY_CONTRACT.md`、`output/playwright/**`、`.playwright-cli/**`。
+
 ## Contracts & Decisions
+
+- 2026-09-15 补充范围：`docs/proposals/PROP-0006-deepseek-pro-recovery.md`、`docs/decisions/adr/ADR-0012-deepseek-pro-recovery.md`；用户明确授权测试并切换 V4 Pro，本机忽略的环境配置可更新，密钥不得进入提交。
 
 PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。新字段/依赖/目录若不在已定稿范围，先更新 Proposal/Task，不能猜测实现。
 
@@ -43,11 +47,11 @@ PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。�
 
 ## Acceptance Criteria
 
-- [ ] 至少两组不同的非示例观点/回应得到相应匹配、一次追问及个人产物；相关引用可回溯。
-- [ ] 回应前后产物不套固定 Scenario；不替用户虚构认知改变，也不生成完整知乎回答。
-- [ ] 人数/簇数/入席人数、题目链接与当前真实课堂一致；102/103 仍明确预览。
-- [ ] 完整路径到达提纲、复制与知乎原问题链接，错误/重试/Reset/第二次体验有证据。
-- [ ] typecheck、lint、test、build 通过；三种视口和 Reduced Motion 无主路径阻断。
+- [x] 至少两组不同的非示例观点/回应得到相应匹配、一次追问及个人产物；相关引用可回溯。
+- [x] 回应前后产物不套固定 Scenario；不替用户虚构认知改变，也不生成完整知乎回答。
+- [x] 人数/簇数/入席人数、题目链接与当前真实课堂一致；102/103 仍明确预览。
+- [x] 完整路径到达提纲、复制与知乎原问题链接，错误/重试/Reset/第二次体验有证据。
+- [x] typecheck、lint、test、build 通过；三种视口和 Reduced Motion 无主路径阻断。
 
 ## Verification
 
@@ -63,3 +67,5 @@ PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。�
 
 本 Task、任务板、相应 Contract/Decision、交付计划、运行说明与 verification report。
 
+
+验收：`verification/TASK-024/report.md`，63 tests 与三视口 Golden Path PASS。

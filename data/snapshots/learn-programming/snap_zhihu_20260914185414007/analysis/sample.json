@@ -1,0 +1,118 @@
+{
+  "sampleId": "sample_learn_programming_v1",
+  "noteHash": "c1af797ae6e87f7aa3c9dab76e1ab20e40a280cfe33dbb2bab7e57075d5087af",
+  "noteText": "初学编程可以先用 Python 建立反馈，但我更想把选语言变成一次两周试学实验：先做一个足够小的真实项目，记录反馈速度、反复卡住的位置和求助成本，并预先写下继续、缩小项目或补基础的条件，再决定下一阶段的路线。",
+  "result": {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "analysis_1b8ccb4baad90dd950d0839b",
+    "questionId": "q_learn_programming",
+    "classroomRevision": "snap_zhihu_20260914185414007",
+    "status": "success",
+    "claims": [
+      {
+        "id": "claim_1b8ccb4baad90dd950d0839b",
+        "text": "初学编程可以先用 Python 建立反馈，但更应通过两周试学实验（做小项目并记录反馈速度、卡点和求助成本，预先写下继续/缩小/补基础的条件）来决定下一阶段路线。",
+        "normalizedText": "初学编程可以先用 Python 建立反馈，但更应通过两周试学实验（做小项目并记录反馈速度、卡点和求助成本，预先写下继续/缩小/补基础的条件）来决定下一阶段路线。",
+        "noteEvidenceIds": [
+          "ev_note_c1af797ae6e8_1"
+        ]
+      }
+    ],
+    "assessments": [
+      {
+        "claimId": "claim_1b8ccb4baad90dd950d0839b",
+        "relevance": {
+          "value": "related",
+          "evidenceIds": [
+            "ev_note_c1af797ae6e8_1"
+          ],
+          "explanation": "笔记回应了「零基础从哪门语言开始」的问题，没有直接指定某门语言，而是提出用试学实验来决定路线，属于对该入门选择问题的另一种回应方式。"
+        },
+        "noteSupport": {
+          "value": "supported",
+          "evidenceIds": [
+            "ev_note_c1af797ae6e8_1"
+          ],
+          "explanation": "笔记明确提出先用 Python 建立反馈，并描述两周试学实验的具体做法、记录指标和预设决策条件，整体指向通过实验决定下一阶段路线，支持该主张。"
+        },
+        "coverage": {
+          "value": "limited",
+          "evidenceIds": [
+            "ev_zhihu_2080326940892968127",
+            "ev_zhihu_2036939663831736642",
+            "ev_zhihu_2030360414194770313"
+          ],
+          "explanation": "给定来源大多直接推荐某门入门语言或按目标、基础作选择，部分来源提到先体验、先问目标或快速写出能跑的东西，但没有来源把两周试学实验、记录反馈与卡点、预先设定继续或调整条件作为决定入门路线的核心方法。"
+        },
+        "decision": "candidate"
+      }
+    ],
+    "candidateSeats": [
+      {
+        "id": "seat_1b8ccb4baad90dd950d0839b",
+        "claimId": "claim_1b8ccb4baad90dd950d0839b",
+        "title": "这里可能有你的一席",
+        "disclosure": "只表示你的主要观点在当前 12 条摘要中覆盖较少，不代表知乎全站，也不表示观点正确或全新。",
+        "evidencePanel": {
+          "relevanceEvidenceIds": [
+            "ev_note_c1af797ae6e8_1"
+          ],
+          "noteSupportEvidenceIds": [
+            "ev_note_c1af797ae6e8_1"
+          ],
+          "coverageEvidenceIds": [
+            "ev_zhihu_2080326940892968127",
+            "ev_zhihu_2036939663831736642",
+            "ev_zhihu_2030360414194770313"
+          ]
+        },
+        "outline": {
+          "perspective": "把选语言当作可验证的试学实验，而不是一次性定论。",
+          "evidence": "笔记证据仅有 ev_note_c1af797ae6e8_1，来源证据多为直接推荐语言或按目标选择，缺少对试学实验方法的直接覆盖。",
+          "structure": "先说明主张，再展开两周试学实验的操作与判断条件，最后指出当前来源对该方法覆盖有限。"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": "ev_note_c1af797ae6e8_1",
+        "kind": "note_excerpt",
+        "text": "初学编程可以先用 Python 建立反馈，但我更想把选语言变成一次两周试学实验：先做一个足够小的真实项目，记录反馈速度、反复卡住的位置和求助成本，并预先写下继续、缩小项目或补基础的条件，再决定下一阶段的路线。",
+        "start": 0,
+        "end": 104
+      },
+      {
+        "id": "ev_zhihu_2080326940892968127",
+        "kind": "source_excerpt",
+        "text": "不要一上来纠结语言。先问自己想干啥。 想做网站、App 后台，Java 或 Go 都行。Java 工作多，教材也多，零基础好入手。Go 更轻，但入门岗位相对少一点。 想做数据分析、爬虫、AI 玩票，Python 几乎是唯一答案。语法简单，跑起来快。 想做前端页面，JavaScript 跑不掉。浏览器里开 F12 就能练。 如果真的什么目标都没有，就 Python。不是因为它最牛，是因为你前两周就能写出能跑的东西，不易丢。 语言只是工具。真正决定能不能坚…",
+        "sourceContentId": "src_zhihu_2080326940892968127"
+      },
+      {
+        "id": "ev_zhihu_2036939663831736642",
+        "kind": "source_excerpt",
+        "text": "对于完全零基础、只想先“入门编程思维”的人来说， Python 通常是最合适的第一门语言。它语法接近自然语言，不用先搞懂复杂概念就能把想法变成代码；上手后能很快做出小工具、自动处理文件、爬点数据、画个图，成就感强。等你有了基础，再学第二门语言会快很多。下面给你一个“能直接跑起来”的起步示例，并顺便解释它在帮你建立什么编程思维。 1）先建立最基础的“变量 + 打印” name = \"小明\" age = 18 print(\"我叫\", name, \"…",
+        "sourceContentId": "src_zhihu_2036939663831736642"
+      },
+      {
+        "id": "ev_zhihu_2030360414194770313",
+        "kind": "source_excerpt",
+        "text": "还是要看你的目标呀。 如果你想走科班路线，想深入地学习计算机科学知识，那就从 C/C++ 开始。如果你只是想随便玩玩，体验体验编程，并搞几个稍微好玩一点的例子的话，那就学 Python，还可以搞搞办公自动化、数据分析啥的。 如果确定目标是做 Web 开发，那就学 Java 。",
+        "sourceContentId": "src_zhihu_2030360414194770313"
+      }
+    ],
+    "warnings": [
+      "本次分析笔记中的一条主要主张，未评估全部表述。",
+      "观点比较由 AI 完成，请结合摘要和原始来源自行判断。"
+    ],
+    "analyzedAt": "2026-09-14T18:05:15.935Z"
+  },
+  "noteEvidence": [
+    {
+      "id": "ev_note_c1af797ae6e8_1",
+      "kind": "note_excerpt",
+      "text": "初学编程可以先用 Python 建立反馈，但我更想把选语言变成一次两周试学实验：先做一个足够小的真实项目，记录反馈速度、反复卡住的位置和求助成本，并预先写下继续、缩小项目或补基础的条件，再决定下一阶段的路线。",
+      "start": 0,
+      "end": 104
+    }
+  ]
+}

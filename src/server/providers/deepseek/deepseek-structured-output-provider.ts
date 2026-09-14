@@ -7,6 +7,19 @@ import type { StructuredOutputProvider } from "../../ports/structured-output-pro
 import type { ExecutionContext } from "../../ports/execution-context.ts";
 import { invalidProviderOutput, providerFailure, providerSignal, providerStatusError } from "../provider-failure.ts";
 
+// A provider or transport may fail to settle after cancellation. Keep our boundary bounded.
+function untilAbort<T>(operation: PromiseLike<T>, signal: AbortSignal): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const abort = () => { signal.removeEventListener("abort", abort); reject(signal.reason); };
+    signal.addEventListener("abort", abort, { once: true });
+    Promise.resolve(operation).then(
+      (value) => { signal.removeEventListener("abort", abort); resolve(value); },
+      (error) => { signal.removeEventListener("abort", abort); reject(error); },
+    );
+    if (signal.aborted) abort();
+  });
+}
+
 export class DeepSeekStructuredOutputProvider implements StructuredOutputProvider {
   private readonly apiKey: string;
   private readonly modelId: string;
@@ -28,7 +41,7 @@ export class DeepSeekStructuredOutputProvider implements StructuredOutputProvide
       signal.throwIfAborted();
       if (!this.apiKey || !this.modelId || !/^https:\/\/api\.deepseek\.com(?:\/v1)?\/?$/.test(this.baseURL)) throw providerStatusError(401);
       const provider = createDeepSeek({ apiKey: this.apiKey, baseURL: this.baseURL, fetch: (input, init) => this.transport(input, { ...init, redirect: "error" }) });
-      const result = await generateText({
+      const result = await untilAbort(generateText({
         model: provider(this.modelId),
         system: request.system,
         prompt: request.prompt,
@@ -37,7 +50,7 @@ export class DeepSeekStructuredOutputProvider implements StructuredOutputProvide
         maxRetries: 1,
         abortSignal: signal,
         providerOptions: { deepseek: { thinking: { type: "disabled" } } },
-      });
+      }), signal);
       signal.throwIfAborted();
       const parsed = request.schema.safeParse(result.output);
       if (!parsed.success || result.finishReason === "length") throw invalidProviderOutput();

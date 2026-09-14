@@ -16,6 +16,7 @@ import {
   type SessionState,
 } from "./session-machine";
 import styles from "./classroom.module.css";
+import { LearningEvidence } from "./LearningEvidence";
 
 type ClassroomContextRailProps = {
   classroom: Classroom;
@@ -60,7 +61,13 @@ export function ClassroomContextRail({
 }: ClassroomContextRailProps) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
-  const seatmate = getStudentDetails(classroom, scenario.seatmate.studentId);
+  const real = classroom.provenance.mode !== "mock";
+  const learningPending = state.learning.status === "preparing" || state.learning.status === "completing";
+  const prepared = "prepared" in state.learning ? state.learning.prepared : null;
+  const seatmate = !real || prepared ? getStudentDetails(classroom, scenario.seatmate.studentId) : null;
+  const learningMeta = state.learning.status === "completed" ? state.learning.meta : "prepareMeta" in state.learning ? state.learning.prepareMeta : null;
+  const learningMode = learningMeta ? <p className={styles.sampleResultDisclosure}>{learningMeta.mode === "live" ? "本阶段：实时 AI 整理，请核对" : "本阶段：精确示例结果"} · 追问由系统生成，不代表真实答主发言。</p> : null;
+  const learningError = state.learning.status === "error" ? <div className={styles.analysisError} role="alert"><strong>这一步没有完成，输入已保留。</strong><p>{state.learning.message}</p><p>可以重试；会话失效时请重新开始。</p></div> : null;
   const sampleMatches = state.opinionText.trim() === scenario.noteText.trim();
   const sampleAnswerMatches =
     state.answerText.trim() === scenario.seatmate.sampleAnswer.trim();
@@ -313,6 +320,8 @@ export function ClassroomContextRail({
         />
         <div className={styles.railBody}>
           {analysisMode}
+          {learningError}
+          {learningPending ? <p role="status">正在根据你的观点选择同桌并准备追问…</p> : null}
           <p className={styles.candidateClaim}>{claim.text}</p>
           <div className={styles.positionRationale}>
             <span>为什么你坐在这里</span>
@@ -365,8 +374,8 @@ export function ClassroomContextRail({
           {noteProgress}
         </div>
         <footer className={styles.railFooter}>
-          <button type="button" className={styles.primaryAction} onClick={onOpenSeatmate}>
-            认识我的同桌
+          <button type="button" className={styles.primaryAction} onClick={onOpenSeatmate} disabled={learningPending}>
+            {learningPending ? "正在准备追问…" : state.learning.status === "error" ? "重试准备同桌" : "认识我的同桌"}
             <span aria-hidden="true">→</span>
           </button>
           <button type="button" className={styles.textAction} onClick={onReset}>重新开始</button>
@@ -386,6 +395,7 @@ export function ClassroomContextRail({
           title={`坐在你旁边的学生 ${seatNumber}`}
         />
         <div className={styles.railBody}>
+          {learningMode}
           <section className={styles.seatmateIdentityCard}>
             <PixelStudentPortrait
               seed={seatmate.student.displaySeed}
@@ -422,12 +432,13 @@ export function ClassroomContextRail({
           <section className={styles.challengeTeaser}>
             <div className={styles.interactionHeading}>
               <span>一次有效认知摩擦</span>
-              <small>预设追问 · 针对你的观点漏洞 · 非实时 AI 回复</small>
+              <small>{real ? "系统依据你的观点与来源生成一次追问" : "预设追问 · 针对你的观点漏洞 · 非实时 AI 回复"}</small>
             </div>
             <p>
               同桌的职责不是陪聊，而是帮你发现自己还没想完整的地方。
             </p>
           </section>
+          {prepared ? <LearningEvidence classroom={classroom} evidenceIds={prepared.evidenceIds} /> : null}
           {noteProgress}
         </div>
         <footer className={styles.railFooter}>
@@ -452,6 +463,8 @@ export function ClassroomContextRail({
           title="他指出了你还没想完整的地方"
         />
         <div className={styles.railBody}>
+          {learningMode}
+          {learningError}
           <section className={styles.challengeCard}>
             <div className={styles.challengeSpeaker}>
               <PixelStudentPortrait
@@ -467,15 +480,17 @@ export function ClassroomContextRail({
           <label className={styles.noteField}>
             <span>你的回应</span>
             <textarea
+              maxLength={4000}
+              disabled={learningPending}
               value={state.answerText}
               onChange={(event) => onEditAnswer(event.target.value)}
               placeholder="认真回答这个追问——它会写进你的课堂笔记……"
             />
           </label>
-          <button type="button" className={styles.secondaryAction} onClick={onUseSampleAnswer}>
-            使用演示答案
+          <button type="button" className={styles.secondaryAction} onClick={onUseSampleAnswer} disabled={learningPending}>
+            {real ? "填入参考回应（可修改）" : "使用演示答案"}
           </button>
-          {!sampleAnswerMatches && state.answerText ? (
+          {!real && !sampleAnswerMatches && state.answerText ? (
             <p className={styles.inlineNotice} role="status">
               当前 Demo 只为示例回应准备了后续学习产物；恢复示例后可继续。这样不会把固定结果冒充成你的回答。
             </p>
@@ -486,12 +501,13 @@ export function ClassroomContextRail({
           <button
             type="button"
             className={styles.primaryAction}
-            disabled={!sampleAnswerMatches}
+            disabled={learningPending || (real ? state.answerText.trim().length < 10 : !sampleAnswerMatches)}
             onClick={onSubmitAnswer}
           >
-            写下我的回应
+            {learningPending ? "正在整理你的回应…" : state.learning.status === "error" ? "重试整理回应" : "写下我的回应"}
             <span aria-hidden="true">→</span>
           </button>
+          <button type="button" className={styles.textAction} onClick={onReset}>重新开始</button>
         </footer>
       </aside>
     );
@@ -507,8 +523,9 @@ export function ClassroomContextRail({
           title="《我的一席》"
         />
         <div className={styles.railBody}>
+          {learningMode}
           <section className={styles.mySeatBlock}>
-            <span>我的观点</span>
+            <span>我的观点（整理草稿）</span>
             <p className={styles.mySeatViewpoint}>{scenario.mySeat.viewpoint}</p>
           </section>
           <section className={styles.mySeatBlock}>
@@ -516,7 +533,7 @@ export function ClassroomContextRail({
             <p>{scenario.mySeat.reasons}</p>
           </section>
           <section className={styles.mySeatBlock}>
-            <span>我补上的条件</span>
+            <span>{real ? "回应中的条件与待澄清处" : "我补上的条件"}</span>
             <p>{scenario.mySeat.addedCondition}</p>
           </section>
           <section className={styles.mySeatBlock}>
@@ -524,7 +541,7 @@ export function ClassroomContextRail({
             <p>{scenario.mySeat.delta}</p>
           </section>
           <p className={styles.mySeatNote}>
-            这不是 AI 代写的回答——它来自你的初始观点、你听到的讨论，以及你对同桌追问的回应。
+            这是根据你的观点与回应整理的 AI 草稿，请核对是否忠实；不代表你已经掌握，也不证明观点正确。
           </p>
           {noteProgress}
         </div>
@@ -557,6 +574,7 @@ export function ClassroomContextRail({
           title="这一席，接下来可以去两个地方"
         />
         <div className={styles.railBody}>
+          {learningMode}
           <section className={styles.exitCard}>
             <div className={styles.exitCardHeading}>
               <span>A</span>
@@ -566,7 +584,7 @@ export function ClassroomContextRail({
               </div>
             </div>
             <details className={styles.zhihuDraft}>
-              <summary>查看回答提纲（Mock 草稿）</summary>
+              <summary>{real ? "查看三条回答提纲（AI 整理）" : "查看回答提纲（Mock 草稿）"}</summary>
               <div className={styles.zhihuDraftBody}>
                 <strong>{scenario.zhihuDraft.title}</strong>
                 {scenario.zhihuDraft.outline.map((item) => (

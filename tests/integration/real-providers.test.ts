@@ -100,4 +100,13 @@ describe("DeepSeek structured output boundary", () => {
     await assert.rejects(provider.generate(generation, { ...context(), signal: AbortSignal.abort() }), code("PROVIDER_TIMEOUT"));
     await assert.rejects(provider.generate(generation, context()), code("PROVIDER_UNAVAILABLE"));
   });
+
+  it("returns at the deadline even if the underlying SDK transport never settles", async () => {
+    const provider = new DeepSeekStructuredOutputProvider({ apiKey: "test", modelId: "deepseek-flash", fetch: () => new Promise<Response>(() => {}) });
+    // AbortSignal.timeout is unref'ed; keep the test process alive until the assertion settles.
+    const keepAlive = setInterval(() => {}, 1000);
+    try {
+      await assert.rejects(provider.generate(generation, { ...context(), deadlineAt: Date.now() + 30 }), code("PROVIDER_TIMEOUT"));
+    } finally { clearInterval(keepAlive); }
+  });
 });

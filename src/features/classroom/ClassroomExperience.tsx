@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 
-import { analysisApiSuccessSchema, apiFailureSchema } from "@/contracts";
+import { analysisApiSuccessSchema, apiFailureSchema, learningApiSuccessSchema } from "@/contracts";
 import type { Classroom } from "@/domain/schemas";
 import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
 
@@ -19,6 +19,7 @@ import { StudentDetailSheet } from "./StudentDetailSheet";
 import {
   candidateVisible as phaseHasCandidate,
   initialSessionState,
+  preparedLearning,
   seatClaimed as phaseIsSeated,
   sessionReducer,
   type SessionPhase,
@@ -56,13 +57,25 @@ type ClassroomExperienceProps = {
   demoScenario: DemoScenarioV3;
 };
 
-export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperienceProps) {
+export function ClassroomExperience({ classroom, demoScenario: baseScenario }: ClassroomExperienceProps) {
   const [session, dispatch] = useReducer(sessionReducer, initialSessionState);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const studentButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const restoreStudentIdRef = useRef<string | null>(null);
   const restoreClusterIdRef = useRef<string | null>(null);
   const candidateAbortRef = useRef<AbortController | null>(null);
+  const learningAbortRef = useRef<AbortController | null>(null);
+  const prepared = preparedLearning(session.learning);
+  const demoScenario = useMemo(() => ({
+    ...baseScenario,
+    ...(prepared ? { seatmate: prepared.seatmate } : {}),
+    ...(session.learning.status === "completed" ? {
+      classNote: session.learning.result.classNote,
+      mySeat: session.learning.result.mySeat,
+      zhihuDraft: session.learning.result.zhihuDraft,
+    } : {}),
+  }), [baseScenario, prepared, session.learning]);
+  const matchedStudentId = classroom.provenance.mode === "mock" ? demoScenario.seatmate.studentId : prepared?.seatmate.studentId ?? null;
 
   const { phase } = session;
   const selectedStudentId =
@@ -109,7 +122,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
   ]);
 
   const focusedStudentId =
-    selectedStudentId ?? (hasCandidate ? demoScenario.seatmate.studentId : null);
+    selectedStudentId ?? (hasCandidate ? matchedStudentId : null);
   const focusedDetails = focusedStudentId
     ? getStudentDetails(classroom, focusedStudentId)
     : null;
@@ -140,13 +153,13 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
   const selectStudent = useCallback(
     (studentId: string, restoreFocus = false) => {
       restoreStudentIdRef.current = restoreFocus ? studentId : null;
-      if (phase === "candidate" && studentId === demoScenario.seatmate.studentId) {
+      if (classroom.provenance.mode === "mock" && phase === "candidate" && studentId === demoScenario.seatmate.studentId) {
         dispatch({ type: "open_seatmate" });
         return;
       }
       dispatch({ type: "select_student", studentId });
     },
-    [demoScenario.seatmate.studentId, phase],
+    [classroom.provenance.mode, demoScenario.seatmate.studentId, phase],
   );
 
   const closeSheet = useCallback(() => {
@@ -211,11 +224,45 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
     [classroom.question.id, classroom.revision, classroom.schemaVersion, demoScenario.noteText],
   );
 
-  useEffect(() => () => candidateAbortRef.current?.abort(), []);
+  const submitLearning = useCallback(async (stage: "prepare" | "complete") => {
+    if (stage === "prepare" && session.phase !== "candidate") return;
+    if (stage === "complete" && session.phase !== "challenge") return;
+    if (classroom.provenance.mode === "mock") {
+      if (stage === "prepare") dispatch({ type: "open_seatmate" });
+      else dispatch({ type: "submit_answer", sampleMatches: session.answerText.trim() === demoScenario.seatmate.sampleAnswer.trim() });
+      return;
+    }
+    if (session.candidate.status !== "resolved" || (stage === "complete" && !prepared)) return;
+    learningAbortRef.current?.abort();
+    const controller = new AbortController();
+    learningAbortRef.current = controller;
+    const requestId = `req_learning_${crypto.randomUUID().replaceAll("-", "")}`;
+    dispatch({ type: "start_learning", stage, requestId });
+    try {
+      const response = await fetch("/api/v1/learning-turn", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ schemaVersion: classroom.schemaVersion, questionId: classroom.question.id, classroomRevision: classroom.revision, noteText: session.candidate.submittedText, idempotencyKey: requestId, stage,
+          ...(stage === "complete" ? { answerText: session.answerText, challengeToken: prepared!.challengeToken } : {}),
+        }), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]),
+      });
+      const body: unknown = await response.json().catch(() => null);
+      if (!response.ok) { const parsed = apiFailureSchema.safeParse(body); throw new Error(parsed.success ? parsed.data.error.message : "服务暂时没有返回可用结果，请重试。"); }
+      const parsed = learningApiSuccessSchema.safeParse(body);
+      if (!parsed.success) throw new Error("学习结果未通过校验，请重试。");
+      dispatch({ type: "resolve_learning", requestId, result: parsed.data.data, meta: parsed.data.meta });
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      dispatch({ type: "reject_learning", requestId, message: error instanceof DOMException && error.name === "TimeoutError" ? "处理用时较长，输入已保留，请重试。" : error instanceof Error ? error.message : "学习结果生成失败，请重试。" });
+    } finally { if (learningAbortRef.current === controller) learningAbortRef.current = null; }
+  }, [classroom.provenance.mode, classroom.schemaVersion, classroom.question.id, classroom.revision, session.phase, session.candidate, session.answerText, prepared, demoScenario.seatmate.sampleAnswer]);
+
+  useEffect(() => () => { candidateAbortRef.current?.abort(); learningAbortRef.current?.abort(); }, []);
 
   const resetSession = useCallback(() => {
     candidateAbortRef.current?.abort();
     candidateAbortRef.current = null;
+    learningAbortRef.current?.abort();
+    learningAbortRef.current = null;
     dispatch({ type: "reset" });
   }, []);
 
@@ -317,7 +364,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
               selectedStudentId={selectedStudentId}
               candidateVisible={hasCandidate}
               candidatePosition={demoScenario.candidate}
-              seatmateStudentId={demoScenario.seatmate.studentId}
+              seatmateStudentId={matchedStudentId ?? ""}
               seatClaimed={isSeated}
               blackboardExpanded={atLeast(phase, "reflection")}
               roundtable={{
@@ -386,6 +433,9 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
         ) : showNotePanel ? (
           <ClassroomNotePanel
             scenario={demoScenario}
+            classroom={classroom}
+            learning={session.learning}
+            originalNote={session.candidate.status === "resolved" ? session.candidate.submittedText : session.opinionText}
             phase={phase}
             answerText={session.answerText}
             onOpenMySeat={() => dispatch({ type: "open_my_seat" })}
@@ -407,19 +457,13 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
               const submittedText = session.candidate.submittedText;
               void submitOpinion(submittedText);
             }}
-            onOpenSeatmate={() => dispatch({ type: "open_seatmate" })}
+            onOpenSeatmate={() => void submitLearning("prepare")}
             onStartChallenge={() => dispatch({ type: "start_challenge" })}
             onEditAnswer={(value) => dispatch({ type: "edit_answer", value })}
             onUseSampleAnswer={() =>
               dispatch({ type: "use_sample_answer", value: demoScenario.seatmate.sampleAnswer })
             }
-            onSubmitAnswer={() =>
-              dispatch({
-                type: "submit_answer",
-                sampleMatches:
-                  session.answerText.trim() === demoScenario.seatmate.sampleAnswer.trim(),
-              })
-            }
+            onSubmitAnswer={() => void submitLearning("complete")}
             onSelectCluster={selectCluster}
             onOpenNote={() => dispatch({ type: "open_note" })}
             onClaimSeat={() => dispatch({ type: "claim_seat" })}

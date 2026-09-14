@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0-rc.2",
+  "snapshotId": "snap_zhihu_20260914181742485",
+  "questionId": "q_learn_programming",
+  "classroomRevision": "snap_zhihu_20260914181742485",
+  "generatedAt": "2026-09-14T18:17:48.993Z",
+  "capturedAt": "2026-09-14T17:41:34.317Z",
+  "sourceProvider": "zhihu_question_answers",
+  "sourceCount": 12,
+  "fetchedCount": 15,
+  "queryHistory": [
+    {
+      "endpoint": "https://developer.zhihu.com/api/v1/content/question_answers",
+      "questionUrl": "https://www.zhihu.com/question/1997626624837951772",
+      "offset": 0,
+      "limit": 50,
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    }
+  ],
+  "pipelineVersion": "classroom-v1-candidate-v1-learning-v1",
+  "promptVersions": {
+    "argument": "argument-v1",
+    "label": "label-v1",
+    "narrative": "narrative-v1"
+  },
+  "modelVersions": {
+    "structured": "deepseek-flash"
+  },
+  "embeddingModel": {
+    "id": "Xenova/bge-small-zh-v1.5",
+    "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dimensions": 512,
+    "pooling": "cls",
+    "normalized": true
+  },
+  "clustering": {
+    "algorithm": "agglomerative",
+    "linkage": "ward",
+    "distance": "euclidean",
+    "clusterCount": 2,
+    "seed": 42
+  },
+  "checksums": {
+    "sources.json": "8af824a189e45b86089bd4dd6c5a881eec89ed070c22a05ac1387a9f1290d0cb",
+    "classroom.json": "f5ebb1f7bff84c877981eb594b17583ef0a62674cb4db6592f74ec0781fe9a82",
+    "narrative.json": "8bc7e91c4a2c7cff4ad54502ab170172c144a574080a6207e0a5b39b126d18fb",
+    "raw.json": "b6fe7f4315d8c05f2b31c9ee7758d7e2881a3924dbf4fbe3aaad98cb7465ea01",
+    "embeddings.json": "fb099752d4795e2feaa53241cbad3e8bb012086d6b561d5255a700c5f596a041",
+    "generation-report.json": "13ec1684f6355628027a11c7ae5e7093ee07a69427ac1fdfa070d6261cf667cf",
+    "layout-review.json": "331c17c78eda1c79af8ca17cec71a2f068aa85421bec09ce5a8e580438b493b5",
+    "analysis/sample.json": "b4dc51b41107c1e7d6e551c10b68191a07766b17e4df58db8ed5429836dee439",
+    "candidate-generation.json": "278b21875a9a477c5518787e59e3f81af3eccadf15a62efd01e15ada635fd4a7",
+    "learning/sample.json": "f89d840a3f86b353fe0263b37d509f76fd3d8e3134589c3dff5ad4a8a5617b0a",
+    "learning-generation.json": "88b8da1352cf05c943c2b217ad047ffa02442926d2c0d6ec31c2c4356616ba0b"
+  },
+  "exclusions": [
+    {
+      "externalId": "1998067154461946768",
+      "reason": "摘要仅泛泛谈论自学编程需有人指导、能否熬过困难及入职后的挑战，未针对‘零基础应从哪门语言入门’给出明确结论或可支持的理由，属于跑题且无相关论证。"
+    },
+    {
+      "externalId": "1997703781597607523",
+      "reason": "人工复核：只推荐工具和练习任务，未说明选择理由；模型曾将结论重述为理由，故排除。"
+    },
+    {
+      "externalId": "2021468982868223299",
+      "reason": "摘要内容为情绪化感慨和个人观点，未针对'零基础应从哪门语言开始入门'给出任何明确结论或可支持的理由，属于跑题且无相关论证。"
+    }
+  ]
+}

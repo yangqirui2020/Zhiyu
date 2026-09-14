@@ -1,0 +1,42 @@
+{
+  "testedAt": "2026-09-14T18:48:56.998Z",
+  "rows": [
+    {
+      "name": "sample_prepare",
+      "status": 200,
+      "mode": "sample",
+      "stage": "prepared",
+      "durationMs": 162,
+      "noStore": true
+    },
+    {
+      "name": "sample_complete",
+      "status": 200,
+      "mode": "sample",
+      "stage": "completed",
+      "durationMs": 9,
+      "noStore": true
+    },
+    {
+      "name": "tampered_token",
+      "status": 400,
+      "code": "INVALID_INPUT",
+      "durationMs": 6,
+      "noStore": true
+    },
+    {
+      "name": "stale_revision",
+      "status": 409,
+      "code": "CLASSROOM_REVISION_MISMATCH",
+      "durationMs": 6,
+      "noStore": true
+    },
+    {
+      "name": "live_prepare_health",
+      "status": 504,
+      "code": "PROVIDER_TIMEOUT",
+      "durationMs": 25009,
+      "noStore": true
+    }
+  ]
+}

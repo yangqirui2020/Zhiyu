@@ -11,6 +11,20 @@
 
 import type { AnalysisResult } from "@/domain/schemas";
 import type { ApiMeta } from "@/contracts";
+import type { LearningTurnResult } from "@/domain/schemas/learning";
+
+export type PreparedLearning = Extract<LearningTurnResult, { stage: "prepared" }>;
+export type CompletedLearning = Extract<LearningTurnResult, { stage: "completed" }>;
+export type LearningRequestState =
+  | { status: "idle" }
+  | { status: "preparing"; requestId: string }
+  | { status: "prepared"; prepared: PreparedLearning; prepareMeta: ApiMeta }
+  | { status: "completing"; requestId: string; prepared: PreparedLearning; prepareMeta: ApiMeta; submittedAnswer: string }
+  | { status: "completed"; prepared: PreparedLearning; prepareMeta: ApiMeta; result: CompletedLearning; meta: ApiMeta }
+  | { status: "error"; stage: "prepare"; message: string }
+  | { status: "error"; stage: "complete"; message: string; prepared: PreparedLearning; prepareMeta: ApiMeta };
+
+export const preparedLearning = (learning: LearningRequestState) => "prepared" in learning ? learning.prepared : null;
 
 export type SessionPhase =
   | "exploring"
@@ -44,6 +58,7 @@ export type SessionState = {
   opinionText: string;
   answerText: string;
   candidate: CandidateRequestState;
+  learning: LearningRequestState;
   panel: SessionPanel;
 };
 
@@ -62,6 +77,9 @@ export type SessionEvent =
   | { type: "edit_answer"; value: string }
   | { type: "use_sample_answer"; value: string }
   | { type: "submit_answer"; sampleMatches: boolean }
+  | { type: "start_learning"; stage: "prepare" | "complete"; requestId: string }
+  | { type: "resolve_learning"; requestId: string; result: LearningTurnResult; meta: ApiMeta }
+  | { type: "reject_learning"; requestId: string; message: string }
   | { type: "open_my_seat" }
   | { type: "claim_seat" }
   | { type: "open_note" }
@@ -77,6 +95,7 @@ export const initialSessionState: SessionState = {
   opinionText: "",
   answerText: "",
   candidate: { status: "idle" },
+  learning: { status: "idle" },
   panel: { kind: "default" },
 };
 
@@ -198,6 +217,7 @@ export function sessionReducer(
 
     case "open_seatmate":
       if (state.phase !== "candidate") return state;
+      if (!preparedLearning(state.learning) && !(state.candidate.status === "resolved" && state.candidate.result.schemaVersion === "1.0.0-rc.1")) return state;
       return { ...state, phase: "seatmate", panel: { kind: "default" } };
 
     case "start_challenge":
@@ -205,20 +225,46 @@ export function sessionReducer(
       return { ...state, phase: "challenge", panel: { kind: "default" } };
 
     case "edit_answer":
-      if (state.phase !== "challenge") return state;
+      if (state.phase !== "challenge" || state.learning.status === "completing") return state;
       return { ...state, answerText: event.value };
 
     case "use_sample_answer":
-      if (state.phase !== "challenge") return state;
+      if (state.phase !== "challenge" || state.learning.status === "completing") return state;
       return { ...state, answerText: event.value };
 
     case "submit_answer":
       if (
         state.phase !== "challenge" ||
         !state.answerText.trim() ||
-        !event.sampleMatches
+        !event.sampleMatches || state.learning.status !== "idle"
       ) return state;
       return { ...state, phase: "responded", panel: { kind: "default" } };
+
+    case "start_learning": {
+      if (event.stage === "prepare") {
+        if (state.phase !== "candidate" || state.learning.status === "preparing" || state.candidate.status !== "resolved") return state;
+        return { ...state, learning: { status: "preparing", requestId: event.requestId }, panel: { kind: "default" } };
+      }
+      const prepared = preparedLearning(state.learning);
+      if (state.phase !== "challenge" || !prepared || state.answerText.trim().length < 10 || state.learning.status === "completing" || !("prepareMeta" in state.learning)) return state;
+      return { ...state, learning: { status: "completing", requestId: event.requestId, prepared, prepareMeta: state.learning.prepareMeta, submittedAnswer: state.answerText }, panel: { kind: "default" } };
+    }
+
+    case "resolve_learning": {
+      const learning = state.learning;
+      if (!("requestId" in learning) || learning.requestId !== event.requestId || state.candidate.status !== "resolved" || event.result.questionId !== state.candidate.result.questionId || event.result.classroomRevision !== state.candidate.result.classroomRevision) return state;
+      if (learning.status === "preparing" && state.phase === "candidate" && event.result.stage === "prepared") return { ...state, phase: "seatmate", learning: { status: "prepared", prepared: event.result, prepareMeta: event.meta }, panel: { kind: "default" } };
+      if (learning.status === "completing" && state.phase === "challenge" && event.result.stage === "completed") return { ...state, phase: "responded", answerText: learning.submittedAnswer, learning: { status: "completed", prepared: learning.prepared, prepareMeta: learning.prepareMeta, result: event.result, meta: event.meta }, panel: { kind: "default" } };
+      return state;
+    }
+
+    case "reject_learning": {
+      const learning = state.learning;
+      if (!("requestId" in learning) || learning.requestId !== event.requestId) return state;
+      if (learning.status === "preparing") return { ...state, learning: { status: "error", stage: "prepare", message: event.message } };
+      if (learning.status === "completing") return { ...state, answerText: learning.submittedAnswer, learning: { status: "error", stage: "complete", message: event.message, prepared: learning.prepared, prepareMeta: learning.prepareMeta } };
+      return state;
+    }
 
     case "open_my_seat":
       if (state.phase !== "responded") return state;

@@ -1,0 +1,7 @@
+{
+  "derivedFrom": "snap_zhihu_20260914174541651",
+  "model": "deepseek-flash",
+  "promptVersion": "candidate-v1",
+  "generatedAt": "2026-09-14T18:05:15.935Z",
+  "classroomGenerationUnchanged": true
+}

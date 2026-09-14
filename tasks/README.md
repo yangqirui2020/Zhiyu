@@ -41,7 +41,7 @@
 | TASK-021 | Done | Primary Agent | 真实知乎/模型/Embedding 通过；rc.2 资产与学习合同冻结，41 tests PASS |
 | TASK-022 | Done | Primary Agent | 12 条真实回答摘要 / 2 组；资产、阅读路径、三视口验证及 44 tests PASS |
 | TASK-023 | Done | Primary Agent | Live / 精确 Sample；54 tests、真实模型三组测试与浏览器失败恢复 PASS |
-| TASK-024 | Planned | Primary Agent | 用户自己的观点/回应 → 一次追问 → 个人学习产物 |
+| TASK-024 | Done | Primary Agent | 63 tests / Pro 真实输入 / 三视口闭环与失败恢复 PASS |
 | TASK-025 | Planned | Primary Agent | 公网发布、Golden Path QA、材料包与提交回执 |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。

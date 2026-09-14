@@ -1,0 +1,273 @@
+{
+  "usage": [
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:13.191Z",
+      "inputTokens": 442,
+      "outputTokens": 155
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:12.484Z",
+      "inputTokens": 436,
+      "outputTokens": 59
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:12.680Z",
+      "inputTokens": 412,
+      "outputTokens": 100
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:41:34.317Z",
+      "inputTokens": null,
+      "outputTokens": null
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:14.218Z",
+      "inputTokens": 451,
+      "outputTokens": 53
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:14.625Z",
+      "inputTokens": 393,
+      "outputTokens": 114
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:15.854Z",
+      "inputTokens": 401,
+      "outputTokens": 124
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:16.161Z",
+      "inputTokens": 433,
+      "outputTokens": 149
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:15.956Z",
+      "inputTokens": 403,
+      "outputTokens": 124
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:17.499Z",
+      "inputTokens": 389,
+      "outputTokens": 109
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:18.006Z",
+      "inputTokens": 502,
+      "outputTokens": 211
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:17.697Z",
+      "inputTokens": 482,
+      "outputTokens": 171
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:19.284Z",
+      "inputTokens": 500,
+      "outputTokens": 164
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:19.111Z",
+      "inputTokens": 434,
+      "outputTokens": 138
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:31:19.855Z",
+      "inputTokens": 486,
+      "outputTokens": 192
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:41:37.585Z",
+      "inputTokens": 2115,
+      "outputTokens": 260
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:41:39.358Z",
+      "inputTokens": 744,
+      "outputTokens": 151
+    },
+    {
+      "provider": "deepseek",
+      "modelId": "deepseek-flash",
+      "generatedAt": "2026-09-14T17:41:49.117Z",
+      "inputTokens": 10695,
+      "outputTokens": 1926
+    }
+  ],
+  "exclusions": [
+    {
+      "externalId": "1998067154461946768",
+      "reason": "摘要仅泛泛谈论自学编程需有人指导、能否熬过困难及入职后的挑战，未针对‘零基础应从哪门语言入门’给出明确结论或可支持的理由，属于跑题且无相关论证。"
+    },
+    {
+      "externalId": "1997703781597607523",
+      "reason": "人工复核：只推荐工具和练习任务，未说明选择理由；模型曾将结论重述为理由，故排除。"
+    },
+    {
+      "externalId": "2021468982868223299",
+      "reason": "摘要内容为情绪化感慨和个人观点，未针对'零基础应从哪门语言开始入门'给出任何明确结论或可支持的理由，属于跑题且无相关论证。"
+    }
+  ],
+  "clustering": {
+    "selected": {
+      "k": 2,
+      "silhouette": 0.09375461570338546,
+      "groups": [
+        [
+          0,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          6
+        ]
+      ]
+    },
+    "scores": [
+      {
+        "k": 2,
+        "silhouette": 0.09375461570338546,
+        "groups": [
+          [
+            0,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          [
+            1,
+            2,
+            6
+          ]
+        ]
+      },
+      {
+        "k": 3,
+        "silhouette": 0.0824596903109162,
+        "groups": [
+          [
+            0,
+            4,
+            7,
+            8,
+            9,
+            11
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            3,
+            5,
+            10
+          ]
+        ]
+      },
+      {
+        "k": 4,
+        "silhouette": 0.09085848955811131,
+        "groups": [
+          [
+            0,
+            4,
+            11
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            3,
+            5,
+            10
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ]
+      },
+      {
+        "k": 5,
+        "silhouette": 0.0912705904709565,
+        "groups": [
+          [
+            0,
+            4,
+            11
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            7,
+            8,
+            9
+          ],
+          [
+            10
+          ]
+        ]
+      }
+    ]
+  },
+  "capturedAt": "2026-09-14T17:41:34.317Z",
+  "fetchedCount": 15,
+  "sourceCount": 12
+}

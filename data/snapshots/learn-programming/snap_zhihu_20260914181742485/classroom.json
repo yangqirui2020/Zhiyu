@@ -1,0 +1,909 @@
+{
+  "schemaVersion": "1.0.0-rc.2",
+  "revision": "snap_zhihu_20260914181742485",
+  "question": {
+    "schemaVersion": "1.0.0-rc.2",
+    "id": "q_learn_programming",
+    "externalId": "1997626624837951772",
+    "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+    "url": "https://www.zhihu.com/question/1997626624837951772",
+    "searchQueries": [
+      "零基础 编程 第一门语言"
+    ]
+  },
+  "provenance": {
+    "schemaVersion": "1.0.0-rc.2",
+    "mode": "snapshot",
+    "requestId": "snap_zhihu_20260914174134317",
+    "servedAt": "2026-09-14T17:41:34.317Z",
+    "snapshotId": "snap_zhihu_20260914181742485",
+    "capturedAt": "2026-09-14T17:41:34.317Z",
+    "warnings": [
+      "来源为知乎官方回答摘要，并非全文；仅覆盖本次可用样本。",
+      "观点分组与课代表发言由 AI 整理，不代表正确性、支持率或社会共识。"
+    ]
+  },
+  "sources": [
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_2030360414194770313",
+      "provider": "zhihu",
+      "externalId": "2030360414194770313",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "还是要看你的目标呀。 如果你想走科班路线，想深入地学习计算机科学知识，那就从 C/C++ 开始。如果你只是想随便玩玩，体验体验编程，并搞几个稍微好玩一点的例子的话，那就学 Python，还可以搞搞办公自动化、数据分析啥的。 如果确定目标是做 Web 开发，那就学 Java 。",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/2030360414194770313",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1999471724153046560",
+      "provider": "zhihu",
+      "externalId": "1999471724153046560",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "从js开始，尤其别听那些说从c开始的，这就是冲着放弃去的。。。 以及建议你私信我试听一下我的课，反正也不要钱 [图片] [图片] [图片]",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1999471724153046560",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1999894777827717947",
+      "provider": "zhihu",
+      "externalId": "1999894777827717947",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "建议学c开始，就算是你c只学了个一知半解，对你以后转码永远有益处。",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1999894777827717947",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1997960419244015820",
+      "provider": "zhihu",
+      "externalId": "1997960419244015820",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "科班建议学c或python，非科班建议学python。根据自己情况选择即可。如果需要编程指导，我可以帮助你少走一些弯路！",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1997960419244015820",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1997664458839974972",
+      "provider": "zhihu",
+      "externalId": "1997664458839974972",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "看未来的发展方向了。 如果涉及到系统底层，那么推荐C类的语言，比如C，C++。 如果是Web开发，那么推荐Java和Javascript。 如果是搞AI，算法或者是系统运维类的，推荐Python。 如果是芯片设计，大概率是Perl和TCL/Tk。",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1997664458839974972",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1999485687951550352",
+      "provider": "zhihu",
+      "externalId": "1999485687951550352",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "计算机相关专业，学习过相关基础课程的，建议从C开始。如果没有，可以考虑Python。当然这是后端，如果要前端入手，我不懂，不作推荐。",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1999485687951550352",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1998103400735348031",
+      "provider": "zhihu",
+      "externalId": "1998103400735348031",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "Python 最是简单易用，建议从他入手。Bilibili 上有非常多的课程",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1998103400735348031",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_2080326940892968127",
+      "provider": "zhihu",
+      "externalId": "2080326940892968127",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "不要一上来纠结语言。先问自己想干啥。 想做网站、App 后台，Java 或 Go 都行。Java 工作多，教材也多，零基础好入手。Go 更轻，但入门岗位相对少一点。 想做数据分析、爬虫、AI 玩票，Python 几乎是唯一答案。语法简单，跑起来快。 想做前端页面，JavaScript 跑不掉。浏览器里开 F12 就能练。 如果真的什么目标都没有，就 Python。不是因为它最牛，是因为你前两周就能写出能跑的东西，不易丢。 语言只是工具。真正决定能不能坚…",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/2080326940892968127",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_2039646173980570959",
+      "provider": "zhihu",
+      "externalId": "2039646173980570959",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "首选推荐：Python为什么适合零基础：语法最接近英语，不用写大量标点符号和大括号。比如打印“Hello World”，Python 只需 print(“Hello World”)，而其他语言可能要写好几行。优势：学习曲线平缓，能让你快速体会到编程乐趣。资源极多，学会后能用于数据分析、人工智能、自动化办公、爬虫等多个热门领域。缺点：运行效率相对较低（但对初学者无影响），部分高级特性较特殊。一句话建议：如果你没有特定目标，只是好奇或想提升…",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/2039646173980570959",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_2036939663831736642",
+      "provider": "zhihu",
+      "externalId": "2036939663831736642",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "对于完全零基础、只想先“入门编程思维”的人来说， Python 通常是最合适的第一门语言。它语法接近自然语言，不用先搞懂复杂概念就能把想法变成代码；上手后能很快做出小工具、自动处理文件、爬点数据、画个图，成就感强。等你有了基础，再学第二门语言会快很多。下面给你一个“能直接跑起来”的起步示例，并顺便解释它在帮你建立什么编程思维。 1）先建立最基础的“变量 + 打印” name = \"小明\" age = 18 print(\"我叫\", name, \"…",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/2036939663831736642",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_2000245829546558793",
+      "provider": "zhihu",
+      "externalId": "2000245829546558793",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "学了快2年编程，我现在感觉可以先从AI做点小项目试试，基本不用代码，然后cs61a开始学python，这个学完直接all in c++就行，或者看你具体情况，可以做java方向的，不过感觉现在java快被python替代了，反正先学python和c++是对的",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/2000245829546558793",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    },
+    {
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "src_zhihu_1997985770540136394",
+      "provider": "zhihu",
+      "externalId": "1997985770540136394",
+      "contentType": "answer",
+      "questionId": "q_learn_programming",
+      "title": "零基础想学编程，应该从哪门语言开始入门比较好？",
+      "excerpt": "我做过Java，PHP，python，C#，前端。 你想用编程来工作吗？如果是想做的编程的工作，得根据你想做的工作来选。 python 一门好像什么都能做的语言：web开发（简单理解为建站），人工智能，大数据、运维（简单理解为管理服务器）。方向很多，真的工作你可能先只能选一个方向，以后可以拓展到其他方向。 就业来说，大城市好一些，三四线需求量不大。毕竟人工智能、大数据、运维这些，小公司搞不了或者用不着。 Java永远的神。Java…",
+      "textKind": "answer_summary",
+      "url": "https://www.zhihu.com/question/1997626624837951772/answer/1997985770540136394",
+      "author": {
+        "displayName": "未提供作者信息",
+        "badge": null,
+        "authorityLevel": null
+      },
+      "metrics": {
+        "voteUpCount": null,
+        "commentCount": null
+      },
+      "capturedAt": "2026-09-14T17:41:34.317Z"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_zhihu_2030360414194770313",
+      "kind": "source_excerpt",
+      "text": "还是要看你的目标呀。 如果你想走科班路线，想深入地学习计算机科学知识，那就从 C/C++ 开始。如果你只是想随便玩玩，体验体验编程，并搞几个稍微好玩一点的例子的话，那就学 Python，还可以搞搞办公自动化、数据分析啥的。 如果确定目标是做 Web 开发，那就学 Java 。",
+      "sourceContentId": "src_zhihu_2030360414194770313"
+    },
+    {
+      "id": "ev_zhihu_1999471724153046560",
+      "kind": "source_excerpt",
+      "text": "从js开始，尤其别听那些说从c开始的，这就是冲着放弃去的。。。 以及建议你私信我试听一下我的课，反正也不要钱 [图片] [图片] [图片]",
+      "sourceContentId": "src_zhihu_1999471724153046560"
+    },
+    {
+      "id": "ev_zhihu_1999894777827717947",
+      "kind": "source_excerpt",
+      "text": "建议学c开始，就算是你c只学了个一知半解，对你以后转码永远有益处。",
+      "sourceContentId": "src_zhihu_1999894777827717947"
+    },
+    {
+      "id": "ev_zhihu_1997960419244015820",
+      "kind": "source_excerpt",
+      "text": "科班建议学c或python，非科班建议学python。根据自己情况选择即可。如果需要编程指导，我可以帮助你少走一些弯路！",
+      "sourceContentId": "src_zhihu_1997960419244015820"
+    },
+    {
+      "id": "ev_zhihu_1997664458839974972",
+      "kind": "source_excerpt",
+      "text": "看未来的发展方向了。 如果涉及到系统底层，那么推荐C类的语言，比如C，C++。 如果是Web开发，那么推荐Java和Javascript。 如果是搞AI，算法或者是系统运维类的，推荐Python。 如果是芯片设计，大概率是Perl和TCL/Tk。",
+      "sourceContentId": "src_zhihu_1997664458839974972"
+    },
+    {
+      "id": "ev_zhihu_1999485687951550352",
+      "kind": "source_excerpt",
+      "text": "计算机相关专业，学习过相关基础课程的，建议从C开始。如果没有，可以考虑Python。当然这是后端，如果要前端入手，我不懂，不作推荐。",
+      "sourceContentId": "src_zhihu_1999485687951550352"
+    },
+    {
+      "id": "ev_zhihu_1998103400735348031",
+      "kind": "source_excerpt",
+      "text": "Python 最是简单易用，建议从他入手。Bilibili 上有非常多的课程",
+      "sourceContentId": "src_zhihu_1998103400735348031"
+    },
+    {
+      "id": "ev_zhihu_2080326940892968127",
+      "kind": "source_excerpt",
+      "text": "不要一上来纠结语言。先问自己想干啥。 想做网站、App 后台，Java 或 Go 都行。Java 工作多，教材也多，零基础好入手。Go 更轻，但入门岗位相对少一点。 想做数据分析、爬虫、AI 玩票，Python 几乎是唯一答案。语法简单，跑起来快。 想做前端页面，JavaScript 跑不掉。浏览器里开 F12 就能练。 如果真的什么目标都没有，就 Python。不是因为它最牛，是因为你前两周就能写出能跑的东西，不易丢。 语言只是工具。真正决定能不能坚…",
+      "sourceContentId": "src_zhihu_2080326940892968127"
+    },
+    {
+      "id": "ev_zhihu_2039646173980570959",
+      "kind": "source_excerpt",
+      "text": "首选推荐：Python为什么适合零基础：语法最接近英语，不用写大量标点符号和大括号。比如打印“Hello World”，Python 只需 print(“Hello World”)，而其他语言可能要写好几行。优势：学习曲线平缓，能让你快速体会到编程乐趣。资源极多，学会后能用于数据分析、人工智能、自动化办公、爬虫等多个热门领域。缺点：运行效率相对较低（但对初学者无影响），部分高级特性较特殊。一句话建议：如果你没有特定目标，只是好奇或想提升…",
+      "sourceContentId": "src_zhihu_2039646173980570959"
+    },
+    {
+      "id": "ev_zhihu_2036939663831736642",
+      "kind": "source_excerpt",
+      "text": "对于完全零基础、只想先“入门编程思维”的人来说， Python 通常是最合适的第一门语言。它语法接近自然语言，不用先搞懂复杂概念就能把想法变成代码；上手后能很快做出小工具、自动处理文件、爬点数据、画个图，成就感强。等你有了基础，再学第二门语言会快很多。下面给你一个“能直接跑起来”的起步示例，并顺便解释它在帮你建立什么编程思维。 1）先建立最基础的“变量 + 打印” name = \"小明\" age = 18 print(\"我叫\", name, \"…",
+      "sourceContentId": "src_zhihu_2036939663831736642"
+    },
+    {
+      "id": "ev_zhihu_2000245829546558793",
+      "kind": "source_excerpt",
+      "text": "学了快2年编程，我现在感觉可以先从AI做点小项目试试，基本不用代码，然后cs61a开始学python，这个学完直接all in c++就行，或者看你具体情况，可以做java方向的，不过感觉现在java快被python替代了，反正先学python和c++是对的",
+      "sourceContentId": "src_zhihu_2000245829546558793"
+    },
+    {
+      "id": "ev_zhihu_1997985770540136394",
+      "kind": "source_excerpt",
+      "text": "我做过Java，PHP，python，C#，前端。 你想用编程来工作吗？如果是想做的编程的工作，得根据你想做的工作来选。 python 一门好像什么都能做的语言：web开发（简单理解为建站），人工智能，大数据、运维（简单理解为管理服务器）。方向很多，真的工作你可能先只能选一个方向，以后可以拓展到其他方向。 就业来说，大城市好一些，三四线需求量不大。毕竟人工智能、大数据、运维这些，小公司搞不了或者用不着。 Java永远的神。Java…",
+      "sourceContentId": "src_zhihu_1997985770540136394"
+    }
+  ],
+  "arguments": [
+    {
+      "conclusion": "零基础学编程应从哪门语言入门取决于你的目标：科班路线选 C/C++，随便玩玩选 Python，Web 开发选 Java。",
+      "reasons": [
+        "想走科班路线、深入学习计算机科学知识，就从 C/C++ 开始",
+        "只是想随便玩玩、体验编程并搞几个稍微好玩的例子，就学 Python，还可以搞办公自动化、数据分析",
+        "确定目标是做 Web 开发，就学 Java"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_2030360414194770313"
+      ],
+      "qualifiers": [
+        "零基础",
+        "取决于个人目标"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_2030360414194770313",
+      "sourceContentId": "src_zhihu_2030360414194770313",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:13.191Z"
+      }
+    },
+    {
+      "conclusion": "零基础想学编程，应该从 JavaScript 开始入门。",
+      "reasons": [
+        "从 C 语言开始入门容易让人放弃。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1999471724153046560"
+      ],
+      "qualifiers": [
+        "尤其别听那些说从 C 开始的"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1999471724153046560",
+      "sourceContentId": "src_zhihu_1999471724153046560",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:12.680Z"
+      }
+    },
+    {
+      "conclusion": "零基础学编程应该从C语言开始入门。",
+      "reasons": [
+        "就算C只学了个一知半解，对以后转码永远有益处。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1999894777827717947"
+      ],
+      "qualifiers": [],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1999894777827717947",
+      "sourceContentId": "src_zhihu_1999894777827717947",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:14.625Z"
+      }
+    },
+    {
+      "conclusion": "零基础想学编程应从C或Python开始入门，具体选择取决于是否科班出身。",
+      "reasons": [
+        "科班建议学C或Python。",
+        "非科班建议学Python。",
+        "根据自己情况选择即可。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1997960419244015820"
+      ],
+      "qualifiers": [
+        "零基础",
+        "科班建议C或Python",
+        "非科班建议Python"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1997960419244015820",
+      "sourceContentId": "src_zhihu_1997960419244015820",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:15.854Z"
+      }
+    },
+    {
+      "conclusion": "零基础学编程应先看未来发展方向，再据此选择入门语言",
+      "reasons": [
+        "如果涉及系统底层，推荐C类的语言，比如C、C++",
+        "如果是Web开发，推荐Java和Javascript",
+        "如果是搞AI、算法或者系统运维类的，推荐Python"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1997664458839974972"
+      ],
+      "qualifiers": [
+        "具体入门语言取决于未来发展方向"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1997664458839974972",
+      "sourceContentId": "src_zhihu_1997664458839974972",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:16.161Z"
+      }
+    },
+    {
+      "conclusion": "零基础入门编程，应根据是否有计算机基础选择：有计算机相关专业基础则从C开始，没有则可以考虑Python。",
+      "reasons": [
+        "有计算机相关专业、学习过相关基础课程的，建议从C开始。",
+        "没有相关基础的，可以考虑Python。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1999485687951550352"
+      ],
+      "qualifiers": [
+        "针对后端方向；前端方向不作推荐"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1999485687951550352",
+      "sourceContentId": "src_zhihu_1999485687951550352",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:15.956Z"
+      }
+    },
+    {
+      "conclusion": "零基础学编程应该从Python开始入门。",
+      "reasons": [
+        "Python最是简单易用",
+        "Bilibili上有非常多的课程"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1998103400735348031"
+      ],
+      "qualifiers": [],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1998103400735348031",
+      "sourceContentId": "src_zhihu_1998103400735348031",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:17.499Z"
+      }
+    },
+    {
+      "conclusion": "零基础学编程不必一上来纠结语言，应先明确目标；若完全没有目标，建议从 Python 入门。",
+      "reasons": [
+        "想做网站或 App 后台，可选 Java 或 Go：Java 工作多、教材多，零基础好入手；Go 更轻但入门岗位相对少。",
+        "想做数据分析、爬虫或 AI 玩票，Python 几乎是唯一答案，因为语法简单、跑起来快。",
+        "想做前端页面，JavaScript 跑不掉，因为浏览器 F12 就能练；若什么目标都没有，Python 能让你前两周就写出能跑的东西，不易丢。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_2080326940892968127"
+      ],
+      "qualifiers": [
+        "针对零基础入门",
+        "以目标方向为区分",
+        "若完全没有目标则推荐 Python"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_2080326940892968127",
+      "sourceContentId": "src_zhihu_2080326940892968127",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:18.006Z"
+      }
+    },
+    {
+      "conclusion": "零基础入门编程应首选Python。",
+      "reasons": [
+        "Python语法最接近英语，不用写大量标点符号和大括号，例如打印“Hello World”只需一行代码。",
+        "Python学习曲线平缓，能快速体会到编程乐趣，且资源极多；学会后可应用于数据分析、人工智能、自动化办公、爬虫等多个热门领域。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_2039646173980570959"
+      ],
+      "qualifiers": [
+        "如果你没有特定目标，只是好奇或想提升"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_2039646173980570959",
+      "sourceContentId": "src_zhihu_2039646173980570959",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:17.697Z"
+      }
+    },
+    {
+      "conclusion": "对于完全零基础、只想先入门编程思维的人来说，Python通常是最合适的第一门语言。",
+      "reasons": [
+        "它语法接近自然语言，不用先搞懂复杂概念就能把想法变成代码。",
+        "上手后能很快做出小工具、自动处理文件、爬点数据、画个图，成就感强。",
+        "等你有了基础，再学第二门语言会快很多。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_2036939663831736642"
+      ],
+      "qualifiers": [
+        "对于完全零基础、只想先“入门编程思维”的人来说"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_2036939663831736642",
+      "sourceContentId": "src_zhihu_2036939663831736642",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:19.284Z"
+      }
+    },
+    {
+      "conclusion": "零基础学编程可以先学 Python 再学 C++，或根据情况走 Java 方向。",
+      "reasons": [
+        "可以先从 AI 做点小项目试试，基本不用代码，然后从 cs61a 开始学 Python。",
+        "Python 学完可以直接 all in C++。",
+        "感觉现在 Java 快被 Python 替代了。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_2000245829546558793"
+      ],
+      "qualifiers": [
+        "或者看你具体情况"
+      ],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_2000245829546558793",
+      "sourceContentId": "src_zhihu_2000245829546558793",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:19.111Z"
+      }
+    },
+    {
+      "conclusion": "零基础学编程选哪门语言入门，应取决于你想从事的编程工作方向；如果选Python，它可做web开发、人工智能、大数据、运维等多个方向，但就业在大城市更好，三四线城市需求不大。",
+      "reasons": [
+        "想做的编程工作决定语言选择。",
+        "Python能用于web开发、人工智能、大数据、运维等多个方向。",
+        "就业来说大城市好一些，三四线需求量不大，因为小公司搞不了或用不着人工智能、大数据、运维这些。"
+      ],
+      "evidenceIds": [
+        "ev_zhihu_1997985770540136394"
+      ],
+      "qualifiers": [],
+      "schemaVersion": "1.0.0-rc.2",
+      "id": "arg_zhihu_1997985770540136394",
+      "sourceContentId": "src_zhihu_1997985770540136394",
+      "extraction": {
+        "promptVersion": "argument-v1",
+        "modelId": "deepseek-flash",
+        "generatedAt": "2026-09-14T17:31:19.855Z"
+      }
+    }
+  ],
+  "students": [
+    {
+      "id": "stu_zhihu_2030360414194770313",
+      "sourceContentId": "src_zhihu_2030360414194770313",
+      "argumentId": "arg_zhihu_2030360414194770313",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 42,
+      "layout": {
+        "x": 24,
+        "y": 19
+      }
+    },
+    {
+      "id": "stu_zhihu_1997960419244015820",
+      "sourceContentId": "src_zhihu_1997960419244015820",
+      "argumentId": "arg_zhihu_1997960419244015820",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 45,
+      "layout": {
+        "x": 30,
+        "y": 19
+      }
+    },
+    {
+      "id": "stu_zhihu_1997664458839974972",
+      "sourceContentId": "src_zhihu_1997664458839974972",
+      "argumentId": "arg_zhihu_1997664458839974972",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 46,
+      "layout": {
+        "x": 36,
+        "y": 19
+      }
+    },
+    {
+      "id": "stu_zhihu_1999485687951550352",
+      "sourceContentId": "src_zhihu_1999485687951550352",
+      "argumentId": "arg_zhihu_1999485687951550352",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 47,
+      "layout": {
+        "x": 24,
+        "y": 25
+      }
+    },
+    {
+      "id": "stu_zhihu_2080326940892968127",
+      "sourceContentId": "src_zhihu_2080326940892968127",
+      "argumentId": "arg_zhihu_2080326940892968127",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 49,
+      "layout": {
+        "x": 30,
+        "y": 25
+      }
+    },
+    {
+      "id": "stu_zhihu_2039646173980570959",
+      "sourceContentId": "src_zhihu_2039646173980570959",
+      "argumentId": "arg_zhihu_2039646173980570959",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 50,
+      "layout": {
+        "x": 36,
+        "y": 25
+      }
+    },
+    {
+      "id": "stu_zhihu_2036939663831736642",
+      "sourceContentId": "src_zhihu_2036939663831736642",
+      "argumentId": "arg_zhihu_2036939663831736642",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 51,
+      "layout": {
+        "x": 24,
+        "y": 31
+      }
+    },
+    {
+      "id": "stu_zhihu_2000245829546558793",
+      "sourceContentId": "src_zhihu_2000245829546558793",
+      "argumentId": "arg_zhihu_2000245829546558793",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 52,
+      "layout": {
+        "x": 30,
+        "y": 31
+      }
+    },
+    {
+      "id": "stu_zhihu_1997985770540136394",
+      "sourceContentId": "src_zhihu_1997985770540136394",
+      "argumentId": "arg_zhihu_1997985770540136394",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_1"
+      },
+      "displaySeed": 53,
+      "layout": {
+        "x": 36,
+        "y": 31
+      }
+    },
+    {
+      "id": "stu_zhihu_1999471724153046560",
+      "sourceContentId": "src_zhihu_1999471724153046560",
+      "argumentId": "arg_zhihu_1999471724153046560",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_2"
+      },
+      "displaySeed": 43,
+      "layout": {
+        "x": 64,
+        "y": 25
+      }
+    },
+    {
+      "id": "stu_zhihu_1999894777827717947",
+      "sourceContentId": "src_zhihu_1999894777827717947",
+      "argumentId": "arg_zhihu_1999894777827717947",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_2"
+      },
+      "displaySeed": 44,
+      "layout": {
+        "x": 70,
+        "y": 25
+      }
+    },
+    {
+      "id": "stu_zhihu_1998103400735348031",
+      "sourceContentId": "src_zhihu_1998103400735348031",
+      "argumentId": "arg_zhihu_1998103400735348031",
+      "assignment": {
+        "kind": "cluster",
+        "clusterId": "clu_real_2"
+      },
+      "displaySeed": 48,
+      "layout": {
+        "x": 76,
+        "y": 25
+      }
+    }
+  ],
+  "clusters": [
+    {
+      "id": "clu_real_1",
+      "label": "按基础与目标选语言",
+      "labelKind": "ai_generated",
+      "summary": "零基础入门语言并无单一推荐，多数观点主张先看个人目标、方向或已有基础，再选 C/C++、Python、Java/JavaScript 等；若没有明确目标，则常被建议先学 Python。",
+      "commonReasons": [
+        "入门语言取决于未来想做的方向，如系统底层可选 C/C++，Web 开发可选 Java/JavaScript，AI、数据分析或运维可选 Python。",
+        "科班出身或有计算机基础者常建议从 C 开始，非科班或完全零基础者则多建议 Python。",
+        "若完全没有特定目标，Python 因语法简单、上手快、能快速做出小工具而常被推荐为先入门语言。"
+      ],
+      "studentIds": [
+        "stu_zhihu_2030360414194770313",
+        "stu_zhihu_1997960419244015820",
+        "stu_zhihu_1997664458839974972",
+        "stu_zhihu_1999485687951550352",
+        "stu_zhihu_2080326940892968127",
+        "stu_zhihu_2039646173980570959",
+        "stu_zhihu_2036939663831736642",
+        "stu_zhihu_2000245829546558793",
+        "stu_zhihu_1997985770540136394"
+      ],
+      "representativeArgumentIds": [
+        "arg_zhihu_2030360414194770313",
+        "arg_zhihu_1997960419244015820"
+      ],
+      "limits": [
+        "成员对入门语言的推荐并不一致，C/C++、Python、Java、JavaScript 和 Go 都出现在建议中。",
+        "部分推荐附有科班、方向、城市就业等限定条件，不能推广为所有零基础学习者的统一答案。",
+        "资料只呈现个人观点，不代表这些语言选择具有正确性、支持率或社会共识。"
+      ],
+      "confidence": "low",
+      "renderMode": "clustered",
+      "layout": {
+        "centerX": 30,
+        "centerY": 25
+      }
+    },
+    {
+      "id": "clu_real_2",
+      "label": "入门语言各有所荐",
+      "labelKind": "ai_generated",
+      "summary": "针对零基础学编程从哪门语言入门，材料中的论证分别推荐 JavaScript、C 语言和 Python，各自依据放弃风险、长期收益与易用性和学习资源来支持选择。",
+      "commonReasons": [
+        "推荐理由涉及学习门槛与是否容易坚持，例如担心太难而放弃。",
+        "推荐理由涉及长期收益或工具易用性，如对以后转码有帮助、语言简单易用且课程多。"
+      ],
+      "studentIds": [
+        "stu_zhihu_1999471724153046560",
+        "stu_zhihu_1999894777827717947",
+        "stu_zhihu_1998103400735348031"
+      ],
+      "representativeArgumentIds": [
+        "arg_zhihu_1999471724153046560",
+        "arg_zhihu_1999894777827717947"
+      ],
+      "limits": [
+        "这些论证对入门语言的结论并不一致，分别推荐 JavaScript、C 语言和 Python，不能视为共同立场。",
+        "材料只给出少量理由和证据，未比较各语言的完整学习效果或适用人群。"
+      ],
+      "confidence": "low",
+      "renderMode": "clustered",
+      "layout": {
+        "centerX": 70,
+        "centerY": 25
+      }
+    }
+  ],
+  "representatives": [
+    {
+      "clusterId": "clu_real_1",
+      "title": "按基础与目标选语言",
+      "commonReasons": [
+        "入门语言取决于未来想做的方向，如系统底层可选 C/C++，Web 开发可选 Java/JavaScript，AI、数据分析或运维可选 Python。",
+        "科班出身或有计算机基础者常建议从 C 开始，非科班或完全零基础者则多建议 Python。",
+        "若完全没有特定目标，Python 因语法简单、上手快、能快速做出小工具而常被推荐为先入门语言。"
+      ],
+      "representativeSourceIds": [
+        "src_zhihu_2030360414194770313",
+        "src_zhihu_1997960419244015820"
+      ],
+      "exampleResponses": [
+        {
+          "promptKey": "cross_cluster",
+          "text": "零基础入门语言并无单一推荐，多数观点主张先看个人目标、方向或已有基础，再选 C/C++、Python、Java/JavaScript 等；若没有明确目标，则常被建议先学 Python。",
+          "evidenceIds": [
+            "ev_zhihu_2030360414194770313"
+          ]
+        }
+      ],
+      "disclosure": "AI 基于当前摘要整理的观点组代表，不是真实答主或知乎立场。"
+    },
+    {
+      "clusterId": "clu_real_2",
+      "title": "入门语言各有所荐",
+      "commonReasons": [
+        "推荐理由涉及学习门槛与是否容易坚持，例如担心太难而放弃。",
+        "推荐理由涉及长期收益或工具易用性，如对以后转码有帮助、语言简单易用且课程多。"
+      ],
+      "representativeSourceIds": [
+        "src_zhihu_1999471724153046560",
+        "src_zhihu_1999894777827717947"
+      ],
+      "exampleResponses": [
+        {
+          "promptKey": "cross_cluster",
+          "text": "针对零基础学编程从哪门语言入门，材料中的论证分别推荐 JavaScript、C 语言和 Python，各自依据放弃风险、长期收益与易用性和学习资源来支持选择。",
+          "evidenceIds": [
+            "ev_zhihu_1999471724153046560"
+          ]
+        }
+      ],
+      "disclosure": "AI 基于当前摘要整理的观点组代表，不是真实答主或知乎立场。"
+    }
+  ]
+}

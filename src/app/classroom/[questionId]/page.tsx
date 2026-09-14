@@ -39,6 +39,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
   return (
     <ClassroomExperience
+      key={`${classroom.question.id}:${classroom.revision}`}
       classroom={classroom}
       demoScenario={demoScenario}
     />

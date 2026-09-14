@@ -9,7 +9,7 @@
 - prepare：schemaVersion、stage=prepare、questionId、classroomRevision、noteText（50–8000 UTF-16 code units）、idempotencyKey。返回 stage=prepared、seatmate（当前 studentId、匹配原因、共同点、差异、一次 challenge、示例回应）、evidenceIds、challengeToken。
 - complete：共用字段 + stage=complete、answerText（10–4000）、challengeToken。返回 stage=completed、classNote、mySeat、zhihuDraft、evidenceIds、学习 id 与当前 questionId/revision。提纲限制 3–5 项，每项最多 300 字，不输出完整回答。
 - success/error envelope 复用现有合同；live/sample 分别披露；不在结果中携带用户笔记全文的日志副本。
-- token 错误/过期=INVALID_INPUT + retry，revision 不匹配=CLASSROOM_REVISION_MISMATCH，模型错误复用 PROVIDER_* / STRUCTURED_OUTPUT_INVALID。
+- token 错误/过期=INVALID_INPUT + none（ADR-0011：界面保留输入并提示重新开始，旧 token 不可直接复用），revision 不匹配=CLASSROOM_REVISION_MISMATCH，模型错误复用 PROVIDER_* / STRUCTURED_OUTPUT_INVALID。
 - 本次 idempotency 仅单实例的有界在途去重，key+请求 body hash 绑定。不同 body 同 key 不复用。不能宣传分布式幂等或 exactly-once。
 
 ## 证据与状态
