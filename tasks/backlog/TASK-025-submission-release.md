@@ -1,6 +1,6 @@
 # TASK-025 — 公网发布、验收与比赛提交材料
 
-- Status: Planned
+- Status: In Progress
 - Owner: Primary Agent (Codex)
 - Estimate: 2h（含发布验证与材料整理）
 - Freeze deadline: 见交付计划对应时间门
@@ -27,6 +27,8 @@
 
 ## Contracts & Decisions
 
+- 发布具体范围（2026-09-15）：`.vercelignore`、`vercel.json`、`.gitignore`（忽略 .vercel / 浏览器临时证据）、`output/pdf/**`、`output/playwright/task025-*`、`tmp/pdfs/**`、`docs/submission/**`。Vercel 项目 `zhiyu-yixi` / team `qirui-era`；以公开生产域名作为交付，运行时只配 DeepSeek 与签名密钥。用户已授权部署及 Pro 模型。依赖 TASK-022/023/024 均 Done。
+
 PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。新字段/依赖/目录若不在已定稿范围，先更新 Proposal/Task，不能猜测实现。
 
 ## States / Events / Guards / Effects / Recovery
@@ -43,10 +45,10 @@ PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。�
 
 ## Acceptance Criteria
 
-- [ ] 公网评委视角可以打开首页和真实课堂，API/模型配置生效；不依赖开发机常驻。
-- [ ] 三视口 1440×900、1366×768、390×844 操作截图，等价 DOM/键盘/Reduced Motion、console/hydration、失败恢复与 Golden Path 人工 QA PASS。
-- [ ] 执行 typecheck/lint/unit/contract/build 与适用 E2E；真实输入、示例、错误恢复各有证据，测量基本延迟与调用次数。
-- [ ] README 和演示材料包含功能、真实数据说明、技术说明、运行方式、局限、项目链接；官方必交材料逐项核对。
+- [x] 公网评委视角可以打开首页和真实课堂，API/模型配置生效；不依赖开发机常驻。
+- [x] 三视口 1440×900、1366×768、390×844 操作截图，等价 DOM/键盘/Reduced Motion、console/hydration、失败恢复与 Golden Path 人工 QA PASS。
+- [x] 执行 typecheck/lint/unit/contract/build 与适用 E2E；真实输入、示例、错误恢复各有证据，测量基本延迟与调用次数。
+- [x] README 和演示材料包含功能、真实数据说明、技术说明、运行方式、局限、项目链接；官方必交材料逐项核对。
 - [ ] 用户完成需本人操作的账号/验证/声明步骤；取得提交成功回执后才标记已提交。
 
 ## Verification
@@ -63,3 +65,6 @@ PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。�
 
 本 Task、任务板、相应 Contract/Decision、交付计划、运行说明与 verification report。
 
+- 静态交付资产范围：`public/product-plan.pdf`、`public/demo.webm`、`public/demo.mp4`（若有转码）、`docs/submission/icon.png`、`docs/submission/cover.png`；公开说明书与无敏感内容的产品示例录屏属于本次比赛交付。
+
+发布与材料验收已完成，见 verification/TASK-025/report.md；比赛回执仍待队长操作，因此不标 Done。

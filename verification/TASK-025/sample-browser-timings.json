@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://zhiyu-yixi.vercel.app/api/v1/candidate-seat",
+    "durationMs": 440
+  },
+  {
+    "url": "https://zhiyu-yixi.vercel.app/api/v1/learning-turn",
+    "durationMs": 440
+  },
+  {
+    "url": "https://zhiyu-yixi.vercel.app/api/v1/learning-turn",
+    "durationMs": 555
+  }
+]

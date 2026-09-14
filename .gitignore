@@ -11,3 +11,11 @@ test-results/
 *.log
 .DS_Store
 Thumbs.db
+.vercel/
+.playwright-cli/
+tmp/pdfs/
+
+.vercel
+.env*
+
+output/playwright/task025-demo.webm
