@@ -1,6 +1,6 @@
 # TASK-028 — 经验入席、黑板更新与分享邀请
 
-- Status: In Progress
+- Status: Done
 - Owner: Primary Agent
 - Estimate: 2h + 发布验收
 - Freeze deadline: 2026-09-15 09:00；10:00 提交截止
@@ -20,14 +20,16 @@ TASK-026/027 Done；用户明确选择推荐方向，尚无作品专属链接。
 PROP-0008、PDR-0006、CONTRIBUTION_CONTRACT v1；学习 API unchanged。固定“用户自述 · 未独立核验”“示例经历 · 虚构”“仅在本次课堂展示”“邀请不包含你的经历”。状态按独立判别联合 reducer；保留原 Candidate 路径。
 
 ## Acceptance Criteria
-- [ ] A. 三间有各自的经历邀请与明确虚构示例；自己的经历通过实际一次追问/整理，相关或重复观点无需新颖性门槛，原 Candidate 合同不变。
-- [ ] B. 原事件/行动/结果/回应与 AI 草稿可核对；可编辑 summary/boundary；确认前黑板不变，确认后新材料可查看和撤回；不改变真实数据或冒充公共存储。
-- [ ] C. 下载贡献卡、复制邀请、保存邀请图可用；个人文本和 token 不进分享；失败有可用恢复；分享回到正确教室和经历入口。
-- [ ] D. 三视口、键盘、Reduced Motion、网络错误/Retry/取消/Reset/切题/晚到/第二次操作、非示例 Live 验证及原九条 GP 回归通过；typecheck/lint/test/build PASS。
-- [ ] E. 新版生产与 PDF/录屏/文案/代码/材料包同步并校验，保留上版恢复点；没有虚构人气或投稿回执。
+- [x] A. 三间有各自的经历邀请与明确虚构示例；自己的经历通过实际一次追问/整理，相关或重复观点无需新颖性门槛，原 Candidate 合同不变。
+- [x] B. 原事件/行动/结果/回应与 AI 草稿可核对；可编辑 summary/boundary；确认前黑板不变，确认后新材料可查看和撤回；不改变真实数据或冒充公共存储。
+- [x] C. 下载贡献卡、复制邀请、保存邀请图可用；个人文本和 token 不进分享；失败有可用恢复；分享回到正确教室和经历入口。
+- [x] D. 三视口、键盘、Reduced Motion、网络错误/Retry/取消/Reset/切题/晚到/第二次操作、非示例 Live 验证及原九条 GP 回归通过；typecheck/lint/test/build PASS。
+- [x] E. 新版生产与 PDF/录屏/文案/代码/材料包同步并校验，保留上版恢复点；没有虚构人气或投稿回执。
 
 ## Verification / Recovery
 verification/TASK-028/report.md；原 TASK-027 GP 脚本与新增贡献流程脚本。API 失败保留输入、Retry 或明确人工整理；Snapshot Golden Path 仍可用。记录不能解决的阻断，不能猜测降级。
 
 ## Docs / Rollback
 更新任务、合同、发布、提交和求职文档。回退到 TASK-027 部署；不动真实快照或个人配置。
+
+完成证据：verification/TASK-028/report.md。最终代码 f2aa5d8，生产 dpl_C2XoQB19Zfi1oj5LYdL5u4N9NxYE；81 tests、三视口新旧流程、公网 Live + 完成阶段重试、6 页 PDF、125.40 秒视频、36 项总包与 296 项源码均验证。知乎投稿与身份声明由队长完成，未冒称取得回执。

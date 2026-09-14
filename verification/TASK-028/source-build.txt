@@ -1,0 +1,49 @@
+
+> zhiyu-yixi@0.1.0 prebuild
+> node --conditions=react-server scripts/validate-snapshots/check.ts
+
+{"ok":true,"snapshotId":"snap_zhihu_20260914185414007","sources":12,"clusters":2,"speakers":2}
+{"ok":true,"questionId":"q_projects_and_foundations","mode":"mock","sources":24,"clusters":4}
+{"ok":true,"questionId":"q_learning_with_ai","mode":"mock","sources":24,"clusters":4}
+
+> zhiyu-yixi@0.1.0 build
+> next build
+
+▲ Next.js 16.3.3 (Turbopack)
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of D:\Vibe Project\zhihu_heike_idea\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles:
+   * D:\Vibe Project\zhihu_heike_idea\output\submission\TASK-028-source-check\Zhiyu\package-lock.json
+
+✓ Running next.config.ts took 25ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.8s
+  Running TypeScript ...
+  Finished TypeScript in 3.2s ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/7) ...
+  Generating static pages using 9 workers (1/7)
+  Generating static pages using 9 workers (3/7)
+  Generating static pages using 9 workers (5/7)
+✓ Generating static pages using 9 workers (7/7) in 1008ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/v1/candidate-seat
+├ ƒ /api/v1/classrooms/[questionId]
+├ ƒ /api/v1/learning-turn
+├   /classroom/[questionId]
+│ ├ ● /classroom/q_learn_programming
+│ ├ ● /classroom/q_projects_and_foundations
+│ └ ● /classroom/q_learning_with_ai
+└ ○ /icon.svg
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand

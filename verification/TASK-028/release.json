@@ -1,0 +1,60 @@
+{
+  "release": "2026-09-15-experience-contribution",
+  "team": "知乎有你一席",
+  "leader": "杨骐瑞",
+  "school": "湖北师范大学",
+  "branch": "task/TASK-028-experience-contribution",
+  "sourceCommit": "f2aa5d810265909020d2d1254781b1f94a6856cb",
+  "productCommit": "e6d8653",
+  "deploymentId": "dpl_C2XoQB19Zfi1oj5LYdL5u4N9NxYE",
+  "deploymentUrl": "https://zhiyu-yixi-ji3hkzg43-qirui-era.vercel.app",
+  "productionUrl": "https://zhiyu-yixi.vercel.app",
+  "repositoryUrl": "https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-028-experience-contribution",
+  "snapshotId": "snap_zhihu_20260914185414007",
+  "classrooms": [
+    {
+      "number": "101",
+      "sourceCount": 12,
+      "groups": 2,
+      "source": "real_zhihu_summary_snapshot"
+    },
+    {
+      "number": "102",
+      "sourceCount": 24,
+      "groups": 4,
+      "source": "authored_synthetic"
+    },
+    {
+      "number": "103",
+      "sourceCount": 24,
+      "groups": 4,
+      "source": "authored_synthetic"
+    }
+  ],
+  "pdfPages": 6,
+  "video": {
+    "seconds": 125.4,
+    "width": 1366,
+    "height": 768,
+    "fps": 25,
+    "audio": false,
+    "execution": "101 exact sample; 102 fictional experience with two live model calls; 103 explicit manual",
+    "recordedOn": "local_production_build",
+    "recordedFromCommit": "e6d8653ba2cd2d8bc7c092b1b1140cb6f3ece208"
+  },
+  "publicAssets": [
+    {
+      "sha256": "6acb3444cbbe59c30341fecb4b07933e92a3f7fe41730e307b64374bb6d458e2",
+      "bytes": 480104,
+      "path": "/product-plan.pdf"
+    },
+    {
+      "sha256": "98d44d3f3e25eba8de2cea08c8556cb7826e1025ee59b9d1a303f3681c5a85b3",
+      "bytes": 9797722,
+      "path": "/demo.webm"
+    }
+  ],
+  "submissionReceipt": "not_received",
+  "submitted": false,
+  "refinement": "Final code adds direct-question validation and stronger fictional-input grounding; UI, PDF and video are byte-unchanged."
+}

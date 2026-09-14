@@ -2,7 +2,7 @@
 
 当前生产地址：https://zhiyu-yixi.vercel.app
 
-当前为 TASK-027 三教室版本：101 真实 Snapshot，102/103 合成目录；均支持完整个人学习与笔记下载。部署 dpl_F4UTjwFEWsLMfcq9K4dGJJBtxord，代码/附件提交 808756061fb6abc958637a8c2f330946a0533d26。当前验收与 SHA-256 见 verification/TASK-027；下文首次发布记录为历史恢复点。
+当前为 TASK-028 经验入席版：三教室新增独立经历入口、一次直接追问、本人确认的贡献卡、黑板更新与邀请。最终部署 dpl_C2XoQB19Zfi1oj5LYdL5u4N9NxYE，代码/公开附件提交 f2aa5d810265909020d2d1254781b1f94a6856cb。81 项测试通过；最新公网、录屏和 SHA-256 见 verification/TASK-028。录屏 UI 基于 e6d8653，最终仅收紧服务端追问，不改变公开媒体。TASK-027 部署 dpl_F4UTjwFEWsLMfcq9K4dGJJBtxord 保留为恢复点。
 
 项目：qirui-era / zhiyu-yixi。运行地区 hkg1（已从生产响应 x-vercel-id 核实）；构建机器地区 iad1 与运行地区不同。首次发布 ID：dpl_8T9PS2CqfvdR2ZY2KuweT9kyE1Co。
 
@@ -24,7 +24,7 @@
 
 模型超时：保留用户输入并重试。精确示例可继续；修改后的输入绝不套用旧 Sample。Flash 曾出现连续生成超时，Pro 经授权验证可用，不自动切回 Flash。
 
-学习 token 过期：保留可见输入，重新开始本次学习。不得把过期签名重试描述为可恢复。
+学习 token 过期：保留可见输入，重新开始本次学习；经验面板可返回修改经历并重新整理。不得把过期签名直接重试描述为可恢复。
 
 发布失败：以已验证生产 deployment 为恢复点，用 Vercel 项目部署记录恢复；不要覆盖历史 Snapshot。当前真实版本为 snap_zhihu_20260914185414007。
 

@@ -1,6 +1,6 @@
 # TASK-028 验收报告
 
-Status: Local PASS；生产发布与材料包校验进行中。
+Status: PASS。2026-09-15 完成产品、生产与参赛材料更新；知乎投稿由队长最终操作。
 
 ## 范围与依据
 
@@ -31,7 +31,23 @@ Status: Local PASS；生产发布与材料包校验进行中。
 
 浏览器脚本调试曾遇到 Windows 剪贴板换行归一化及读取焦点等待；实际复制内容已核对，重复验收检查复制成功反馈及邀请原文。最后的生产验收使用独立浏览器顺序执行，避免测试共享页面互相干扰；调试失败不计为 PASS。
 
-## 待完成
 
-公网版本、公开 PDF/视频字节校验、源码包独立安装构建、提交包 CRC/凭证扫描、最终 Task 状态。队长尚需在知乎完成最终投稿并保存回执。
 
+
+## 最终公网与材料
+
+- 生产地址：https://zhiyu-yixi.vercel.app
+- 最终代码与公开附件提交：f2aa5d810265909020d2d1254781b1f94a6856cb。
+- 最终部署：dpl_C2XoQB19Zfi1oj5LYdL5u4N9NxYE，https://zhiyu-yixi-ji3hkzg43-qirui-era.vercel.app，Vercel READY。
+- 三视口 × 三教室 × 新旧两条路径，共 18 条公网操作通过。记录 public-contribution-*.json / public-legacy-*.json，截图在 output/playwright/TASK-028/public/。
+- 公网首次 Live 验收发现模型用内部分析代替问句；随后增加经验专用的单个直接问句校验与有限重试，强化虚构材料身份和生成边界。最终 Live 复验通过 prepare / 注入 complete 503 / 保留回应 / retry / complete / 修改确认 / 下载；实际结果见 live-production.json。初次输出保留在 live-production-before-refinement.json，不计为最终问句质量通过。
+- 18 条 UI 验收基于 e6d8653；最后 f2aa5d8 只收紧服务端经验追问、增加测试和对应说明，没有改 UI、数据或公开媒体。最终补验直接问句、实际生成、完成阶段错误恢复及公开附件；未无故重复全部 UI 流程。
+- 81 项测试全部通过，最终类型检查、lint、生产 build 通过。参赛 ZIP 解压安装 454 个依赖后构建成功，替换为最终源码重建成功，解包后的 81 项测试通过。记录 source-build.txt / source-tests.txt。嵌套复验目录触发 Next.js 多锁文件提示，实际构建完成；未新增工程依赖或修改配置掩盖提示。
+- 6 页 PDF 已逐页检查；公开 PDF 480104 字节，视频 9797722 字节，均 HTTP 200，SHA-256 与 Git 中公开附件和本机文件一致，见 public-assets.json / release.json。
+- 视频 125.40 秒、1366×768、25 fps、无旁白。录于 e6d8653 本机生产构建：101 精确示例三次请求；102 虚构经历两次 Live；103 明确人工整理。后续只改问句校验与提示，录屏中的直接追问满足新约束，UI 与媒体保持相同。全过程无页面异常，记录 recording.json。
+- 提交包 36 项文件；参赛源码 296 项文件。最终包验证 ZIP CRC、必需文件、实际凭证扫描、公开媒体与 Git 一致性，见 package-check.json。源码版本固定 f2aa5d8，包含开发时点文档；总包 10_验收报告.md 与最终分支上的本报告记录完成后的验收。
+- 旧版本恢复点：TASK-027 的 dpl_F4UTjwFEWsLMfcq9K4dGJJBtxord。未更改真实 Snapshot、原 Candidate 规则、依赖、用户 AGENTS.md / next-env.d.ts 或本机凭证。
+
+## 尚需队长完成
+
+当前明确“尚未提交”，未获得作品专属链接、点赞数据或投稿回执。队长须于 9 月 15 日 10:00 前完成知乎最终提交，按实际情况确认身份与声明并保存回执。提交后可在本人邀请消息中附作品页链接，邀请真实体验者自愿评价。当前未接 OAuth，不宣称平台已计入邀请产生的使用量，也不保证人气奖结果。

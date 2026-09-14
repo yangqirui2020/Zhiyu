@@ -1,0 +1,51 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions -- Executed by playwright-cli run-code. */
+async (page) => {
+  const origin = "https://zhiyu-yixi.vercel.app";
+  const responses = [];
+  const collect = async response => {
+    if (!response.url().includes("/learning-turn") || response.request().method() !== "POST") return;
+    const body = await response.json(); responses.push({ status: response.status(), mode: body.meta?.mode, stage: body.data?.stage });
+  };
+  page.on("response", collect);
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto(origin);
+  await page.goto(`${origin}/classroom/q_learn_programming#experience`);
+  const event = "这是验收用虚构情境：我第一次学 Python 想给摄影社团整理照片。小脚本遇到中文文件名时停止运行，我起初怀疑是编程语言不适合自己。";
+  await page.getByRole("textbox", { name: "发生了什么", exact: true }).fill(event);
+  await page.getByRole("textbox", { name: "你采取了什么办法", exact: true }).fill("我保留原始文件，把任务缩小为复制两张照片，并核对日志中的路径。创建缺少的目标目录后，这两张照片可以复制了。");
+  await page.getByRole("textbox", { name: "结果与仍不确定的地方", exact: true }).fill("我尚未测试重名和日期信息缺失的照片，因此这个小结果不能代表归档工具已经完成。");
+  await page.getByRole("button", { name: "让同桌追问一个细节 →", exact: true }).click();
+  const input = page.getByRole("textbox", { name: "我对这次追问的回应", exact: true });
+  await input.waitFor({ timeout: 35000 });
+  const question = await page.getByRole("complementary").locator("blockquote").first().innerText();
+  if (!/你/.test(question) || !/[？?]$/.test(question.trim()) || (question.match(/[？?]/g)?.length ?? 0) !== 1) throw new Error("Experience question is not a single direct question");
+  const answer = "这仍是虚构验收情境。我只检查了两张不同名照片的复制结果。下一步会准备重名但内容不同的照片，要求都保留且能追溯新名字；没有日期的照片放到待确认目录。测试之后再比较文件数量和原文件是否完整，目前这些边界检验还没有执行。";
+  await input.fill(answer);
+  const failing = async route => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: { message: "QA simulated complete failure" } }) });
+  await page.route("**/api/v1/learning-turn", failing, { times: 1 });
+  await page.getByRole("button", { name: "根据这次回应整理贡献卡 →", exact: true }).click();
+  await page.getByRole("button", { name: "重试整理回应", exact: true }).waitFor();
+  if (await input.inputValue() !== answer) throw new Error("Complete failure lost actual answer");
+  await page.getByRole("button", { name: "重试整理回应", exact: true }).click();
+  const summaryInput = page.getByRole("textbox", { name: "我希望课堂多考虑的一点", exact: true });
+  await summaryInput.waitFor({ timeout: 35000 });
+  const summary = await summaryInput.inputValue();
+  if (/真实亲历|这段亲历/.test(summary)) throw new Error("Declared fictional QA scenario relabeled as lived experience");
+  const boundary = await page.getByRole("textbox", { name: "这段材料适用于什么，不能证明什么", exact: true }).inputValue();
+  await page.getByRole("button", { name: "确认表述，把这份材料留在黑板上 →", exact: true }).click();
+  await page.getByRole("button", { name: "修改这张贡献卡", exact: true }).click();
+  await page.getByRole("textbox", { name: "这段材料适用于什么，不能证明什么", exact: true }).fill(boundary + "仍需核对实际情况。");
+  await page.getByRole("button", { name: "确认表述，把这份材料留在黑板上 →", exact: true }).click();
+  await page.getByText("核对贡献卡的原始材料", { exact: true }).click();
+  const cardText = await page.getByRole("complementary").innerText();
+  if (![event, question, answer].every(text => cardText.includes(text))) throw new Error("Editing card lost original expression");
+  const downloading = page.waitForEvent("download");
+  await page.getByRole("button", { name: "下载我的贡献卡", exact: true }).click();
+  const downloaded = await downloading;
+  await downloaded.saveAs("output/playwright/TASK-028/public/live-101-contribution.md");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: "output/playwright/TASK-028/public/live-101-contribution-1366.png", fullPage: true });
+  page.off("response", collect);
+  if (responses.filter(r => r.status === 200 && r.mode === "live").length !== 2 || responses.filter(r => r.status === 503).length !== 1) throw new Error("Expected two live stages and one injected failure");
+  return { testedAt: new Date().toISOString(), origin, syntheticQaInput: true, responses, question, summary, boundary, completeRetry: true, actualInputPreserved: true, editedCardPreservedQuestion: true, downloaded: true };
+}
