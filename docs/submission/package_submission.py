@@ -5,10 +5,11 @@ import hashlib, io, json, re, subprocess, tarfile, zipfile
 root = Path.cwd()
 out = root / 'output/submission'
 out.mkdir(parents=True, exist_ok=True)
-release = json.loads((root / 'verification/TASK-027/release.json').read_text(encoding='utf-8-sig'))
+release = json.loads((root / 'verification/TASK-028/release.json').read_text(encoding='utf-8-sig'))
 commit = release['sourceCommit']
 archive = subprocess.check_output(['git', 'archive', '--format=tar', commit], cwd=root)
-allowed_dirs = {'src', 'data', 'scripts', 'tests', 'public', 'docs', 'tasks', '.github'}
+allowed_dirs = {'src', 'data', 'scripts', 'tests', 'public', 'docs', 'tasks', '.github', 'verification'}
+editable_plan_images = {'output/playwright/TASK-028/home-1440.png', 'output/playwright/TASK-028/blackboard-detail.png'}
 excluded_dirs = {'node_modules', '.next', '.vercel', '.git', '.playwright-cli', '__pycache__'}
 secret_pattern = re.compile(rb'sk-[a-f0-9]{24,}')
 local_secret_values = []
@@ -25,7 +26,9 @@ with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
         if not member.isfile():
             continue
         path = Path(member.name)
-        if len(path.parts) > 1 and path.parts[0] not in allowed_dirs:
+        if len(path.parts) > 1 and path.parts[0] not in allowed_dirs and member.name not in editable_plan_images:
+            continue
+        if path.parts[0] == 'verification' and (len(path.parts) < 2 or path.parts[1] != 'TASK-028'):
             continue
         if set(path.parts) & excluded_dirs:
             raise RuntimeError(f'Unexpected excluded directory: {path}')
@@ -38,7 +41,9 @@ with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
 
 required = ['package.json', 'package-lock.json', '.env.example', 'README.md',
             'src/app/page.tsx', 'data/classrooms/catalog.ts',
-            'data/classrooms/synthetic-lessons.ts', 'data/snapshots/active.json']
+            'data/classrooms/synthetic-lessons.ts', 'data/snapshots/active.json',
+            'src/domain/schemas/contribution.ts', 'src/features/contribution/contribution-machine.ts',
+            'src/features/contribution/ContributionPanel.tsx', 'data/contributions/invitations.ts']
 assert all(name in files for name in required), 'Missing reproducibility files'
 assert files['public/product-plan.pdf'] == (root / 'public/product-plan.pdf').read_bytes()
 assert files['public/demo.webm'] == (root / 'public/demo.webm').read_bytes()
@@ -64,36 +69,42 @@ def add(name, path):
     entries[name] = (root / path).read_bytes()
 
 add('01_产品说明书.pdf', 'public/product-plan.pdf')
-add('02_三教室演示.webm', 'public/demo.webm')
+add('02_经验入席演示.webm', 'public/demo.webm')
 add('03_图标.png', 'docs/submission/icon.png')
 add('04_三教室封面.png', 'docs/submission/cover.png')
 add('05_演示讲稿.md', 'docs/submission/DEMO_SCRIPT.md')
 add('06_提交信息.md', 'docs/submission/SUBMISSION_FIELDS.md')
 entries['07_参赛代码.zip'] = source.read_bytes()
 for number in ('101', '102', '103'):
-    add(f'08_截图/{number}_课堂.png', f'output/playwright/TASK-027/{number}-ready-1440.png')
-    add(f'08_截图/{number}_完成一课.png', f'output/playwright/TASK-027/{number}-seated-1440.png')
-    add(f'09_课堂笔记示例/{number}_笔记.md', f'output/playwright/TASK-027/{number}-classnote-1440.md')
-add('08_截图/首页_三间教室.png', 'output/playwright/TASK-027/home-1440.png')
-add('08_截图/103_手机完整课堂.png', 'output/playwright/TASK-027/103-ready-390.png')
-add('10_验收报告.md', 'verification/TASK-027/report.md')
+    add(f'08_截图/{number}_课堂.png', f'output/playwright/TASK-028/{number}-ready-1440.png')
+    add(f'08_截图/{number}_完成一课.png', f'output/playwright/TASK-028/{number}-seated-1440.png')
+    add(f'08_截图/{number}_确认贡献.png', f'output/playwright/TASK-028/{number}-contributed-1440.png')
+    add(f'09_课堂产物/{number}_笔记.md', f'output/playwright/TASK-028/{number}-classnote-1440.md')
+    add(f'09_课堂产物/{number}_贡献卡.md', f'output/playwright/TASK-028/{number}-contribution-1440.md')
+    add(f'13_邀请图/{number}_邀请.png', f'output/playwright/TASK-028/{number}-invite-1440.png')
+add('08_截图/首页_三间教室.png', 'output/playwright/TASK-028/home-1440.png')
+add('08_截图/黑板新增材料.png', 'output/playwright/TASK-028/blackboard-detail.png')
+add('08_截图/103_手机贡献全流程.png', 'output/playwright/TASK-028/103-contributed-390.png')
+add('09_课堂产物/102_录屏实际AI贡献卡.md', 'output/playwright/TASK-028/video-102-contribution.md')
+add('10_验收报告.md', 'verification/TASK-028/report.md')
 add('11_Agent学习与求职说明.md', 'docs/operations/AGENT_LEARNING_AND_RESUME.md')
 add('12_产品说明书可编辑稿.md', 'docs/submission/PRODUCT_PLAN.md')
+add('14_人气奖行动与邀请文案.md', 'docs/submission/POPULARITY_PLAN.md')
 # Keep editable Markdown images resolvable after moving the document to the package root.
 entries['12_产品说明书可编辑稿.md'] = entries['12_产品说明书可编辑稿.md'].replace(
-    b'../../output/playwright/TASK-026/home-1440.png', '08_截图/首页_三间教室.png'.encode()).replace(
-    b'../../output/playwright/TASK-026/102-seated-1440.png', '08_截图/102_完成一课.png'.encode())
-entries['00_先读我.md'] = f'''# 知遇·一席｜三教室新版提交包
+    b'../../output/playwright/TASK-028/home-1440.png', '08_截图/首页_三间教室.png'.encode()).replace(
+    b'../../output/playwright/TASK-028/blackboard-detail.png', '08_截图/黑板新增材料.png'.encode())
+entries['00_先读我.md'] = f'''# 知遇·一席｜经验入席版提交包
 
 团队：知乎有你一席 · 杨骐瑞 · 湖北师范大学
 截止：2026-09-15 10:00（北京时间）。本包不代表已在知乎完成投稿。
 
 1. 先看 06_提交信息.md，将 Demo 链接与作品介绍填入官方提交页。
 2. 上传 01_产品说明书.pdf；需要时用 03_图标.png、04_三教室封面.png。
-3. 02_三教室演示.webm 是 2 分 10 秒、1366×768 的无旁白示例录屏。
-4. 源码链接指向 TASK-027 新版分支；07_参赛代码.zip 可独立解压运行。
-5. 09_课堂笔记示例/ 是浏览器实际下载的三个示例产物。
-6. 完成最终提交，保存成功回执；旧单教室材料已被此包替代。
+3. 02_经验入席演示.webm 为 {release['video']['seconds']} 秒、1366×768 无旁白录屏，含 101 原有示例、102 实际模型整理虚构经历、103 明确人工整理。
+4. 源码链接指向 TASK-028 新版分支；07_参赛代码.zip 可独立解压运行。
+5. 09_课堂产物/ 为浏览器实际下载的示例产物，13_邀请图/ 可与公开课堂链接一起分享。
+6. 完成最终提交，保存成功回执；此前三教室材料已被本包替代，后续按 14_人气奖行动与邀请文案.md 邀请真实体验者。
 
 ## 运行代码
 
@@ -103,7 +114,8 @@ entries['00_先读我.md'] = f'''# 知遇·一席｜三教室新版提交包
     Copy-Item .env.example .env.local
 
 在 .env.local 填写独立随机的 LEARNING_SESSION_SECRET（至少 32 字符）。
-示例流程无需模型凭证；使用自己的观点需要配置 STRUCTURED_OUTPUT_API_KEY。
+原有精确示例无需模型凭证；自己的观点和经验追问需要 STRUCTURED_OUTPUT_API_KEY。
+经验的“先由我自己整理”路径不依赖模型，不能把它称为 AI 成功。
 生产模型为 deepseek-v4-pro，地址为 https://api.deepseek.com。
 随后执行 npm run dev，打开 http://localhost:3000。
 部署前执行 npm run build；其预检会校验真实 Snapshot 和合成目录。
@@ -113,7 +125,7 @@ entries['00_先读我.md'] = f'''# 知遇·一席｜三教室新版提交包
 源码版本：{commit}
 生产部署：{release['deploymentId']}
 101 是 12 条真实知乎摘要；102/103 各 24 条合成材料，不代表真实知乎讨论。
-PDF 6 页；录像逐间完成三间示例流程。源码中的 Task 状态记录提交时点，最新验收看 10_验收报告.md。
+PDF 6 页；贡献当前会话保存，自述与虚构示例持续标记。源码中的 Task 状态记录提交时点，最新公网及材料验收看 10_验收报告.md。
 SHA256SUMS.txt 可核对包内文件；RELEASE.json 记录 Git、部署和附件校验和。
 密钥、环境配置、依赖缓存及用户个人输入未包含在源码或材料包中。
 '''.encode('utf-8')
@@ -125,7 +137,7 @@ entries['RELEASE.json'] = json.dumps(release, ensure_ascii=False, indent=2).enco
 entries['SHA256SUMS.txt'] = ''.join(
     f'{hashlib.sha256(payload).hexdigest()}  {name}\n' for name, payload in sorted(entries.items())
 ).encode('utf-8')
-package = root / 'docs/submission/知遇一席_三教室新版_提交材料包.zip'
+package = root / 'docs/submission/知遇一席_经验入席版_提交材料包.zip'
 make_zip(package, entries)
 # Replace the earlier stable handoff name as well, so it cannot serve the stale single-room package.
 stable = root / 'docs/submission/知遇一席_提交材料包.zip'
@@ -139,6 +151,6 @@ result = {
     'zipIntegrity': 'PASS', 'credentialScan': 'PASS', 'requiredFiles': 'PASS',
     'gitPublicAssetsMatchWorkingFiles': True,
 }
-(root / 'verification/TASK-027/package-check.json').write_text(
+(root / 'verification/TASK-028/package-check.json').write_text(
     json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
 print(json.dumps(result, ensure_ascii=False))

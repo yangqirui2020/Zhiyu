@@ -19,6 +19,10 @@ import { ClassroomNotePanel } from "./ClassroomNotePanel";
 import { ClusterDetailSheet } from "./ClusterDetailSheet";
 import { RoundtableOverlay } from "./RoundtableOverlay";
 import { StudentDetailSheet } from "./StudentDetailSheet";
+import { useContribution } from "../contribution/use-contribution";
+import { ContributionPanel } from "../contribution/ContributionPanel";
+import { InviteClassroom } from "../contribution/InviteClassroom";
+import { contributionIdentity } from "@/domain/schemas/contribution";
 import {
   candidateVisible as phaseHasCandidate,
   initialSessionState,
@@ -58,6 +62,12 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
   const room = findClassroom(classroom.question.id)!;
   const legacyFixture = classroom.schemaVersion === "1.0.0-rc.1";
   const [session, dispatch] = useReducer(sessionReducer, initialSessionState);
+  const contribution = useContribution(classroom);
+  const { cancel: cancelContribution, dispatch: dispatchContribution } = contribution;
+  const contributionPhase = contribution.state.flow.phase;
+  const contributionOpen = contributionPhase !== "closed";
+  const board = contribution.state.board;
+  const manuallyPrepared = (contribution.state.flow.phase === "review" && contribution.state.flow.preparation === "manual") || (contribution.state.flow.phase === "published" && board?.preparation === "manual");
   const workspaceRef = useRef<HTMLDivElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const studentButtonRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -83,7 +93,8 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
     session.panel.kind === "student" ? session.panel.studentId : null;
   const hasCandidate = phaseHasCandidate(phase);
   const isSeated = phaseIsSeated(phase);
-  const headcount = classroom.students.length + (isSeated ? 1 : 0);
+  const headcount = classroom.students.length + (isSeated || board ? 1 : 0);
+  const blackboardExpanded = atLeast(phase, "reflection") || contributionOpen || Boolean(board);
 
   useEffect(() => {
     const panel = workspaceRef.current?.querySelector("aside");
@@ -91,6 +102,15 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
     if (content) content.scrollTop = 0;
     if (phase !== "exploring" && phase !== "roundtable" && window.matchMedia("(max-width: 720px)").matches) panel?.scrollIntoView({ block: "start", behavior: "instant" });
   }, [phase, session.panel.kind]);
+
+  useEffect(() => {
+    if (!contributionOpen) return;
+    const panel = workspaceRef.current?.querySelector("aside");
+    const content = panel?.querySelector<HTMLElement>("[data-lesson-content]");
+    if (content) content.scrollTop = 0;
+    panel?.querySelector<HTMLElement>("#contribution-title")?.focus({ preventScroll: true });
+    if (window.matchMedia("(max-width: 720px)").matches) panel?.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [contributionPhase, contributionOpen]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -272,7 +292,29 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
     learningAbortRef.current?.abort();
     learningAbortRef.current = null;
     dispatch({ type: "reset" });
-  }, []);
+    cancelContribution();
+    dispatchContribution({ type: "withdraw" });
+  }, [cancelContribution, dispatchContribution]);
+
+  const openContribution = useCallback(() => {
+    candidateAbortRef.current?.abort();
+    learningAbortRef.current?.abort();
+    dispatch({ type: "reset" });
+    dispatchContribution({ type: "begin" });
+    requestAnimationFrame(() => workspaceRef.current?.querySelector("aside")?.scrollIntoView({ block: "nearest", behavior: "instant" }));
+  }, [dispatchContribution]);
+  const closeContribution = () => {
+    cancelContribution();
+    dispatchContribution({ type: "close" });
+    requestAnimationFrame(() => document.getElementById("stage-heading")?.scrollIntoView({ block: "start", behavior: "instant" }));
+  };
+  useEffect(() => {
+    let frame = 0;
+    const enterFromInvitation = () => { if (window.location.hash === "#experience") frame = requestAnimationFrame(openContribution); };
+    enterFromInvitation();
+    window.addEventListener("hashchange", enterFromInvitation);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("hashchange", enterFromInvitation); };
+  }, [openContribution]);
 
   const showNotePanel =
     session.panel.kind === "note" ||
@@ -312,18 +354,27 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
         </div>
       </header>
 
+      <div className={styles.participationBar}>
+        <div><strong>让一段经历，为讨论多补上一块拼图。</strong><span>亲历、条件、疑问和反例，都可以留下一席。</span></div>
+        <button type="button" className={styles.contributionEntry} onClick={openContribution}>{board ? "查看我的贡献卡" : contribution.state.input.event ? "继续我的经历 →" : "带一段经历来 →"}</button>
+        <InviteClassroom questionId={classroom.question.id} title={classroom.question.title} synthetic={classroom.provenance.mode === "mock"} />
+      </div>
+
       <ol className={styles.lessonJourney} aria-label="本节课的学习进度">
-        {[{ label: "看观点", phase: "exploring" }, { label: "写想法", phase: "reflection" }, { label: "同桌追问", phase: "candidate" }, { label: "留下一席", phase: "responded" }].map((step, index, steps) => {
+        {contributionOpen ? ["讲次经历", manuallyPrepared ? "本人整理" : "同桌追问", "确认表述", "黑板留席"].map((label, index) => {
+          const currentIndex = contributionPhase === "published" ? 3 : contributionPhase === "review" ? 2 : ["preparing", "challenge", "completing", "error"].includes(contributionPhase) ? 1 : 0;
+          return <li key={label} className={index === currentIndex ? styles.journeyCurrent : index < currentIndex ? styles.journeyDone : undefined} aria-current={index === currentIndex ? "step" : undefined}><b>{index < currentIndex ? "✓" : `0${index + 1}`}</b>{label}</li>;
+        }) : [{ label: "看观点", phase: "exploring" }, { label: "写想法", phase: "reflection" }, { label: "同桌追问", phase: "candidate" }, { label: "留下一席", phase: "responded" }].map((step, index, steps) => {
           const reached = atLeast(phase, step.phase as SessionPhase);
           const current = reached && (index === steps.length - 1 || !atLeast(phase, steps[index + 1].phase as SessionPhase));
           return <li key={step.label} className={current ? styles.journeyCurrent : reached ? styles.journeyDone : undefined} aria-current={current ? "step" : undefined}><b>{reached && !current ? "✓" : `0${index + 1}`}</b>{step.label}</li>;
         })}
-        <li className={styles.journeyResult}>带走课堂笔记，继续下一题</li>
+        <li className={styles.journeyResult}>{contributionOpen ? "带走贡献卡，邀请朋友接力" : "带走课堂笔记，继续下一题"}</li>
       </ol>
 
-      <div ref={workspaceRef} className={styles.classroomWorkspace}>
+      <div ref={workspaceRef} className={styles.classroomWorkspace} data-contribution={Boolean(board)}>
         <section className={styles.stage} aria-labelledby="stage-heading">
-          <div className={styles.stageCanvas} data-expanded={atLeast(phase, "reflection")}>
+          <div className={styles.stageCanvas} data-expanded={blackboardExpanded}>
             <div className={styles.sceneTopWall} aria-hidden="true" />
             <span className={styles.roomPlaque} aria-hidden="true">教室 {room.number}</span>
 
@@ -342,7 +393,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
                     : "课堂规则：按论证路径分组；组内座次与颜色不表示排名"}
                 </p>
               )}
-              {atLeast(phase, "reflection") ? (
+              {blackboardExpanded ? (
                 <div className={styles.blackboardOutcome}>
                   <div>
                     <span>样本共同点</span>
@@ -358,16 +409,22 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
                   </div>
                 </div>
               ) : null}
+              {board ? <button type="button" className={styles.blackboardContribution} onClick={() => { dispatch({ type: "close_panel" }); dispatchContribution({ type: "show_card" }); }}>
+                <span>黑板新增一份材料 · {contributionIdentity(board.input)}</span>
+                <strong>{board.wording.summary}</strong>
+                <small>仅在本次课堂展示 · 查看贡献卡 ↗</small>
+              </button> : null}
             </section>
 
             <ForceGraphAdapter
               classroom={classroom}
               selectedStudentId={selectedStudentId}
-              candidateVisible={hasCandidate}
+              candidateVisible={hasCandidate || Boolean(board)}
               candidatePosition={demoScenario.candidate}
               seatmateStudentId={matchedStudentId ?? ""}
-              seatClaimed={isSeated}
-              blackboardExpanded={atLeast(phase, "reflection")}
+              seatClaimed={isSeated || Boolean(board)}
+              blackboardExpanded={blackboardExpanded}
+              blackboardExtraHeight={board ? 125 : 0}
               roundtable={{
                 active: phase === "roundtable",
                 speakerIds: roundtableSpeakers,
@@ -413,7 +470,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
             clusterId={session.panel.clusterId}
             onClose={closeSheet}
           />
-        ) : showNotePanel ? (
+        ) : contributionOpen ? <ContributionPanel classroom={classroom} controller={contribution} onClose={closeContribution} /> : showNotePanel ? (
           <ClassroomNotePanel
             scenario={demoScenario}
             classroom={classroom}

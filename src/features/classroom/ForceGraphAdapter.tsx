@@ -22,6 +22,7 @@ type ForceGraphAdapterProps = {
   seatmateStudentId: string;
   seatClaimed: boolean;
   blackboardExpanded: boolean;
+  blackboardExtraHeight?: number;
   roundtable: {
     active: boolean;
     speakerIds: string[];
@@ -38,6 +39,7 @@ export function ForceGraphAdapter({
   seatmateStudentId,
   seatClaimed,
   blackboardExpanded,
+  blackboardExtraHeight = 0,
   roundtable,
   onSelectStudent,
 }: ForceGraphAdapterProps) {
@@ -79,6 +81,7 @@ export function ForceGraphAdapter({
           seatmateStudentId={seatmateStudentId}
           seatClaimed={seatClaimed}
           blackboardExpanded={blackboardExpanded}
+          blackboardExtraHeight={blackboardExtraHeight}
           roundtable={roundtable}
           onSelectStudent={onSelectStudent}
         />

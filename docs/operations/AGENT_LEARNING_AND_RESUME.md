@@ -12,7 +12,8 @@
 
 - 在 AI 辅助开发下完成「来源对照 → 个人观点分析 → 一次追问 → 回应整理 → 下载笔记 → 知乎表达提纲/下一教室」闭环；接入官方 API 的 12 条去重回答摘要，以本地 512 维 BGE 向量及 Ward 聚类组织观点；另有两间各 24 条合成材料的独立课堂，明确区分来源、实时执行与示例。
 - 实现 Zod 共用合同、evidenceId 引用校验和保守候选规则，区分实时调用、真实历史资产与精确示例；通过签名绑定笔记、追问与资料版本，防止会话结果错配。
-- 实现请求取消、25 秒截止、有限重试和输入保留；完成 66 项自动化测试、三种视口体验验收及 Vercel 发布，并通过交叉测试定位和恢复模型生成超时问题。
+- 增加“经验入席”工作流：保留事件、行动、结果及实际回应，区分 AI 草稿和本人确认表述；以独立 reducer 管理确认、修改、撤回和中断恢复。邀请仅携带公开课堂信息，个人经历与签名不进入分享内容。
+- 实现请求取消、25 秒截止、有限重试和输入保留；自动化与三视口验证结果见 TASK-028 最新报告，并通过交叉测试定位和恢复模型生成超时问题。
 
 投递前按你能独立解释和修改的部分取舍。尚未获得赛事结果，不写获奖或入围；不写生产用户量、学习效率提升、P95 或准确率。LangGraph、MCP、多 Agent、长期记忆和向量数据库目前只能写学习计划。
 
@@ -23,6 +24,7 @@
 | 一次请求怎样走完？ | app/api/v1/learning-turn、server/use-cases/run-learning-turn | 画出 prepare/complete 输入输出，解释每个阶段何时结束 |
 | 为什么 JSON 合法还不够？ | domain/schemas/learning、server/pipelines/learning/generate | 给一段合法 JSON 放入不存在的 evidenceId，观察为什么被拒绝 |
 | 怎样避免旧结果覆盖新输入？ | features/classroom/session-machine | 在现有测试里构造晚到的 requestId，解释 reducer 为什么忽略它 |
+| 为什么需要本人确认？ | features/contribution/contribution-machine、domain/schemas/contribution | 修改 AI 草稿，再核对原始输入为何不变；解释生成、确认和事实核验的区别 |
 | 为什么不能给所有人用示例？ | use-cases/analyze-candidate-seat、run-learning-turn | 改一个字，看为何不能命中同一预计算结果，解释个性化因果关系 |
 | 超时怎样不拖死页面？ | providers/deepseek、provider-failure | 用不会返回的 transport 验证 deadline，区分客户端取消、模型超时和格式错误 |
 
@@ -37,6 +39,10 @@
 **第 3 周：做可解释的工程交付。** 按实际需求增加 Langfuse / OpenTelemetry、故障重放、Docker 和 CI；若确需跨工具共享，再把只读检索封成 MCP。证明质量回归可复现，敏感文本不进入日志。
 
 nanobot 阅读入口：[官方架构](https://github.com/HKUDS/nanobot/blob/main/docs/architecture.md)、[运行循环](https://github.com/HKUDS/nanobot/blob/main/nanobot/agent/runner.py)、[工具注册](https://github.com/HKUDS/nanobot/blob/main/nanobot/agent/tools/registry.py)。赛前仅作架构参考，未安装或集成。
+
+## 这轮新增最值得亲手复现的实验
+
+先运行贡献状态机测试：确认前黑板无卡片；修改表述不改原输入；取消后旧结果不能回写；修改原经历必须重新追问。再在界面填入虚构示例、改用自己的经历，观察身份标记如何变化。最后故意断网，检查原文能否保留、重试是否发新请求，以及人工整理是否如实标记。把实验结果与代码逐行对应，比只背“Human-in-the-loop”更有说服力。
 
 ## 三分钟面试讲述顺序
 

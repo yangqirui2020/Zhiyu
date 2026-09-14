@@ -21,6 +21,7 @@ Accepted Records are immutable in conclusion. A later decision must create a new
 | UXDR-0002 | Accepted | Student/Cluster/Candidate 使用 Sheet 保留空间上下文 |
 | PDR-0003 | Accepted | Demo V2 加入显式 Mock 的 Candidate → 同桌体验闭环 |
 | PDR-0005 | Accepted | 用户授权开放三间真实/合成分别披露的完整教室，人数适配布局与笔记下载 |
+| PDR-0006 | Accepted | 经验入席、本人确认黑板材料与主动邀请；自述/示例分明，当前会话保存 |
 | UXDR-0003 | Accepted | Desktop 使用教室主场景 + 单一上下文栏；Student 升级为 Character |
 
 - [ADR-0012：DeepSeek V4 Pro 恢复实时生成](adr/ADR-0012-deepseek-pro-recovery.md) — Accepted，用户授权，同平台配置切换。

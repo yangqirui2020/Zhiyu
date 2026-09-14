@@ -12,13 +12,14 @@ type GraphNode = { id: string; studentId: string; seatNumber: string; clusterId:
 type Props = {
   classroom: Classroom; width: number; height: number; selectedStudentId: string | null;
   candidateVisible: boolean; candidatePosition: { x: number; y: number }; seatmateStudentId: string; seatClaimed: boolean; blackboardExpanded: boolean;
+  blackboardExtraHeight?: number;
   roundtable: { active: boolean; speakerIds: string[]; currentSpeakerId: string | null };
   onSelectStudent: (studentId: string) => void;
 };
 
-export default function ForceGraphCanvas({ classroom, width, height, selectedStudentId, candidateVisible, seatmateStudentId, seatClaimed, blackboardExpanded, roundtable, onSelectStudent }: Props) {
+export default function ForceGraphCanvas({ classroom, width, height, selectedStudentId, candidateVisible, seatmateStudentId, seatClaimed, blackboardExpanded, blackboardExtraHeight = 0, roundtable, onSelectStudent }: Props) {
   const graphRef = useRef<ForceGraphMethods<GraphNode> | undefined>(undefined);
-  const presentation = useMemo(() => classroomPresentation(classroom, width, height, blackboardExpanded), [classroom, width, height, blackboardExpanded]);
+  const presentation = useMemo(() => classroomPresentation(classroom, width, height, blackboardExpanded, blackboardExtraHeight), [classroom, width, height, blackboardExpanded, blackboardExtraHeight]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [entrance, setEntrance] = useState(0);
   const [candidateReveal, setCandidateReveal] = useState(0);

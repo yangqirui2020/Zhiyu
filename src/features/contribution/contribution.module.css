@@ -1,0 +1,39 @@
+.panel { border-color: #b68b4a; }
+.eyebrow { font-size: 11px; color: #866127; letter-spacing: .08em; margin: 0 0 10px; }
+.invitation { font-size: 19px; line-height: 1.65; color: var(--ink); margin: 0 0 18px; }
+.disclosure { font-size: 12px; line-height: 1.8; color: var(--ink-muted); }
+.field { display: grid; gap: 8px; margin: 18px 0; font-size: 13px; line-height: 1.6; }
+.field > span { font-weight: 650; }
+.field textarea, .field select { box-sizing: border-box; width: 100%; border: 1px solid var(--line); background: #fffdf6; color: var(--ink); padding: 12px; font: inherit; resize: vertical; min-height: 44px; }
+.field textarea { line-height: 1.8; }
+.field textarea:focus, .field select:focus { outline: 2px solid #ac7c2e; outline-offset: 2px; }
+.identity { border-left: 3px solid #a57b35; background: #f2e8d6; padding: 10px 12px; font-size: 12px; line-height: 1.7; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.actions button, .notice button, .inviteTrigger { font: inherit; font-size: 12px; border: 1px solid var(--line); color: var(--ink); background: #fffdf7; padding: 11px 14px; cursor: pointer; line-height: 1.5; min-height: 42px; }
+.actions .primary { background: #324e43; color: #fffdf7; border-color: #324e43; }
+.manual, .withdraw { display: block; font: inherit; font-size: 12px; border: 0; padding: 12px 0; color: var(--ink-muted); background: transparent; cursor: pointer; min-height: 42px; }
+.manual:disabled { opacity: .5; cursor: not-allowed; }
+.notice { border: 1px dashed #b18d4f; padding: 18px; background: #f6eddb; line-height: 1.8; font-size: 13px; }
+.challenge { margin: 16px 0; border-left: 4px solid #b18d4f; padding: 16px; background: #f4eddf; line-height: 1.8; font-size: 18px; }
+.original { margin: 18px 0; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.original h3 { font-size: 12px; color: #587163; margin: 18px 0 6px; }
+.original p { white-space: pre-wrap; margin: 6px 0 14px; }
+.original summary { cursor: pointer; padding: 12px 0; }
+.published { background: #324e43; color: #fff9e9; border: 5px solid #a18c6c; padding: 18px; margin: 20px 0; }
+.published span { font-size: 11px; color: #dfc98a; }
+.published h3 { font-size: 20px; line-height: 1.6; margin: 12px 0; overflow-wrap: anywhere; }
+.published p { font-size: 13px; line-height: 1.8; margin: 0; }
+.panel .published p { color: #e7dfcc; }
+.external { display: block; margin: 20px 0 10px; color: #324e43; font-size: 13px; line-height: 1.8; }
+.withdraw { color: #8a5c37; }
+.inviteTrigger { font-size: 11px; white-space: normal; }
+.inviteDialog { width: min(620px, calc(100vw - 32px)); max-height: 88dvh; box-sizing: border-box; overflow-y: auto; border: 1px solid #aa9471; padding: 26px; background: #fbf7ed; color: #18232d; box-shadow: 0 24px 100px #142b2155; }
+.inviteDialog::backdrop { background: #15291dd9; }
+.dialogHeading { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.dialogHeading p { color: #8e692b; margin: 0 0 10px; font-size: 12px; }
+.dialogHeading h2 { font-size: 23px; line-height: 1.5; margin: 0 0 22px; }
+.dialogHeading > button { background: transparent; border: 1px solid #bca98a; font-size: 22px; width: 42px; height: 42px; flex-shrink: 0; cursor: pointer; }
+.inviteDialog h3 { font-size: 15px; line-height: 1.7; }
+.inviteDialog > p[role] { font-size: 12px; line-height: 1.7; }
+.inviteDialog > a { font-size: 12px; color: #324e43; }
+@media (max-width: 720px) { .inviteDialog { padding: 20px; }.invitation { font-size: 18px; }.field textarea { font-size: 16px; }.dialogHeading h2 { font-size: 20px; } }

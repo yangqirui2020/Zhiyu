@@ -9,7 +9,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
 from PIL import Image as PILImage
-root=Path.cwd(); src=root/'docs/submission/PRODUCT_PLAN.md'; out=root/'output/pdf/知遇一席_产品说明计划书.pdf'
+root=Path.cwd(); src=root/'docs/submission/PRODUCT_PLAN.md'; out=root/'output/pdf/知遇一席_经验入席版_产品说明计划书.pdf'
 pdfmetrics.registerFont(TTFont('YaHei','C:/Windows/Fonts/msyh.ttc'))
 pdfmetrics.registerFont(TTFont('YaHeiBold','C:/Windows/Fonts/msyhbd.ttc'))
 pdfmetrics.registerFontFamily('YaHei',normal='YaHei',bold='YaHeiBold')

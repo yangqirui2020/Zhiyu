@@ -1,9 +1,9 @@
 import type { Classroom } from "../../domain/schemas/classroom.ts";
 
 /** Screen layout only: source count, group membership and immutable snapshot stay intact. */
-export function classroomPresentation(classroom: Classroom, width: number, height: number, expanded: boolean) {
+export function classroomPresentation(classroom: Classroom, width: number, height: number, expanded: boolean, blackboardExtraHeight = 0) {
   const mobile = width < 500;
-  const top = mobile ? (expanded ? 264 : 154) : (expanded ? 190 : 140);
+  const top = (mobile ? (expanded ? 264 : 154) : (expanded ? 190 : 140)) + blackboardExtraHeight;
   const bottom = height - (mobile ? 86 : 105);
   const columns = mobile && classroom.clusters.length === 2 ? 1 : 2;
   const rows = Math.ceil(classroom.clusters.length / columns);

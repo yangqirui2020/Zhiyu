@@ -11,7 +11,7 @@ export default async function HomePage() {
       <div className={styles.heroCopy}>
         <p className={styles.eyebrow}>一道问题，一间观点教室</p>
         <h1 id="home-title">听见不同的想法，<br />留下自己的<span>一席。</span></h1>
-        <p className={styles.lede}>从选语言，到做项目，再到与 AI 一起学习。走过三间教室，把别人的观点，变成自己想清楚的一句话。</p>
+        <p className={styles.lede}>从选语言，到做项目，再到与 AI 一起学习。听见不同的观点，也带来你的一次尝试：让经历成为黑板上的新材料，邀请下一位朋友接着聊。</p>
         <Link className={styles.primaryAction} href={classroomHref(rooms[0].questionId)}>从 101 开始这段旅程 <span aria-hidden="true">→</span></Link>
         <ol className={styles.journey} aria-label="每节课的学习过程"><li><b>01</b>看观点</li><li><b>02</b>写想法</li><li><b>03</b>同桌追问</li><li><b>04</b>带走笔记</li></ol>
         <p className={styles.disclosure}>101 使用真实知乎回答摘要；102、103 使用明确标注的合成材料。每间均可完整体验。</p>

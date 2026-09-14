@@ -1,14 +1,14 @@
 # 知遇·一席
 
-一道知乎问题，一间可以带着自己观点入席的认知教室。
+一道问题，一间观点教室。带来一次经历，让黑板多一份可讨论的材料。
 
-**[已发布版本](https://zhiyu-yixi.vercel.app)** · [产品说明计划书](docs/submission/PRODUCT_PLAN.md) · 三教室改版见 [TASK-026](verification/TASK-026/report.md) · [当前发布与材料验收](verification/TASK-027/report.md)
+**[线上体验](https://zhiyu-yixi.vercel.app)** · [产品说明计划书](docs/submission/PRODUCT_PLAN.md) · [当前发布与材料验收](verification/TASK-028/report.md)
 
 参赛团队：**知乎有你一席** · 队长：**杨骐瑞** · **湖北师范大学**。参赛方向：知乎黑客松 2026 校园新锐季「知识炼金场」。
 
 ## 当前参赛版本
 
-新版公开代码：[TASK-027 参赛分支](https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-027-three-classroom-submission)。公网 Demo、6 页说明书、2 分 10 秒三教室录屏与提交包按同一版本更新，详见 [提交信息](docs/submission/SUBMISSION_FIELDS.md)。
+新版公开代码：[TASK-028 参赛分支](https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-028-experience-contribution)。本轮增加经验入席、黑板更新与分享邀请；公网与附件的发布记录见 [提交信息](docs/submission/SUBMISSION_FIELDS.md) 和验收报告。
 
 ## 现在可以体验什么
 
@@ -21,6 +21,14 @@
 | 103 | 有了 AI 编程工具，初学者还需要自己写代码吗？ | 24 条合成材料、4 个观点组 |
 
 101 来源采集于 2026-09-15 01:41（北京时间）。102/103 明确标为「合成演示 · 非真实知乎回答」，没有真实作者或原回答链接。三间使用独立的材料、讨论、观点示例与追问，均可通过 DeepSeek 分析自己的输入。分组表达论证路径相近，组内座次不表示相似度排名、正确性或支持率。
+
+### 带一段经历来
+
+点击「带一段经历来」填写发生经过、采取的办法、结果和不确定性。系统结合本班资料追问一个具体细节，用实际回应整理草稿。你可以修改摘要与适用边界，确认后黑板才会新增这份材料，并出现「你的一席」。可以查看原文、修改、撤回、下载贡献卡，主动邀请朋友到同一教室。
+
+亲历、条件、疑问或反例都可以参与，不要求观点新颖。「用户自述 · 未独立核验」与「示例经历 · 虚构」明确区分；示例编辑后仍保持示例身份。贡献只在本次课堂会话保存，刷新、切题或撤回后清除。AI 失败保留输入，可重试或明确选择自己整理。邀请文字与图片只含公开课堂信息，不包含个人经历或 token。
+
+### 原有观点学习路径
 
 1. 打开教室，点击像素学生或等价文字列表，核对观点、摘要证据和知乎原链接。
 2. 听课代表归纳当前样本的共同点、争议和未解决问题。
@@ -84,7 +92,7 @@ npm test
 npm run build
 ```
 
-当前 66 项自动化测试通过。三教室各自的完整示例、精确输入匹配、来源隔离、跨题 token、失败重试、下载、Reset 与切题清理已验证；三视口为 1440×900、1366×768、390×844，含键盘路径与 Reduced Motion。当前改版见 [TASK-026](verification/TASK-026/report.md)；历史真实模型验收见 [TASK-024](verification/TASK-024/report.md)，历史公网验收见 [TASK-025](verification/TASK-025/report.md)。这些是小样本功能验收，不代表大规模质量、延迟或用户效果统计。
+最新测试数量与结果见 [TASK-028 验收报告](verification/TASK-028/report.md)。覆盖三教室原有完整示例、新贡献确认与撤回、来源隔离、签名、输入保留、重试、下载、切题和晚到结果；三视口为 1440×900、1366×768、390×844，含键盘路径与 Reduced Motion。这些是小样本功能验收，不代表大规模质量、延迟或用户效果统计。
 
 输入发送至第三方 DeepSeek 处理。应用不将个人输入写入数据库或日志；当前浏览器会话及服务端有界短期缓存会持有必要数据，Reset 清理当前交互。不要提交个人敏感信息。AI 整理可能失真，需要核对原意和来源。
 
@@ -93,7 +101,8 @@ npm run build
 ## 项目文档
 
 - [产品说明计划书](docs/submission/PRODUCT_PLAN.md)
-- [两分钟演示脚本](docs/submission/DEMO_SCRIPT.md)
+- [三分钟演示脚本](docs/submission/DEMO_SCRIPT.md)
+- [人气奖参与与反馈计划](docs/submission/POPULARITY_PLAN.md)
 - [发布与恢复说明](docs/operations/RELEASE_RUNBOOK.md)
 - [截止前交付计划与赛后 Agent 路线](docs/operations/SUBMISSION_SPRINT_2026-09-15.md)
 - [开发规格入口](docs/INDEX.md)

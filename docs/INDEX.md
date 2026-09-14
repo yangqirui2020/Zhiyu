@@ -10,7 +10,7 @@ last_verified: 2026-08-31
 
 ## 当前参赛交付（2026-09-15）
 
-三教室最新交付入口：[提交信息](submission/SUBMISSION_FIELDS.md)、[产品说明书](submission/PRODUCT_PLAN.md)、[发布验收](../verification/TASK-027/report.md)。实际增量以 PDR-0005 和 TASK-026/027 为准；下列早期规格与未完成规划保留历史状态。
+经验入席版入口：[提交信息](submission/SUBMISSION_FIELDS.md)、[产品说明书](submission/PRODUCT_PLAN.md)、[最新验收](../verification/TASK-028/report.md)、[贡献合同](contracts/CONTRIBUTION_CONTRACT.md)。当前增量依据 PDR-0006 / TASK-028；三教室基线为 TASK-026/027。下列早期规格与未完成规划保留历史状态。
 
 ## 真相源
 
@@ -82,4 +82,3 @@ Specification
 - `docs/templates/DECISION_RECORD_TEMPLATE.md`
 - `docs/templates/PROPOSAL_TEMPLATE.md`
 - `docs/templates/VERIFICATION_TEMPLATE.md`
-

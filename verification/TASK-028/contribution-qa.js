@@ -1,0 +1,87 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions -- Executed by playwright-cli run-code. */
+async (page) => {
+  const origin = page.url().split("/").slice(0, 3).join("/");
+  const viewport = page.viewportSize();
+  const suffix = String(viewport.width);
+  const rooms = ["q_learn_programming", "q_projects_and_foundations", "q_learning_with_ai"];
+  const errors = [];
+  const onError = error => errors.push(error.message);
+  page.on("pageerror", onError);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto(origin);
+  const results = [];
+  const check = (ok, message) => { if (!ok) throw new Error(message); };
+  const shot = async name => {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: `output/playwright/TASK-028/${name}-${suffix}.png`, fullPage: true });
+    check(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${name}: horizontal overflow`);
+  };
+  for (const [index, questionId] of rooms.entries()) {
+    const number = String(101 + index);
+    await page.goto(`${origin}/classroom/${questionId}#experience`);
+    await page.getByRole("textbox", { name: "发生了什么", exact: true }).waitFor();
+    await page.locator("canvas").waitFor();
+    check(await page.getByRole("button", { name: "让同桌追问一个细节 →", exact: true }).isDisabled(), "Empty input should be disabled");
+    await page.getByRole("button", { name: "填入虚构示例", exact: true }).click();
+    const note = await page.getByRole("textbox", { name: "发生了什么", exact: true }).inputValue();
+    await page.getByRole("textbox", { name: "发生了什么", exact: true }).fill(note + "这次编辑仍是虚构示例。");
+    check(await page.getByText("示例经历 · 虚构", { exact: true }).isVisible(), "Editing example changed provenance");
+    await shot(`${number}-experience`);
+    await page.getByRole("button", { name: "先由我自己整理", exact: true }).click();
+    const summary = `这次尝试让我多考虑一个条件：${index === 0 ? "先分清环境与代码问题" : index === 1 ? "缩小任务再定位缺少的基础" : "检验保存和读取才知道功能是否完成"}。`;
+    await page.getByRole("textbox", { name: "我希望课堂多考虑的一点", exact: true }).fill(summary);
+    check(await page.getByRole("button", { name: /^黑板新增一份材料/ }).count() === 0, "Unconfirmed card appeared on blackboard");
+    await shot(`${number}-review`);
+    await page.getByRole("button", { name: "确认表述，把这份材料留在黑板上 →", exact: true }).click();
+    const board = page.getByRole("button", { name: /^黑板新增一份材料/ });
+    await board.waitFor();
+    check((await board.innerText()).includes(summary), "Board lost confirmed wording");
+    check((await page.getByRole("list", { name: "本节课的学习进度" }).innerText()).includes("本人整理"), "Manual flow claimed AI questioning");
+    await shot(`${number}-contributed`);
+    const downloading = page.waitForEvent("download");
+    await page.getByRole("button", { name: "下载我的贡献卡", exact: true }).click();
+    const download = await downloading;
+    await download.saveAs(`output/playwright/TASK-028/${number}-contribution-${suffix}.md`);
+    check(!(await download.failure()), "Card download failed");
+    await page.getByRole("button", { name: "返回课堂", exact: true }).click();
+    await board.focus(); await page.keyboard.press("Enter");
+    await page.getByRole("button", { name: "修改这张贡献卡", exact: true }).click();
+    await page.getByRole("textbox", { name: "这段材料适用于什么，不能证明什么", exact: true }).fill("这是虚构示例，仅演示流程，没有证明普遍适用。");
+    await page.getByRole("button", { name: "确认表述，把这份材料留在黑板上 →", exact: true }).click();
+    const trigger = page.getByRole("complementary").getByRole("button", { name: "邀请朋友来这间教室 ↗", exact: true });
+    await trigger.focus(); await page.keyboard.press("Enter");
+    const dialog = page.getByRole("dialog", { name: "这一次，想听听你的经历", exact: true });
+    await dialog.waitFor();
+    const invitation = await dialog.getByRole("textbox", { name: "可分享的邀请文字" }).inputValue();
+    check(invitation.includes(`https://zhiyu-yixi.vercel.app/classroom/${questionId}#experience`), "Invite points to wrong classroom");
+    check(!invitation.includes(note) && !invitation.includes(summary) && !invitation.includes("challengeToken"), "Invite leaked private material");
+    await dialog.getByRole("button", { name: "复制邀请", exact: true }).click();
+    await dialog.getByText("邀请已复制，可以发给愿意交流的朋友。", { exact: true }).waitFor();
+    const imagePending = page.waitForEvent("download");
+    await dialog.getByRole("button", { name: "保存邀请图", exact: true }).click();
+    const image = await imagePending;
+    await image.saveAs(`output/playwright/TASK-028/${number}-invite-${suffix}.png`);
+    check(!(await image.failure()), "Invite image failed");
+    await shot(`${number}-invite-dialog`);
+    await page.keyboard.press("Escape");
+    check(await trigger.evaluate(element => document.activeElement === element), "Invite did not restore focus");
+    await page.getByRole("button", { name: "撤回这次贡献", exact: true }).click();
+    check(await board.count() === 0, "Withdrawal left the blackboard contribution");
+    await page.getByRole("button", { name: "带一段经历来 →", exact: true }).click();
+    check(await page.getByRole("textbox", { name: "发生了什么", exact: true }).inputValue() === "", "Second operation retained withdrawn input");
+    await page.getByRole("button", { name: "填入虚构示例", exact: true }).click();
+    await page.getByRole("button", { name: "改用自己的经历", exact: true }).click();
+    check(await page.getByRole("textbox", { name: "发生了什么", exact: true }).inputValue() === "", "Own entry did not clear example");
+    const next = rooms[(index + 1) % 3];
+    await page.getByRole("navigation", { name: "认知校园教室入口" }).getByRole("link", { name: new RegExp(`^${101 + (index + 1) % 3} `) }).click();
+    await page.getByRole("button", { name: "听听各组怎么说", exact: true }).waitFor();
+    check(page.url().endsWith(next), "Classroom switch failed");
+    check(await page.getByRole("textbox").count() === 0, "Contribution carried into next classroom");
+    results.push({ number, confirmed: true, editable: true, cardDownload: true, inviteCopy: true, inviteImage: true, privacy: true, withdrawn: true, secondOperation: true, keyboard: true, nextClassroom: next });
+  }
+  page.off("pageerror", onError); check(errors.length === 0, errors.join("; "));
+  return { testedAt: new Date().toISOString(), origin, viewport, errors, results };
+}
+

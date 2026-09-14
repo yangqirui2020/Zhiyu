@@ -1,0 +1,121 @@
+
+> zhiyu-yixi@0.1.0 test
+> node --conditions=react-server --test tests/contract/*.test.ts tests/integration/*.test.ts tests/unit/*.test.ts
+
+▶ P0 API contracts
+  ✔ accepts an explicit Mock classroom envelope (14.9245ms)
+  ✔ requires snapshot provenance and paired fallback disclosure (1.4865ms)
+  ✔ validates note length and idempotency (1.6274ms)
+  ✔ keeps stable error codes and recovery actions (1.2504ms)
+✔ P0 API contracts (21.0755ms)
+▶ Candidate Seat contract
+  ✔ accepts only a related + supported + limited Candidate (22.3675ms)
+  ✔ rejects a Candidate whose coverage is not limited (2.2745ms)
+  ✔ rejects missing evidence relations and mismatched note slices (2.9388ms)
+  ✔ allows no_candidate only without a seat (0.7931ms)
+✔ Candidate Seat contract (53.2544ms)
+▶ mock Classroom fixture
+  ✔ contains exactly 40 students in five deterministic clusters (2.1143ms)
+  ✔ gives every cluster an inspectable representative with resolvable evidence (0.6758ms)
+  ✔ places every student close to the declared center of its cluster (0.6695ms)
+  ✔ resolves each student evidenceId to a verified substring of the same source (0.5977ms)
+✔ mock Classroom fixture (7.4124ms)
+▶ classroomSchema relation validation
+  ✔ rejects a missing evidence reference (8.7381ms)
+  ✔ rejects evidence borrowed from another source (3.4182ms)
+  ✔ rejects evidence text that is not present in its stored excerpt (2.621ms)
+  ✔ rejects a student and cluster backlink mismatch (2.8935ms)
+  ✔ rejects duplicate provider external source identities (4.075ms)
+  ✔ rejects a source that is not represented by exactly one student (2.7185ms)
+✔ classroomSchema relation validation (25.066ms)
+▶ provenanceSchema
+  ✔ accepts an explicit snapshot response (15.3288ms)
+  ✔ rejects an undisclosed mode (1.3925ms)
+✔ provenanceSchema (17.9933ms)
+▶ real delivery contracts
+  ✔ requires the new version to label official answer summaries (2.103ms)
+  ✔ rejects zero, non-finite and incorrectly sized embedding vectors (2.8558ms)
+  ✔ requires a response and challenge token only for completion (1.7355ms)
+  ✔ rejects invented evidence and a seatmate unconnected to that evidence (3.7053ms)
+  ✔ requires snapshot assets, provenance and an actual source count (13.4898ms)
+✔ real delivery contracts (26.4092ms)
+✔ only serves a precomputed result for an exact note, and rejects key reuse with changed content (89.0003ms)
+✔ opens three isolated classrooms with truthful source identities and different lessons (84.5459ms)
+✔ completes each classroom's exact sample through candidate, signed challenge and personal note (34.9286ms)
+✔ never reuses a different classroom, note or answer when the live provider fails (21.585ms)
+✔ uses one grounded question and bounded experience instructions in both AI stages (5.6444ms)
+✔ preserves the original learning behavior for ordinary notes (0.6102ms)
+▶ signed learning turn
+  ✔ rejects tampering, expiry and wrong signing keys (4.7923ms)
+  ✔ grounds the selected peer and refuses invented source evidence (2.9794ms)
+  ✔ retries invalid model output once within the original deadline (0.8936ms)
+  ✔ preserves original expressions and removes unsupported change highlights (1.205ms)
+  ✔ rejects long-form answers disguised as an outline (1.0302ms)
+  ✔ binds Sample results to the note, answer, signed question and revision (35.5013ms)
+✔ signed learning turn (47.6828ms)
+▶ live Candidate grounding
+  ✔ resolves citations from the actual input and complete classroom sources (4.6343ms)
+  ✔ does not create a seat for relevance=unrelated (1.1348ms)
+  ✔ does not create a seat for noteSupport=insufficient (1.288ms)
+  ✔ does not create a seat for coverage=covered (5.8553ms)
+  ✔ does not create a seat for coverage=partial (1.0124ms)
+  ✔ does not create a seat for coverage=uncertain (0.9546ms)
+  ✔ rejects unknown evidence and source/note substitution (2.1733ms)
+  ✔ refuses stale revisions before a model call (0.3663ms)
+  ✔ preserves exact Unicode ranges and never splits surrogate pairs (1.7954ms)
+✔ live Candidate grounding (21.9428ms)
+(node:25680) Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25680) Warning: AI SDK Warning (deepseek.chat / deepseek-flash): The feature "responseFormat JSON schema" is used in a compatibility mode. JSON response schema is injected into the system message.
+(node:25680) Warning: AI SDK Warning (deepseek.chat / deepseek-flash): The feature "responseFormat JSON schema" is used in a compatibility mode. JSON response schema is injected into the system message.
+▶ official content boundary
+  ✔ keeps source URLs and summaries and sends the documented parameters (44.8007ms)
+  ✔ accepts an empty non-final page only with an advancing official cursor (3.7253ms)
+  ✔ rejects other-question answers and malformed source data (3.5517ms)
+  ✔ maps API quota and HTTP auth errors without leaking provider messages (1.8698ms)
+  ✔ retries one transient HTTP failure and never follows credential redirects (1.3601ms)
+  ✔ does not request after cancellation, deadline expiry, or unsafe URL input (0.8513ms)
+✔ official content boundary (58.233ms)
+▶ DeepSeek structured output boundary
+  ✔ uses the frozen schema, records actual model usage, and disables thinking (24.7841ms)
+  ✔ rejects syntactically valid JSON that violates the domain schema (4.4032ms)
+  ✔ honors cancellation and sanitizes authentication failure (3.9247ms)
+  ✔ returns at the deadline even if the underlying SDK transport never settles (41.9136ms)
+✔ DeepSeek structured output boundary (75.5852ms)
+▶ real snapshot asset integrity
+  ✔ loads checksum-verified real sources and referenced classroom narrative (74.3765ms)
+  ✔ rejects unknown questions and never shares a mutable classroom between requests (30.1155ms)
+  ✔ recovers two clearly separated normalized vector groups without losing members (2.9882ms)
+✔ real snapshot asset integrity (108.6442ms)
+▶ experience contributions
+  ✔ preserves original text and rejects whitespace-only fields (2.7198ms)
+  ✔ offers three distinct explicitly fictional examples, retaining origin after edits (0.7159ms)
+  ✔ permits participation without Candidate or novelty checks, but requires confirmation (2.5789ms)
+  ✔ retains the actual question and response when editing a published card (0.5794ms)
+  ✔ cannot publish incomplete or empty wording (0.5517ms)
+  ✔ labels manual preparation accurately and does not invent source evidence (0.8374ms)
+  ✔ rejects late, wrong-room and wrong-revision results (0.4218ms)
+  ✔ keeps input for retry, cancels safely, and resumes an interrupted response (0.2846ms)
+  ✔ clears board and all private material on withdrawal, permitting a second operation (0.2768ms)
+  ✔ preserves the original fields but invalidates old response and wording when revising input (0.2379ms)
+  ✔ exports actual expressions but keeps the signed challenge out of cards and invitations (0.4114ms)
+✔ experience contributions (11.1972ms)
+✔ requires a prepared real peer, then completes a personal response and a second session (2.1903ms)
+✔ preserves the initial opinion when preparation fails and allows retry (0.3302ms)
+▶ Demo V3 session reducer
+  ✔ completes the legal learning loop in order (1.6231ms)
+  ✔ ignores illegal phase jumps and blank submissions (0.6959ms)
+  ✔ keeps stale, failed and no-candidate analyses in reflection (0.26ms)
+  ✔ does not advance a non-matching seatmate response (0.2017ms)
+  ✔ keeps student and campus panels orthogonal to the active phase (0.7351ms)
+  ✔ unlocks note sections only after their causal phase (0.2667ms)
+  ✔ reset clears the session and permits a second complete run (0.4061ms)
+✔ Demo V3 session reducer (5.4921ms)
+ℹ tests 79
+ℹ suites 13
+ℹ pass 79
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 887.8363

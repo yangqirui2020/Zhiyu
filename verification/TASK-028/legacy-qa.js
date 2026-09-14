@@ -1,0 +1,78 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions -- Function expression is executed by playwright-cli run-code. */
+async (page) => {
+  const origin = page.url().split("/").slice(0, 3).join("/");
+  const viewport = page.viewportSize();
+  const suffix = String(viewport.width);
+  const rooms = ["q_learn_programming", "q_projects_and_foundations", "q_learning_with_ai"];
+  const errors = [];
+  const onError = error => errors.push(error.message);
+  page.on("pageerror", onError);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const results = [];
+  const check = (ok, message) => { if (!ok) throw new Error(message); };
+  const shot = async name => {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(160);
+    await page.screenshot({ path: `output/playwright/TASK-028/${name}-${suffix}.png`, fullPage: viewport.width < 500 });
+    check(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${name}: horizontal overflow`);
+  };
+  for (const [index, questionId] of rooms.entries()) {
+    const number = String(101 + index);
+    await page.goto(`${origin}/classroom/${questionId}`);
+    await page.getByRole("button", { name: "听听各组怎么说", exact: true }).waitFor();
+    await page.locator("canvas").waitFor();
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await shot(`${number}-ready`);
+    const summary = page.getByText(/^打开 Canvas 等价文字视图/);
+    await summary.click();
+    const roster = page.getByRole("button", { name: /^学生 \d+/ });
+    check(await roster.count() === (index === 0 ? 12 : 24), "DOM roster count");
+    await roster.first().focus(); await page.keyboard.press("Enter");
+    await page.getByRole("dialog").waitFor();
+    if (index > 0) check(await page.getByText("合成材料片段", { exact: true }).isVisible(), "Synthetic evidence label missing");
+    await page.keyboard.press("Escape");
+    check(await roster.first().evaluate(element => element === document.activeElement), "Student focus was not restored");
+    await summary.click();
+    await page.getByRole("button", { name: "听听各组怎么说", exact: true }).click();
+    await page.getByRole("button", { name: "使用示例观点", exact: true }).waitFor();
+    await page.getByRole("button", { name: "使用示例观点", exact: true }).click();
+    const note = await page.getByRole("textbox", { name: "你的初始观点", exact: true }).inputValue();
+    await page.getByRole("button", { name: "找到我的一席", exact: true }).click();
+    await page.getByRole("heading", { name: "这里可能有你的一席", exact: true }).waitFor();
+    await shot(`${number}-candidate`);
+    await page.getByRole("button", { name: "认识我的同桌", exact: true }).click();
+    await page.getByRole("button", { name: "让他追问我", exact: true }).waitFor();
+    await page.getByRole("button", { name: "让他追问我", exact: true }).click();
+    await page.getByRole("button", { name: "填入参考回应（可修改）", exact: true }).click();
+    const answer = await page.getByRole("textbox", { name: "你的回应", exact: true }).inputValue();
+    await page.getByRole("button", { name: "写下我的回应", exact: true }).click();
+    await page.getByRole("button", { name: "提炼成《我的一席》", exact: true }).waitFor();
+    check((await page.getByRole("complementary").innerText()).includes(note), "Original note missing");
+    check((await page.getByRole("complementary").innerText()).includes(answer), "Original answer missing");
+    await page.getByRole("button", { name: "提炼成《我的一席》", exact: true }).click();
+    await page.getByRole("button", { name: "留下我的这一席", exact: true }).click();
+    await page.getByRole("heading", { name: "这一课，留下了你的观点", exact: true }).waitFor();
+    await shot(`${number}-seated`);
+    const pending = page.waitForEvent("download");
+    await page.getByRole("button", { name: "下载课堂笔记", exact: true }).click();
+    const download = await pending;
+    await download.saveAs(`output/playwright/TASK-028/${number}-classnote-${suffix}.md`);
+    check(!(await download.failure()), "Download failed");
+    const exit = page.getByRole("link", { name: index === 0 ? "打开知乎，亲自完成回答" : "去知乎搜索这个问题", exact: true });
+    const href = await exit.getAttribute("href");
+    check(href.startsWith(index === 0 ? "https://www.zhihu.com/question/" : "https://www.zhihu.com/search?"), "Wrong external destination");
+    const next = String(101 + (index + 1) % 3);
+    await page.getByRole("button", { name: new RegExp(`^${next} `) }).click();
+    await page.getByRole("button", { name: "听听各组怎么说", exact: true }).waitFor();
+    check(page.url().endsWith(rooms[(index + 1) % 3]), "Next classroom did not open");
+    check(await page.getByRole("textbox").count() === 0, "Old personal input carried to next classroom");
+    results.push({ number, candidate: true, learning: true, download: true, nextClassroom: next, keyboard: true });
+  }
+  await page.goto(origin);
+  await shot("home");
+  page.off("pageerror", onError);
+  check(errors.length === 0, errors.join("; "));
+  return JSON.stringify({ viewport, reducedMotion: true, errors, results });
+}
+
+
