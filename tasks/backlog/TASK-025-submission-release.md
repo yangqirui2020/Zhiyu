@@ -68,3 +68,5 @@ PROP-0005、PDR-0004、既有 Domain/API/State 以及 TASK-021 冻结记录。�
 - 静态交付资产范围：`public/product-plan.pdf`、`public/demo.webm`、`public/demo.mp4`（若有转码）、`docs/submission/icon.png`、`docs/submission/cover.png`；公开说明书与无敏感内容的产品示例录屏属于本次比赛交付。
 
 发布与材料验收已完成，见 verification/TASK-025/report.md；比赛回执仍待队长操作，因此不标 Done。
+
+- 交接阻断记录范围：`tasks/blocked/BLOCK-025-zhihu-submission-session.md`。
