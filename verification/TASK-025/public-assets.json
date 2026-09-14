@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "bytes": "9262"
+  },
+  {
+    "path": "/product-plan.pdf",
+    "status": 200,
+    "type": "application/pdf",
+    "bytes": "451382"
+  },
+  {
+    "path": "/demo.webm",
+    "status": 200,
+    "type": "video/webm",
+    "bytes": "9546421"
+  }
+]

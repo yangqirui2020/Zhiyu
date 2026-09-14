@@ -33,3 +33,5 @@
 ## 参考
 
 [Vercel CLI 发布](https://vercel.com/docs/cli/deploy)、[环境变量](https://vercel.com/docs/cli/env)、[运行区域](https://vercel.com/docs/regions)。本机 CLI 59.16.0 与官方文档核验于 2026-09-15。
+
+最终含静态材料部署：dpl_Fv5pRx6VJRg4ajB3pMYsgkwAwp3w（2026-09-15 03:26）。公开 /product-plan.pdf 与 /demo.webm 均已验证 HTTP 200。

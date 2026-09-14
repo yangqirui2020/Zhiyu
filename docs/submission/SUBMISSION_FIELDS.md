@@ -9,8 +9,8 @@
 - 学校：湖北师范大学
 - Demo：https://zhiyu-yixi.vercel.app
 - 产品说明计划书：https://zhiyu-yixi.vercel.app/product-plan.pdf （也可上传本地 PDF）
-- 演示视频：https://zhiyu-yixi.vercel.app/demo.webm （3 分 02 秒，无旁白的真实操作录屏；待本次静态材料发布验收）
-- 仓库参赛分支：https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-025-submission-release （推送后使用，主分支可能仍是旧 Demo）
+- 演示视频：https://zhiyu-yixi.vercel.app/demo.webm （3 分 02 秒，无旁白的真实操作录屏；公开访问已验收）
+- 仓库参赛分支：https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-025-submission-release （已推送公开分支，请使用本链接；主分支可能仍是旧 Demo）
 
 ## 一句话简介
 

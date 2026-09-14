@@ -19,3 +19,4 @@ tmp/pdfs/
 .env*
 
 output/playwright/task025-demo.webm
+docs/submission/*提交材料包.zip
