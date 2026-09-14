@@ -20,3 +20,5 @@ tmp/pdfs/
 
 output/playwright/task025-demo.webm
 docs/submission/*提交材料包.zip
+output/playwright/TASK-027/*.webm
+output/submission/

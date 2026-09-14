@@ -2,9 +2,13 @@
 
 一道知乎问题，一间可以带着自己观点入席的认知教室。
 
-**[已发布版本](https://zhiyu-yixi.vercel.app)** · [产品说明计划书](docs/submission/PRODUCT_PLAN.md) · 当前三教室改版验收见 [TASK-026](verification/TASK-026/report.md)
+**[已发布版本](https://zhiyu-yixi.vercel.app)** · [产品说明计划书](docs/submission/PRODUCT_PLAN.md) · 三教室改版见 [TASK-026](verification/TASK-026/report.md) · [当前发布与材料验收](verification/TASK-027/report.md)
 
 参赛团队：**知乎有你一席** · 队长：**杨骐瑞** · **湖北师范大学**。参赛方向：知乎黑客松 2026 校园新锐季「知识炼金场」。
+
+## 当前参赛版本
+
+新版公开代码：[TASK-027 参赛分支](https://github.com/yangqirui2020/Zhiyu/tree/task/TASK-027-three-classroom-submission)。公网 Demo、6 页说明书、2 分 10 秒三教室录屏与提交包按同一版本更新，详见 [提交信息](docs/submission/SUBMISSION_FIELDS.md)。
 
 ## 现在可以体验什么
 

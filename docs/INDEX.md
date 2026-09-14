@@ -8,6 +8,10 @@ last_verified: 2026-08-31
 
 # 文档索引：Repository as External Brain
 
+## 当前参赛交付（2026-09-15）
+
+三教室最新交付入口：[提交信息](submission/SUBMISSION_FIELDS.md)、[产品说明书](submission/PRODUCT_PLAN.md)、[发布验收](../verification/TASK-027/report.md)。实际增量以 PDR-0005 和 TASK-026/027 为准；下列早期规格与未完成规划保留历史状态。
+
 ## 真相源
 
 | 主题 | 唯一入口 | 状态 |
