@@ -1,0 +1,30 @@
+[
+  {
+    "name": "sample",
+    "status": 200,
+    "expected": 200,
+    "mode": "sample",
+    "cacheControl": "no-store"
+  },
+  {
+    "name": "key_conflict",
+    "status": 400,
+    "expected": 400,
+    "code": "INVALID_INPUT",
+    "cacheControl": null
+  },
+  {
+    "name": "stale",
+    "status": 409,
+    "expected": 409,
+    "code": "CLASSROOM_REVISION_MISMATCH",
+    "cacheControl": null
+  },
+  {
+    "name": "too_short",
+    "status": 400,
+    "expected": 400,
+    "code": "INVALID_INPUT",
+    "cacheControl": null
+  }
+]

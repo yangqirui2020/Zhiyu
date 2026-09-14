@@ -1,6 +1,6 @@
 # TASK-023 — 真实个人观点 Candidate 分析
 
-- Status: Planned
+- Status: Done
 - Owner: Primary Agent (Codex)
 - Estimate: 2h
 - Freeze deadline: 见交付计划对应时间门
@@ -16,7 +16,7 @@
 ## Dependencies / Inputs / Outputs
 
 - Dependencies: TASK-021、TASK-022 Done。
-- Inputs: 合法真实课堂、结构化模型服务、Embedding 粗筛与样例资产。
+- Inputs: 合法真实课堂、结构化模型服务；按 ADR-0006 对当前小语料完整比较，不使用在线 Embedding 粗筛。
 - Outputs: Candidate Pipeline、真实 Analyzer、模式和回退处理、接入后的 Candidate UI。
 
 ## Scope
@@ -24,6 +24,7 @@
 - Allowed Files: `src/server/pipelines/candidate-seat/**`、`src/server/prompts/**`、`src/server/providers/**`、`src/server/use-cases/analyze-candidate-seat.ts`、`src/app/api/v1/candidate-seat/**`、`src/features/classroom/ClassroomExperience.tsx`、`src/features/classroom/ClassroomContextRail.tsx`、`src/features/classroom/session-machine.ts`、`tests/**`、本 Task、任务板、`verification/TASK-023/**`。
 - Forbidden Files: 密钥、用户真实笔记、既有 Accepted Record 原地改结论、Frozen Design Token 值。
 - Non-Scope: 通用自由聊天、多 Agent、长期记忆、数据库、多教室 Live、自动发布知乎回答。
+- Allowed Files 补充：`src/domain/schemas/candidate-generation.ts`、`scripts/precompute/build-candidate-sample.ts`、`data/snapshots/**`（仅新增精确 Sample 版本和 active pin）、`docs/proposals/PROP-0005-real-data-delivery.md`、`docs/decisions/adr/ADR-0010-live-candidate.md`、`docs/decisions/INDEX.md`、`output/playwright/**`、`.playwright-cli/**`、`.gitattributes`（固定 Snapshot 字节换行，避免跨平台校验失败）。
 
 ## Contracts & Decisions
 
@@ -43,11 +44,11 @@ idle/analyzing/error/no_candidate/resolved；new request/reset 取消旧请求�
 
 ## Acceptance Criteria
 
-- [ ] 至少一条非示例观点经真实模型分析，结果依赖当前输入；模型只返回 evidenceId，最终引用从服务端解析。
-- [ ] related AND supported AND limited 唯一亮座条件，uncertain 不亮座；no_candidate 是正常结果。
-- [ ] 真实模型失败保留输入并可 Retry；Sample/hash 不匹配不得预计算回退。
-- [ ] 实际 mode/provenance 下发并显示；不再按是否携带 sampleId 猜测实时调用模式。
-- [ ] 校验/失败用例、测试、构建和关键浏览器操作有证据；不记录笔记正文。
+- [x] 至少一条非示例观点经真实模型分析，结果依赖当前输入；模型只返回 evidenceId，最终引用从服务端解析。
+- [x] related AND supported AND limited 唯一亮座条件，uncertain 不亮座；no_candidate 是正常结果。
+- [x] 真实模型失败保留输入并可 Retry；Sample/hash 不匹配不得预计算回退。
+- [x] 实际 mode/provenance 下发并显示；不再按是否携带 sampleId 猜测实时调用模式。
+- [x] 校验/失败用例、测试、构建和关键浏览器操作有证据；不记录笔记正文。
 
 ## Verification
 
@@ -62,4 +63,3 @@ idle/analyzing/error/no_candidate/resolved；new request/reset 取消旧请求�
 ## Docs to Update
 
 本 Task、任务板、相应 Contract/Decision、交付计划、运行说明与 verification report。
-

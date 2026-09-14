@@ -10,6 +10,7 @@ import { analyzeCandidateSeat } from "@/server/use-cases/analyze-candidate-seat"
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export async function POST(request: Request) {
   const requestId = crypto.randomUUID();
@@ -29,21 +30,11 @@ export async function POST(request: Request) {
     const result = await analyzeCandidateSeat(input, {
       requestId,
       signal: request.signal,
-      deadlineAt: Date.now() + 10_000,
-      mode: input.sampleId ? "sample" : "mock",
+      deadlineAt: Date.now() + 25_000,
+      mode: "live",
     });
-    const responseMode = result.status === "success" && input.sampleId ? "sample" : "mock";
-    const body = analysisApiSuccessSchema.parse({
-      ok: true,
-      data: result,
-      meta: {
-        requestId,
-        mode: responseMode,
-        servedAt: new Date().toISOString(),
-        warnings: result.warnings,
-      },
-    });
-    return Response.json(body);
+    const body = analysisApiSuccessSchema.parse(result);
+    return Response.json(body, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const appError =
       error instanceof ZodError || error instanceof SyntaxError

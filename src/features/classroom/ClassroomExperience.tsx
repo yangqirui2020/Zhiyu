@@ -186,21 +186,23 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
             sampleId: sampleMatches ? "sample_learn_programming_v1" : undefined,
             idempotencyKey: requestId,
           }),
-          signal: controller.signal,
+          signal: AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]),
         });
-        const body: unknown = await response.json();
+        const body: unknown = await response.json().catch(() => null);
         if (!response.ok) {
-          const failure = apiFailureSchema.parse(body);
-          throw new Error(failure.error.message);
+          const failure = apiFailureSchema.safeParse(body);
+          throw new Error(failure.success ? failure.data.error.message : "服务暂时没有返回可用结果，请重试。");
         }
-        const success = analysisApiSuccessSchema.parse(body);
-        dispatch({ type: "resolve_opinion", requestId, result: success.data });
+        const parsed = analysisApiSuccessSchema.safeParse(body);
+        if (!parsed.success) throw new Error("分析结果未通过校验，请重试。");
+        const success = parsed.data;
+        dispatch({ type: "resolve_opinion", requestId, result: success.data, meta: success.meta });
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
         dispatch({
           type: "reject_opinion",
           requestId,
-          message: error instanceof Error ? error.message : "分析没有完成，请重试。",
+          message: error instanceof DOMException && error.name === "TimeoutError" ? "分析用时较长，请保留输入后重试。" : error instanceof Error ? error.message : "分析没有完成，请重试。",
         });
       } finally {
         if (candidateAbortRef.current === controller) candidateAbortRef.current = null;
@@ -266,7 +268,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
         </nav>
 
         <div className={styles.headerMeta}>
-          <span className={styles.modeBadge}>{demoScenario.disclosure}</span>
+          <span className={styles.modeBadge}>{classroom.provenance.mode === "mock" ? demoScenario.disclosure : "真实知乎摘要 · 观点可实时分析"}</span>
           <span>{headcount} 人 · {classroom.clusters.length} 组</span>
         </div>
       </header>
@@ -295,7 +297,7 @@ export function ClassroomExperience({ classroom, demoScenario }: ClassroomExperi
               {atLeast(phase, "reflection") ? (
                 <div className={styles.blackboardOutcome}>
                   <div>
-                    <span>全班共识</span>
+                    <span>{classroom.provenance.mode === "mock" ? "全班共识" : "样本共同点"}</span>
                     <p>{demoScenario.blackboard.consensus}</p>
                   </div>
                   <div>

@@ -10,6 +10,7 @@
  */
 
 import type { AnalysisResult } from "@/domain/schemas";
+import type { ApiMeta } from "@/contracts";
 
 export type SessionPhase =
   | "exploring"
@@ -33,8 +34,8 @@ export type CandidateRequestState =
   | { status: "idle" }
   | { status: "analyzing"; requestId: string; submittedText: string }
   | { status: "error"; requestId: string; submittedText: string; message: string }
-  | { status: "no_candidate"; result: AnalysisResult; submittedText: string }
-  | { status: "resolved"; result: AnalysisResult; submittedText: string };
+  | { status: "no_candidate"; result: AnalysisResult; submittedText: string; meta?: ApiMeta }
+  | { status: "resolved"; result: AnalysisResult; submittedText: string; meta?: ApiMeta };
 
 export type SessionState = {
   phase: SessionPhase;
@@ -53,7 +54,7 @@ export type SessionEvent =
   | { type: "edit_opinion"; value: string }
   | { type: "use_sample_opinion"; value: string }
   | { type: "submit_opinion"; requestId: string }
-  | { type: "resolve_opinion"; requestId: string; result: AnalysisResult }
+  | { type: "resolve_opinion"; requestId: string; result: AnalysisResult; meta?: ApiMeta }
   | { type: "reject_opinion"; requestId: string; message: string }
   | { type: "retry_opinion"; requestId: string }
   | { type: "open_seatmate" }
@@ -150,6 +151,7 @@ export function sessionReducer(
           candidate: {
             status: "no_candidate",
             result: event.result,
+            meta: event.meta,
             submittedText: state.candidate.submittedText,
           },
         };
@@ -160,6 +162,7 @@ export function sessionReducer(
         candidate: {
           status: "resolved",
           result: event.result,
+          meta: event.meta,
           submittedText: state.candidate.submittedText,
         },
         panel: { kind: "default" },

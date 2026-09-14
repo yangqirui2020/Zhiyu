@@ -1,0 +1,53 @@
+{
+  "testedAt": "2026-09-14T18:06:14.378Z",
+  "revision": "snap_zhihu_20260914180513051",
+  "model": "deepseek-flash",
+  "inputs": "Synthetic QA text; originals not logged",
+  "results": [
+    {
+      "name": "non-sample",
+      "noteHash": "6bb01da89c2c54c8603a242b0f278d26be3970ca077240534d8709019233f979",
+      "durationMs": 2323,
+      "status": "success",
+      "dimensions": [
+        {
+          "relevance": "related",
+          "noteSupport": "supported",
+          "coverage": "limited"
+        }
+      ],
+      "evidenceCount": 3,
+      "candidateCount": 1
+    },
+    {
+      "name": "covered",
+      "noteHash": "613d91bac8e2c996982293933140722c7f6469723e3c6214fa977f821c14a530",
+      "durationMs": 2421,
+      "status": "no_candidate",
+      "dimensions": [
+        {
+          "relevance": "related",
+          "noteSupport": "supported",
+          "coverage": "covered"
+        }
+      ],
+      "evidenceCount": 3,
+      "candidateCount": 0
+    },
+    {
+      "name": "unrelated",
+      "noteHash": "f563e836e36d9a7973f8dee9a6ba6fc3d10b37f84309dd5fafc48faac20214f0",
+      "durationMs": 1639,
+      "status": "no_candidate",
+      "dimensions": [
+        {
+          "relevance": "unrelated",
+          "noteSupport": "insufficient",
+          "coverage": "limited"
+        }
+      ],
+      "evidenceCount": 3,
+      "candidateCount": 0
+    }
+  ]
+}

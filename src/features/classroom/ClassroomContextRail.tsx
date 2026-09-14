@@ -65,6 +65,8 @@ export function ClassroomContextRail({
   const sampleAnswerMatches =
     state.answerText.trim() === scenario.seatmate.sampleAnswer.trim();
   const canSubmitOpinion = state.opinionText.trim().length >= 50;
+  const analysisMeta = state.candidate.status === "resolved" || state.candidate.status === "no_candidate" ? state.candidate.meta : undefined;
+  const analysisMode = analysisMeta ? <p className={styles.sampleResultDisclosure}>{analysisMeta.mode === "live" ? "本次观点分析：实时 AI" : analysisMeta.mode === "sample" ? "本次观点分析：精确示例结果" : "本次观点分析：开发 Mock"}{analysisMeta.fallbackFrom ? ` · 实时分析未完成，已显示同一示例的结果：${analysisMeta.fallbackReason}` : ""}</p> : null;
   const seatmateClusterIndex = seatmate?.cluster
     ? classroom.clusters.findIndex((cluster) => cluster.id === seatmate.cluster?.id)
     : -1;
@@ -205,7 +207,7 @@ export function ClassroomContextRail({
         <div className={styles.railBody}>
           <div className={styles.blackboardRecap}>
             <section>
-              <span>全班共识</span>
+              <span>{classroom.provenance.mode === "mock" ? "全班共识" : "样本共同点"}</span>
               <p>{scenario.blackboard.consensus}</p>
             </section>
             <section>
@@ -220,6 +222,7 @@ export function ClassroomContextRail({
           <label className={styles.noteField}>
             <span>你的初始观点</span>
             <textarea
+              maxLength={8000}
               value={state.opinionText}
               onChange={(event) => onEditOpinion(event.target.value)}
               disabled={state.candidate.status === "analyzing"}
@@ -260,14 +263,20 @@ export function ClassroomContextRail({
           ) : null}
           {state.candidate.status === "no_candidate" ? (
             <div className={styles.analysisEmpty} role="status">
-              <strong>当前演示分析没有找到可核验的一席。</strong>
-              <p>{state.candidate.result.warnings[0] ?? "保留你的输入；可以重试或使用示例继续体验。"}</p>
+              <strong>本次分析未满足亮座条件。</strong>
+              {state.candidate.result.assessments.map((item) => <div key={item.claimId}>
+                <p>与题目关系：{item.relevance.explanation}</p>
+                <p>笔记依据：{item.noteSupport.explanation}</p>
+                <p>当前样本覆盖：{item.coverage.explanation}</p>
+              </div>)}
+              <p>输入已保留。你可以补充理由、修改后重试，或使用示例继续体验。</p>
             </div>
           ) : null}
           <div className={styles.privacyNote}>
             <strong>演示边界</strong>
-            <span>{classroom.provenance.mode === "mock" ? "开发模式使用本地 Mock；输入不持久化。" : "个人分析接入中；当前课堂来自真实摘要，示例结果有明确标记。请勿输入个人敏感信息。"}</span>
+            <span>{classroom.provenance.mode === "mock" ? "开发模式使用本地 Mock；输入不持久化。" : "提交后将由 DeepSeek 分析一条主要主张；输入不保存到数据库。请勿填写个人敏感信息。"}</span>
           </div>
+          {analysisMode}
         </div>
         <footer className={styles.railFooter}>
           <button
@@ -303,6 +312,7 @@ export function ClassroomContextRail({
           title={candidateSeat.title}
         />
         <div className={styles.railBody}>
+          {analysisMode}
           <p className={styles.candidateClaim}>{claim.text}</p>
           <div className={styles.positionRationale}>
             <span>为什么你坐在这里</span>
