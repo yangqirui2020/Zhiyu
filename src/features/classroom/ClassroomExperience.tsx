@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { classroomCatalog, classroomHref, findClassroom } from "../../../data/classrooms/catalog";
 
 import { analysisApiSuccessSchema, apiFailureSchema, learningApiSuccessSchema } from "@/contracts";
 import type { Classroom } from "@/domain/schemas";
@@ -29,13 +32,6 @@ import styles from "./classroom.module.css";
 const ROUNDTABLE_LINE_MS = 2600;
 const ROUNDTABLE_WRAP_MS = 900;
 
-const STORY_STEPS: Array<{ phase: SessionPhase; label: string }> = [
-  { phase: "candidate", label: "01 空位亮起" },
-  { phase: "seatmate", label: "02 认识同桌" },
-  { phase: "challenge", label: "03 一次追问" },
-  { phase: "mySeat", label: "04 留下一席" },
-];
-
 const phaseRank: SessionPhase[] = [
   "exploring",
   "roundtable",
@@ -58,7 +54,11 @@ type ClassroomExperienceProps = {
 };
 
 export function ClassroomExperience({ classroom, demoScenario: baseScenario }: ClassroomExperienceProps) {
+  const router = useRouter();
+  const room = findClassroom(classroom.question.id)!;
+  const legacyFixture = classroom.schemaVersion === "1.0.0-rc.1";
   const [session, dispatch] = useReducer(sessionReducer, initialSessionState);
+  const workspaceRef = useRef<HTMLDivElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const studentButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const restoreStudentIdRef = useRef<string | null>(null);
@@ -73,9 +73,10 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
       classNote: session.learning.result.classNote,
       mySeat: session.learning.result.mySeat,
       zhihuDraft: session.learning.result.zhihuDraft,
+      evidenceIds: session.learning.result.evidenceIds,
     } : {}),
   }), [baseScenario, prepared, session.learning]);
-  const matchedStudentId = classroom.provenance.mode === "mock" ? demoScenario.seatmate.studentId : prepared?.seatmate.studentId ?? null;
+  const matchedStudentId = legacyFixture ? demoScenario.seatmate.studentId : prepared?.seatmate.studentId ?? null;
 
   const { phase } = session;
   const selectedStudentId =
@@ -83,6 +84,13 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
   const hasCandidate = phaseHasCandidate(phase);
   const isSeated = phaseIsSeated(phase);
   const headcount = classroom.students.length + (isSeated ? 1 : 0);
+
+  useEffect(() => {
+    const panel = workspaceRef.current?.querySelector("aside");
+    const content = panel?.querySelector<HTMLElement>("[data-lesson-content]");
+    if (content) content.scrollTop = 0;
+    if (phase !== "exploring" && phase !== "roundtable" && window.matchMedia("(max-width: 720px)").matches) panel?.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [phase, session.panel.kind]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -153,13 +161,13 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
   const selectStudent = useCallback(
     (studentId: string, restoreFocus = false) => {
       restoreStudentIdRef.current = restoreFocus ? studentId : null;
-      if (classroom.provenance.mode === "mock" && phase === "candidate" && studentId === demoScenario.seatmate.studentId) {
+      if (legacyFixture && phase === "candidate" && studentId === demoScenario.seatmate.studentId) {
         dispatch({ type: "open_seatmate" });
         return;
       }
       dispatch({ type: "select_student", studentId });
     },
-    [classroom.provenance.mode, demoScenario.seatmate.studentId, phase],
+    [legacyFixture, demoScenario.seatmate.studentId, phase],
   );
 
   const closeSheet = useCallback(() => {
@@ -196,7 +204,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
             questionId: classroom.question.id,
             classroomRevision: classroom.revision,
             noteText,
-            sampleId: sampleMatches ? "sample_learn_programming_v1" : undefined,
+            sampleId: sampleMatches ? room.sampleId : undefined,
             idempotencyKey: requestId,
           }),
           signal: AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]),
@@ -221,13 +229,13 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
         if (candidateAbortRef.current === controller) candidateAbortRef.current = null;
       }
     },
-    [classroom.question.id, classroom.revision, classroom.schemaVersion, demoScenario.noteText],
+    [classroom.question.id, classroom.revision, classroom.schemaVersion, demoScenario.noteText, room.sampleId],
   );
 
   const submitLearning = useCallback(async (stage: "prepare" | "complete") => {
     if (stage === "prepare" && session.phase !== "candidate") return;
     if (stage === "complete" && session.phase !== "challenge") return;
-    if (classroom.provenance.mode === "mock") {
+    if (legacyFixture) {
       if (stage === "prepare") dispatch({ type: "open_seatmate" });
       else dispatch({ type: "submit_answer", sampleMatches: session.answerText.trim() === demoScenario.seatmate.sampleAnswer.trim() });
       return;
@@ -254,7 +262,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
       if (controller.signal.aborted) return;
       dispatch({ type: "reject_learning", requestId, message: error instanceof DOMException && error.name === "TimeoutError" ? "处理用时较长，输入已保留，请重试。" : error instanceof Error ? error.message : "学习结果生成失败，请重试。" });
     } finally { if (learningAbortRef.current === controller) learningAbortRef.current = null; }
-  }, [classroom.provenance.mode, classroom.schemaVersion, classroom.question.id, classroom.revision, session.phase, session.candidate, session.answerText, prepared, demoScenario.seatmate.sampleAnswer]);
+  }, [legacyFixture, classroom.schemaVersion, classroom.question.id, classroom.revision, session.phase, session.candidate, session.answerText, prepared, demoScenario.seatmate.sampleAnswer]);
 
   useEffect(() => () => { candidateAbortRef.current?.abort(); learningAbortRef.current?.abort(); }, []);
 
@@ -270,20 +278,11 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
     session.panel.kind === "note" ||
     (session.panel.kind === "default" && phase === "responded");
 
-  const nextStoryStep = STORY_STEPS.findIndex(
-    (step) => !atLeast(phase, step.phase),
-  );
-  const activeStoryStep = isSeated
-    ? STORY_STEPS.length
-    : nextStoryStep === -1
-      ? STORY_STEPS.length - 1
-      : Math.max(0, nextStoryStep - 1);
-
   return (
     <main className={styles.experienceShell}>
       <header className={styles.classroomHeader}>
         <div className={styles.brandBlock}>
-          <span className={styles.brandMark}>知遇 · 一席</span>
+          <Link href="/" className={styles.brandMark}>知遇 · 一席</Link>
           <span className={styles.pixelEdition}>PIXEL CLASSROOM</span>
         </div>
 
@@ -294,41 +293,43 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
 
         <nav className={styles.roomStrip} aria-label="认知校园教室入口">
           {demoScenario.campus.rooms.map((room) => (
-            <button
+            <Link
               key={room.number}
-              type="button"
+              href={classroomHref(classroomCatalog.find(item => item.number === room.number)!.questionId)}
               className={room.status === "current" ? styles.roomTabCurrent : styles.roomTab}
               aria-current={room.status === "current" ? "page" : undefined}
-              onClick={() =>
-                dispatch({
-                  type: "open_campus_room",
-                  roomNumber: room.number,
-                  isCurrent: room.status === "current",
-                })
-              }
               title={`${room.title} · ${room.note}`}
             >
               <b>{room.number}</b>
               <span>{room.status === "current" ? "本班" : room.note}</span>
-            </button>
+            </Link>
           ))}
         </nav>
 
         <div className={styles.headerMeta}>
-          <span className={styles.modeBadge}>{classroom.provenance.mode === "mock" ? demoScenario.disclosure : "真实知乎摘要 · 观点可实时分析"}</span>
+          <span className={styles.modeBadge}>{classroom.provenance.mode === "mock" ? "合成演示 · 非真实知乎回答" : "真实知乎摘要 · 数据快照"}</span>
           <span>{headcount} 人 · {classroom.clusters.length} 组</span>
         </div>
       </header>
 
-      <div className={styles.classroomWorkspace}>
+      <ol className={styles.lessonJourney} aria-label="本节课的学习进度">
+        {[{ label: "看观点", phase: "exploring" }, { label: "写想法", phase: "reflection" }, { label: "同桌追问", phase: "candidate" }, { label: "留下一席", phase: "responded" }].map((step, index, steps) => {
+          const reached = atLeast(phase, step.phase as SessionPhase);
+          const current = reached && (index === steps.length - 1 || !atLeast(phase, steps[index + 1].phase as SessionPhase));
+          return <li key={step.label} className={current ? styles.journeyCurrent : reached ? styles.journeyDone : undefined} aria-current={current ? "step" : undefined}><b>{reached && !current ? "✓" : `0${index + 1}`}</b>{step.label}</li>;
+        })}
+        <li className={styles.journeyResult}>带走课堂笔记，继续下一题</li>
+      </ol>
+
+      <div ref={workspaceRef} className={styles.classroomWorkspace}>
         <section className={styles.stage} aria-labelledby="stage-heading">
-          <div className={styles.stageCanvas}>
+          <div className={styles.stageCanvas} data-expanded={atLeast(phase, "reflection")}>
             <div className={styles.sceneTopWall} aria-hidden="true" />
-            <span className={styles.roomPlaque} aria-hidden="true">教室 101</span>
+            <span className={styles.roomPlaque} aria-hidden="true">教室 {room.number}</span>
 
             <section className={styles.blackboardPanel} aria-label="课堂黑板信息中枢">
               <div className={styles.blackboardTopline}>
-                <span>CLASSROOM 101 · 本期问题</span>
+                <span>CLASSROOM {room.number} · 本期问题</span>
                 <span>{headcount} 位学生 / {classroom.clusters.length} 个学习小组</span>
               </div>
               <h1 id="stage-heading">{classroom.question.title}</h1>
@@ -337,14 +338,14 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
               ) : (
                 <p>
                   {focusedGroupLabel
-                    ? `当前聚焦：${focusedGroupLabel} · 相邻座位表示论证路径更接近`
-                    : "课堂规则：座位越近，论证越相似；小组颜色不表示正误或支持率"}
+                    ? `当前聚焦：${focusedGroupLabel} · 同组共享相近的论证路径`
+                    : "课堂规则：按论证路径分组；组内座次与颜色不表示排名"}
                 </p>
               )}
               {atLeast(phase, "reflection") ? (
                 <div className={styles.blackboardOutcome}>
                   <div>
-                    <span>{classroom.provenance.mode === "mock" ? "全班共识" : "样本共同点"}</span>
+                    <span>样本共同点</span>
                     <p>{demoScenario.blackboard.consensus}</p>
                   </div>
                   <div>
@@ -386,7 +387,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
 
             <div className={styles.classRuleDock}>
               <strong>课堂规则</strong>
-              <span><i aria-hidden="true">↔</i> 距离 = 论证相似</span>
+              <span><i aria-hidden="true">↔</i> 同组 = 相近论证</span>
               <span><i aria-hidden="true">▦</i> 桌组 = 观点路径</span>
               <span><i aria-hidden="true">≠</i> 颜色不分正误</span>
             </div>
@@ -397,24 +398,6 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
               <span>1F →</span>
             </div>
 
-            {hasCandidate ? (
-              <div className={styles.candidateStory} role="status">
-                {isSeated ? (
-                  <strong>你已入席 · 学生 {studentSeatNumber(classroom, demoScenario.seatmate.studentId)} 向你招了招手</strong>
-                ) : (
-                  STORY_STEPS.map((step, index) => {
-                    const reached = index < activeStoryStep || atLeast(phase, step.phase);
-                    const current = index === activeStoryStep || (activeStoryStep === -1 && index === STORY_STEPS.length - 1);
-                    return (
-                      <span key={step.phase} className={current ? styles.storyCurrent : reached ? styles.storyReached : styles.storyPending}>
-                        {index > 0 ? <i aria-hidden="true">→</i> : null}
-                        {current ? <strong>{step.label}</strong> : step.label}
-                      </span>
-                    );
-                  })
-                )}
-              </div>
-            ) : null}
           </div>
         </section>
 
@@ -468,7 +451,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
             onOpenNote={() => dispatch({ type: "open_note" })}
             onClaimSeat={() => dispatch({ type: "claim_seat" })}
             onOpenCampusRoom={(roomNumber, isCurrent) =>
-              dispatch({ type: "open_campus_room", roomNumber, isCurrent })
+              isCurrent ? dispatch({ type: "close_panel" }) : router.push(classroomHref(classroomCatalog.find(item => item.number === roomNumber)!.questionId))
             }
             onReset={resetSession}
           />
@@ -525,7 +508,7 @@ export function ClassroomExperience({ classroom, demoScenario: baseScenario }: C
       </details>
 
       <footer className={styles.provenanceNote}>
-        {classroom.provenance.mode === "mock" ? "本页使用人工 Mock 演示数据。" : `本班使用 ${classroom.sources.length} 条真实知乎回答摘要，由 AI 整理观点。来源采集于 ${new Date(classroom.provenance.capturedAt!).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}，不代表知乎全站。`} 102–103 为教室预告，尚未开放。
+        {classroom.provenance.mode === "mock" ? `本班 ${classroom.sources.length} 条材料全部为合成演示，无真实知乎作者或回答。` : `本班使用 ${classroom.sources.length} 条真实知乎回答摘要，由 AI 整理观点。来源采集于 ${new Date(classroom.provenance.capturedAt!).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}，不代表知乎全站。`} 三间教室均已开放；切换教室会开始新的一课，请先下载需要保留的笔记。
       </footer>
     </main>
   );

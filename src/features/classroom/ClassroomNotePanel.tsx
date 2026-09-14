@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import type { Classroom } from "@/domain/schemas";
 import { LearningEvidence } from "./LearningEvidence";
+import { DownloadClassNote } from "./DownloadClassNote";
 
 import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
 
@@ -63,7 +64,7 @@ export function ClassroomNotePanel({
   onBack,
 }: ClassroomNotePanelProps) {
   const note = scenario.classNote;
-  const real = classroom.provenance.mode !== "mock";
+  const real = classroom.schemaVersion === "1.0.0-rc.2";
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const sections = noteSectionStatus(phase);
   const canOpenMySeat = phase === "responded";
@@ -82,7 +83,8 @@ export function ClassroomNotePanel({
         <h2 id="classnote-title">记录我的观点与回应</h2>
       </header>
 
-      <div className={styles.railBody}>
+      <div className={styles.railBody} data-lesson-content>
+        {learning.status === "completed" ? <DownloadClassNote classroom={classroom} scenario={scenario} originalNote={originalNote} answerText={answerText} /> : null}
         {learning.status === "completed" ? <p className={styles.sampleResultDisclosure}>{learning.meta.mode === "live" ? "本阶段由 AI 根据你的实际回应整理。" : "本阶段为与示例观点和回应精确匹配的预计算结果。"} 请核对，不准确处应以你的原意为准。</p> : null}
         <ol className={styles.noteProgress} aria-label="课堂进度">
           {progressItems.map((item, index) => (

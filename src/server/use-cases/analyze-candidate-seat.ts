@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { candidateSeatRequestSchema, type CandidateSeatRequest, type ApiSuccess } from "../../contracts/api.ts";
 import { analysisResultSchema, validateAnalysisRelations, type AnalysisResult } from "../../domain/schemas/index.ts";
 import { candidateSampleSchema } from "../../domain/schemas/candidate-generation.ts";
-import { loadSnapshotBundle } from "../providers/snapshot/snapshot-bundle.ts";
+import { loadClassroomBundle } from "../providers/catalog/classroom-bundle.ts";
 import { LiveCandidateAnalyzer } from "../providers/live/live-candidate-analyzer.ts";
 import { hashNote } from "../pipelines/candidate-seat/analyze.ts";
 import { AppError } from "../errors/app-error.ts";
@@ -12,28 +12,28 @@ import type { ExecutionContext } from "../ports/execution-context.ts";
 const inFlight = new Map<string, { fingerprint: string; expiresAt: number; promise: Promise<ApiSuccess<AnalysisResult>> }>();
 
 async function execute(request: CandidateSeatRequest, context: ExecutionContext): Promise<ApiSuccess<AnalysisResult>> {
-  if (process.env.NODE_ENV !== "production" && process.env.DATA_MODE === "mock") {
+  if (request.questionId === "q_learn_programming" && process.env.NODE_ENV !== "production" && process.env.DATA_MODE === "mock") {
     const { loadClassroom } = await import("./load-classroom.ts");
     const { PrecomputedSampleCandidateAnalyzer } = await import("../providers/fixture/precomputed-sample-candidate-analyzer.ts");
     const classroom = await loadClassroom(request.questionId, context);
     const data = await new PrecomputedSampleCandidateAnalyzer().analyze(request, classroom, context);
     return { ok: true, data, meta: { requestId: context.requestId, servedAt: new Date().toISOString(), mode: "mock", warnings: data.warnings } };
   }
-  const { classroom, manifest, assets } = await loadSnapshotBundle(request.questionId);
+  const { classroom, manifest, assets } = await loadClassroomBundle(request.questionId);
   if (request.classroomRevision !== classroom.revision) throw new AppError("CLASSROOM_REVISION_MISMATCH", "课堂资料已更新，请重新打开教室后再试。", 409, false, "switch_question");
   const parsedSample = candidateSampleSchema.safeParse(assets["analysis/sample.json"]);
   const sample = parsedSample.success ? parsedSample.data : null;
-  const exactSample = sample && sample.noteHash === hashNote(request.noteText)
+  const exactSample = sample && sample.result.questionId === request.questionId && sample.noteHash === hashNote(request.noteText)
     && sample.noteText === request.noteText && sample.result.classroomRevision === classroom.revision
     && validateAnalysisRelations(sample.result, request.noteText).length === 0;
   const sampleResult = (fallbackReason?: string): ApiSuccess<AnalysisResult> => ({
     ok: true, data: sample!.result,
-    meta: { requestId: context.requestId, servedAt: new Date().toISOString(), mode: "sample", snapshotId: manifest.snapshotId, capturedAt: manifest.capturedAt, warnings: ["这是与当前示例观点精确匹配的预计算结果。", ...sample!.result.warnings], ...(fallbackReason ? { fallbackFrom: "live" as const, fallbackReason } : {}) },
+    meta: { requestId: context.requestId, servedAt: new Date().toISOString(), mode: manifest ? "sample" : "mock", ...(manifest ? { snapshotId: manifest.snapshotId, capturedAt: manifest.capturedAt } : {}), warnings: ["这是与当前示例观点精确匹配的预计算结果。", ...classroom.provenance.warnings, ...sample!.result.warnings], ...(fallbackReason ? { fallbackFrom: "live" as const, fallbackReason } : {}) },
   });
   if (exactSample && request.sampleId === sample!.sampleId) return sampleResult();
   try {
     const data = analysisResultSchema.parse(await new LiveCandidateAnalyzer().analyze(request, classroom, context));
-    return { ok: true, data, meta: { requestId: context.requestId, servedAt: new Date().toISOString(), mode: "live", warnings: data.warnings } };
+    return { ok: true, data, meta: { requestId: context.requestId, servedAt: new Date().toISOString(), mode: "live", warnings: [...classroom.provenance.warnings, ...data.warnings] } };
   } catch (error) {
     if (exactSample && !context.signal.aborted && error instanceof AppError && ["PROVIDER_TIMEOUT", "PROVIDER_UNAVAILABLE", "PROVIDER_RATE_LIMITED", "STRUCTURED_OUTPUT_INVALID"].includes(error.code)) return sampleResult(error.message);
     throw error;

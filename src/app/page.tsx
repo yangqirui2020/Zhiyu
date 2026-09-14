@@ -1,44 +1,32 @@
 import Link from "next/link";
 import { loadClassroom } from "@/server/use-cases/load-classroom";
-
+import { classroomCatalog, classroomHref } from "../../data/classrooms/catalog";
 import styles from "./home.module.css";
 
-const classroomHref = "/classroom/q_learn_programming";
-
 export default async function HomePage() {
-  const classroom = await loadClassroom("q_learn_programming", { requestId: "page_home", signal: new AbortController().signal, deadlineAt: Number.POSITIVE_INFINITY, mode: "snapshot" });
-  return (
-    <main className={styles.page}>
-      <nav className={styles.nav} aria-label="主导航">
-        <span className={styles.wordmark}>知遇 · 一席</span>
-        <span className={styles.phase}>Demo V3 · Learning loop</span>
-      </nav>
-
-      <section className={styles.hero} aria-labelledby="home-title">
-        <p className={styles.eyebrow}>一题，一间观点教室</p>
-        <h1 id="home-title">
-          走进一个问题，
-          <br />
-          看看观点坐在哪里。
-        </h1>
-        <p className={styles.lede}>
-          回答化作教室里的学生。先听不同小组交流，再写下你的观点，让同桌追问你一次，带着属于自己的说法入席。
-        </p>
-
-        <div className={styles.actions}>
-          <Link className={styles.primaryAction} href={classroomHref}>
-            走进 Classroom 101
-            <span aria-hidden="true">→</span>
+  const rooms = await Promise.all(classroomCatalog.map(async room => ({ ...room, classroom: await loadClassroom(room.questionId, { requestId: "page_home", signal: new AbortController().signal, deadlineAt: Number.POSITIVE_INFINITY, mode: room.mode }) })));
+  return <main className={styles.page}>
+    <nav className={styles.nav} aria-label="主导航"><span className={styles.wordmark}>知遇 · 一席</span><span className={styles.phase}>认知校园 / 编程学习楼 · 1F</span></nav>
+    <section className={styles.hero} aria-labelledby="home-title">
+      <div className={styles.heroCopy}>
+        <p className={styles.eyebrow}>一道问题，一间观点教室</p>
+        <h1 id="home-title">听见不同的想法，<br />留下自己的<span>一席。</span></h1>
+        <p className={styles.lede}>从选语言，到做项目，再到与 AI 一起学习。走过三间教室，把别人的观点，变成自己想清楚的一句话。</p>
+        <Link className={styles.primaryAction} href={classroomHref(rooms[0].questionId)}>从 101 开始这段旅程 <span aria-hidden="true">→</span></Link>
+        <ol className={styles.journey} aria-label="每节课的学习过程"><li><b>01</b>看观点</li><li><b>02</b>写想法</li><li><b>03</b>同桌追问</li><li><b>04</b>带走笔记</li></ol>
+        <p className={styles.disclosure}>101 使用真实知乎回答摘要；102、103 使用明确标注的合成材料。每间均可完整体验。</p>
+      </div>
+      <div className={styles.corridor}>
+        <div className={styles.directoryHeading}><span>今日开放的教室</span><small>3 间 · 由浅入深</small></div>
+        {rooms.map((room, index) => <div key={room.number}>
+          <Link className={styles.room} href={classroomHref(room.questionId)}>
+            <span className={styles.roomNumber}>{room.number}<small>CLASSROOM</small></span>
+            <div className={styles.roomBody}><span className={styles.roomMode}>{room.classroom.provenance.mode === "mock" ? "合成演示 · 非真实知乎回答" : "真实知乎摘要 · 数据快照"}</span><h2>{room.title}</h2><p>{room.subtitle}</p><span className={styles.roomStats}>{room.classroom.students.length} 位学生 · {room.classroom.clusters.length} 个观点组 <b>走进教室 ↗</b></span></div>
           </Link>
-          <span className={styles.disclosure}>{classroom.provenance.mode === "mock" ? "开发模式 · 人工 Mock 数据" : "真实知乎回答摘要 · AI 整理的观点教室"}</span>
-        </div>
-      </section>
-
-      <footer className={styles.footer}>
-        <span>{classroom.students.length} 位学生</span>
-        <span>{classroom.clusters.length} 个观点组</span>
-        <span>摘要与来源链接可查看</span>
-      </footer>
-    </main>
-  );
+          {index < 2 && <div className={styles.connection}><span aria-hidden="true">↓</span>{index === 0 ? "有了起点，然后怎样学？" : "有了工具，怎样自己想？"}</div>}
+        </div>)}
+      </div>
+    </section>
+    <footer className={styles.footer}><span>每个学生是一条观点材料，每张桌子是一种思考路径。</span><span>理解讨论 · 核对证据 · 亲自表达</span></footer>
+  </main>;
 }

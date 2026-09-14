@@ -43,6 +43,7 @@
 | TASK-023 | Done | Primary Agent | Live / 精确 Sample；54 tests、真实模型三组测试与浏览器失败恢复 PASS |
 | TASK-024 | Done | Primary Agent | 63 tests / Pro 真实输入 / 三视口闭环与失败恢复 PASS |
 | TASK-025 | In Progress | Primary Agent | 公网与材料已交付；最终提交/回执待队长操作 |
+| TASK-026 | Done | Primary Agent | 三间完整教室、真实/合成来源隔离、适配人数布局、笔记下载与跨题闭环；66 tests / 三视口 / Live 验证 PASS |
 
 当前用户指令通过 `PROP-0002` 批准 TASK-013 在不改 Domain/API/Provider 的前提下，以显式 Mock Scenario 完成 Desktop Character Classroom 与 Candidate → Seatmate 体验验证。
 

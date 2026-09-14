@@ -27,6 +27,7 @@ export type SnapshotManifest = z.infer<typeof snapshotManifestSchema>;
 
 export function validateSnapshotClassroom(manifest: SnapshotManifest, classroom: Classroom): string[] {
   const issues: string[] = [];
+  if (classroom.sources.some(source => source.provider !== "zhihu" || source.textKind === "synthetic_excerpt")) issues.push("Snapshot cannot contain synthetic sources");
   if (classroom.schemaVersion !== manifest.schemaVersion || classroom.question.id !== manifest.questionId || classroom.revision !== manifest.classroomRevision) issues.push("Snapshot identity mismatch");
   if (classroom.sources.length !== manifest.sourceCount) issues.push("Snapshot source count mismatch");
   if (classroom.clusters.length !== manifest.clustering.clusterCount) issues.push("Snapshot cluster count mismatch");

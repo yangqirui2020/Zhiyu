@@ -5,7 +5,7 @@ import type { StructuredOutputProvider } from "../../ports/structured-output-pro
 import type { ExecutionContext } from "../../ports/execution-context.ts";
 import { AppError } from "../../errors/app-error.ts";
 
-const grounding = (classroom: Classroom) => ({ question: classroom.question.title, students: classroom.students.map((s) => ({ id: s.id, sourceContentId: s.sourceContentId, argument: classroom.arguments.find((a) => a.id === s.argumentId) })), evidence: classroom.evidence.filter((e) => e.kind === "source_excerpt") });
+const grounding = (classroom: Classroom) => ({ sourceMode: classroom.provenance.mode, sourceDisclosure: classroom.provenance.warnings, question: classroom.question.title, students: classroom.students.map((s) => ({ id: s.id, sourceContentId: s.sourceContentId, argument: classroom.arguments.find((a) => a.id === s.argumentId) })), evidence: classroom.evidence.filter((e) => e.kind === "source_excerpt") });
 const check = (data: Parameters<typeof validateLearningReferences>[0], classroom: Classroom) => {
   if (validateLearningReferences(data, classroom).length) throw new AppError("STRUCTURED_OUTPUT_INVALID", "学习结果的参考资料未通过校验，请重试。", 502, true, "retry");
 };

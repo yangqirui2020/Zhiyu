@@ -21,13 +21,13 @@ export const questionSchema = z.object({
 export const sourceContentSchema = z.object({
   schemaVersion: schemaVersionSchema,
   id: stableId("src"),
-  provider: z.literal("zhihu"),
+  provider: z.enum(["zhihu", "synthetic"]),
   externalId: z.string().min(1),
   contentType: z.enum(["answer", "article", "other"]),
   questionId: stableId("q"),
   title: z.string().min(1),
   excerpt: z.string().min(1),
-  textKind: z.enum(["search_excerpt", "answer_summary", "full_text"]),
+  textKind: z.enum(["search_excerpt", "answer_summary", "full_text", "synthetic_excerpt"]),
   url: httpsUrlSchema,
   author: z.object({
     displayName: z.string().min(1),
@@ -46,7 +46,9 @@ export const sourceContentSchema = z.object({
     commentCount: z.number().int().nonnegative().nullable(),
   }),
   capturedAt: z.iso.datetime(),
-}).refine((source) => source.textKind !== "answer_summary" || source.schemaVersion === "1.0.0-rc.2", "Answer summaries require schema rc.2");
+}).refine((source) => source.textKind !== "answer_summary" || source.schemaVersion === "1.0.0-rc.2", "Answer summaries require schema rc.2")
+  .refine((source) => (source.provider === "synthetic") === (source.textKind === "synthetic_excerpt"), "Synthetic sources must use synthetic excerpts")
+  .refine((source) => source.provider !== "synthetic" || source.schemaVersion === "1.0.0-rc.2", "Synthetic sources require schema rc.2");
 
 const sourceExcerptEvidenceSchema = z.object({
   id: stableId("ev"),
@@ -194,6 +196,7 @@ export function validateClassroomRelations(classroom: ClassroomShape): RelationI
   const sourceExternalKeys = new Set<string>();
 
   classroom.sources.forEach((source, index) => {
+    if (source.provider === "synthetic" && classroom.provenance.mode !== "mock") issues.push({ message: "Synthetic sources require disclosed mock classroom", path: ["sources", index, "provider"] });
     const externalKey = `${source.provider}:${source.externalId}`;
     if (sourceExternalKeys.has(externalKey)) {
       issues.push({

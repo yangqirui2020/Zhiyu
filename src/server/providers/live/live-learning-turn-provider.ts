@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import type { LearningTurnProvider } from "../../ports/learning-turn-provider.ts";
 import { learningTurnResultSchema, type LearningTurnRequest } from "../../../domain/schemas/learning.ts";
 import type { ExecutionContext } from "../../ports/execution-context.ts";
-import { loadSnapshotBundle } from "../snapshot/snapshot-bundle.ts";
+import { loadClassroomBundle } from "../catalog/classroom-bundle.ts";
 import { DeepSeekStructuredOutputProvider } from "../deepseek/deepseek-structured-output-provider.ts";
 import { prepareLearning, completeLearning } from "../../pipelines/learning/generate.ts";
 import { signChallenge, verifyChallenge } from "../../pipelines/learning/challenge-token.ts";
@@ -12,7 +12,7 @@ import { AppError } from "../../errors/app-error.ts";
 
 export class LiveLearningTurnProvider implements LearningTurnProvider {
   async run(request: LearningTurnRequest, context: ExecutionContext) {
-    const { classroom } = await loadSnapshotBundle(request.questionId);
+    const { classroom } = await loadClassroomBundle(request.questionId);
     const identity = { schemaVersion: "1.0.0-rc.2" as const, questionId: classroom.question.id, classroomRevision: classroom.revision };
     if (request.classroomRevision !== classroom.revision) throw new AppError("CLASSROOM_REVISION_MISMATCH", "课堂资料已更新，请重新开始这节课。", 409, false, "switch_question");
     const provider = new DeepSeekStructuredOutputProvider();

@@ -1,0 +1,55 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions -- Function expression is executed by playwright-cli run-code. */
+async (page) => {
+  const origin = page.url().split("/").slice(0, 3).join("/");
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(`${origin}/classroom/q_projects_and_foundations`);
+  const button = name => page.getByRole("button", { name, exact: true });
+  const check = (ok, message) => { if (!ok) throw new Error(message); };
+  const failOnce = path => page.route(`**/api/v1/${path}`, route => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false, error: { requestId: "req_browser_failure", code: "PROVIDER_UNAVAILABLE", message: "验证用：服务暂不可用，请重试。", retryable: true, recovery: "retry" } }) }), { times: 1 });
+  await button("听听各组怎么说").click();
+  await button("使用示例观点").click();
+  const note = await page.getByRole("textbox", { name: "你的初始观点" }).inputValue();
+  await failOnce("candidate-seat");
+  await button("找到我的一席").click();
+  await button("重试刚才的观点").waitFor();
+  check(await page.getByRole("textbox", { name: "你的初始观点" }).inputValue() === note, "Lost note after Candidate failure");
+  const response = page.waitForResponse(response => response.url().endsWith("/api/v1/candidate-seat") && response.ok());
+  await button("重试刚才的观点").click();
+  const candidate = await (await response).json();
+  await button("认识我的同桌").waitFor();
+  await failOnce("learning-turn");
+  await button("认识我的同桌").click();
+  await button("重试准备同桌").waitFor();
+  await button("重试准备同桌").click();
+  await button("让他追问我").click();
+  await button("填入参考回应（可修改）").click();
+  const answer = await page.getByRole("textbox", { name: "你的回应" }).inputValue();
+  await failOnce("learning-turn");
+  await button("写下我的回应").click();
+  await button("重试整理回应").waitFor();
+  check(await page.getByRole("textbox", { name: "你的回应" }).inputValue() === answer, "Lost answer after learning failure");
+  await page.screenshot({ path: "output/playwright/TASK-026/recovery-1366.png" });
+  await button("重试整理回应").click();
+  await button("提炼成《我的一席》").click();
+  await button("留下我的这一席").click();
+  await button("重新开始这节课").click();
+  await button("听听各组怎么说").click();
+  check(await page.getByRole("textbox", { name: "你的初始观点" }).inputValue() === "", "Reset did not clear note");
+  await button("使用示例观点").click();
+  let resolveRequest;
+  const started = new Promise(resolve => { resolveRequest = resolve; });
+  let pendingRoute;
+  await page.route("**/api/v1/candidate-seat", route => { pendingRoute = route; resolveRequest(); }, { times: 1 });
+  await button("找到我的一席").click();
+  await started;
+  await page.getByRole("link", { name: "103 合成演示", exact: true }).click();
+  await button("听听各组怎么说").waitFor();
+  try { await pendingRoute.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(candidate) }); } catch { /* The navigation may already have aborted the old request. */ }
+  await page.waitForTimeout(200);
+  check(page.url().endsWith("q_learning_with_ai"), "Wrong room after navigation");
+  check(await page.getByRole("heading", { name: "这里可能有你的一席" }).count() === 0, "Stale Candidate leaked across rooms");
+  check(await page.getByRole("textbox").count() === 0, "Input leaked across rooms");
+  await page.screenshot({ path: "output/playwright/TASK-026/switch-clean-1366.png" });
+  return JSON.stringify({ candidateRetry: true, prepareRetry: true, completionRetry: true, reset: true, secondOperation: true, staleResponseIgnored: true, injectedFailures: 3 });
+}

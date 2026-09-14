@@ -4,20 +4,21 @@ import { notFound } from "next/navigation";
 import { ClassroomExperience } from "@/features/classroom";
 import { loadClassroom } from "@/server/use-cases/load-classroom";
 import { loadDemoNarrative } from "@/server/use-cases/load-demo-narrative";
+import { classroomCatalog, findClassroom } from "../../../../data/classrooms/catalog";
 
 type ClassroomPageProps = {
   params: Promise<{ questionId: string }>;
 };
 
-export const metadata: Metadata = {
-  title: "编程第一门语言 · 知遇一席",
-  description: "走进一间由不同学习路径观点组成的演示教室。",
-};
+export async function generateMetadata({ params }: ClassroomPageProps): Promise<Metadata> {
+  const entry = findClassroom((await params).questionId);
+  return { title: entry ? `${entry.title} · 知遇一席` : "教室未找到 · 知遇一席", description: entry?.subtitle };
+}
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return [{ questionId: "q_learn_programming" }];
+  return classroomCatalog.map(({ questionId }) => ({ questionId }));
 }
 
 export default async function ClassroomPage({ params }: ClassroomPageProps) {

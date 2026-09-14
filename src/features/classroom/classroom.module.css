@@ -3627,3 +3627,56 @@
     transition: none !important;
   }
 }
+.brandMark, .roomTab, .roomTabCurrent { text-decoration: none; }
+.lessonJourney { display: flex; max-width: 1600px; padding: 0 0 14px; margin: 0 auto; align-items: center; gap: 30px; list-style: none; color: var(--ink-muted); font-size: 12px; }
+.lessonJourney li { display: flex; align-items: center; gap: 8px; }
+.lessonJourney b { display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid var(--line); font: 11px ui-monospace, monospace; }
+.lessonJourney .journeyCurrent { color: var(--ink); font-weight: 600; }
+.journeyCurrent b { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.lessonJourney .journeyDone { color: #4d7060; }
+.lessonJourney .journeyResult { margin-left: auto; font-size: 11px; }
+.lessonTakeaway { padding: 16px 0 24px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+.lessonTakeaway > span { color: #956520; font-size: 12px; }
+.lessonTakeaway h3 { margin: 10px 0; font-size: 20px; line-height: 1.5; }
+.lessonTakeaway p { color: var(--ink-muted); font-size: 13px; line-height: 1.8; }
+.lessonTakeaway small { display: block; margin-top: 10px; color: var(--ink-muted); line-height: 1.8; }
+
+/* TASK-026: room-scale seating and a readable lesson path. */
+.classroomHeader { grid-template-columns: 132px 146px minmax(0, 1fr) 202px; gap: 16px; }
+.headerMeta { max-width: 202px; }
+.modeBadge { white-space: normal; font-size: 10px; line-height: 1.5; }
+.blackboardPanel { width: min(680px, 72%); padding: 12px 16px; }
+.blackboardPanel h1 { white-space: normal; font-size: 19px; line-height: 1.45; }
+.blackboardTopline { font-size: 9px; }
+.blackboardPanel p { font-size: 10px; }
+.stageCanvas, .contextRail, .detailSheet { min-height: 600px; height: clamp(600px, calc(100dvh - 160px), 820px); }
+.graphAdapter, .canvasViewport, .canvasLoading { min-height: 0; height: 100%; }
+.candidateStory { bottom: 10px; }
+.classRuleDock { bottom: 14px; font-size: 9px; }
+@media (max-width: 1120px) { .classroomHeader { grid-template-columns: 120px minmax(0, 1fr) 195px; } .campusIdentity { display: none; } }
+@media (max-width: 720px) {
+  .experienceShell { padding: 12px 14px 24px; }
+  .classroomHeader { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .brandBlock { grid-column: 1; }
+  .headerMeta { grid-column: 2; grid-row: 1; justify-self: end; }
+  .roomStrip { grid-column: 1 / -1; grid-row: 2; }
+  .roomTab, .roomTabCurrent { grid-template-columns: max-content 1fr; padding: 6px 10px; justify-items: start; }
+  .roomTab span, .roomTabCurrent span { display: block; font-size: 10px; }
+  .modeBadge { font-size: 9px; }
+  .lessonJourney { gap: 12px; font-size: 10px; justify-content: space-between; }
+  .lessonJourney li { gap: 4px; }
+  .lessonJourney b { width: 20px; height: 20px; font-size: 9px; }
+  .lessonJourney .journeyResult { display: none; }
+  .stageCanvas { min-height: 650px; height: 650px; max-height: none; }
+  .stageCanvas[data-expanded="true"] { height: 850px; }
+  .graphAdapter, .canvasViewport, .canvasLoading { min-height: 0; max-height: none; height: 100%; }
+  .contextRail, .detailSheet { position: relative; inset: auto; z-index: 10; width: 100%; min-height: 460px; height: auto; max-height: none; margin-top: 16px; border: 1px solid var(--line); box-shadow: none; }
+  .railBody, .sheetScroll { overflow-y: visible; }
+  .blackboardPanel { top: 10px; left: 10px; width: calc(100% - 20px); padding: 10px 12px; min-height: 0; transform: none; }
+  .blackboardPanel h1 { display: block; font-size: 16px; white-space: normal; }
+  .blackboardPanel p { font-size: 9px; }
+  .blackboardOutcome p { font-size: 10px; }
+  .roomPlaque { display: none; }
+  .railFooter { position: relative; }
+  .classRuleDock { right: auto; width: 192px; font-size: 8px; }
+}

@@ -11,7 +11,7 @@ export const candidateGenerationSchema = z.object({
   outline: z.object({ perspective: z.string().min(1).max(300), evidence: z.string().min(1).max(300), structure: z.string().min(1).max(300) }).nullable(),
 });
 export const candidateSampleSchema = z.object({
-  sampleId: z.literal("sample_learn_programming_v1"),
+  sampleId: z.string().regex(/^sample_[a-z0-9_-]+$/),
   noteHash: z.string().regex(/^[a-f0-9]{64}$/),
   noteText: z.string().min(50).max(8000),
   result: analysisResultSchema,

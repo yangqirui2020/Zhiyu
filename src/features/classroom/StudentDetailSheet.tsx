@@ -156,7 +156,7 @@ export function StudentDetailSheet({
             </div>
             <div>
               <dt>内容类型</dt>
-              <dd>{source.contentType === "answer" ? "回答" : "文章"}</dd>
+              <dd>{source.provider === "synthetic" ? "合成观点材料" : source.contentType === "answer" ? "回答" : "文章"}</dd>
             </div>
             <div>
               <dt>
@@ -173,7 +173,7 @@ export function StudentDetailSheet({
           </dl>
           {classroom.provenance.mode === "mock" ? (
             <p className={styles.mockSourceNote}>
-              Mock 数据没有可核验的真实原文链接；正式 Snapshot 将在这里提供来源回溯。
+              这条材料为合成演示，没有真实作者或知乎原回答；下方片段只核对本班合成材料。
             </p>
           ) : (
             <a
@@ -190,11 +190,11 @@ export function StudentDetailSheet({
 
         <section className={styles.sheetSection}>
           <p className={styles.sectionKicker}>证据</p>
-          <h3>{source.textKind === "answer_summary" ? "知乎回答摘要" : source.textKind === "full_text" ? "已核验来源片段" : "搜索摘要片段"}</h3>
+          <h3>{classroom.provenance.mode === "mock" ? "合成材料片段" : source.textKind === "answer_summary" ? "知乎回答摘要" : source.textKind === "full_text" ? "已核验来源片段" : "搜索摘要片段"}</h3>
           {evidence.map((item) => (
             <blockquote key={item.id} className={styles.evidenceQuote}>
               <p>{item.text}</p>
-              <footer>已核验为这条来源的{source.textKind === "answer_summary" ? "回答摘要" : "资料片段"}；摘要不等于全文。</footer>
+              <footer>{classroom.provenance.mode === "mock" ? "已核对本班合成材料，非真实知乎引文。" : "已核验为这条来源的回答摘要；摘要不等于全文。"}</footer>
             </blockquote>
           ))}
         </section>

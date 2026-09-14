@@ -1,0 +1,38 @@
+{
+  "testedAt": "2026-09-14T20:13:47.323Z",
+  "syntheticQaInput": true,
+  "classroomMode": "mock",
+  "sourceCount": 24,
+  "results": [
+    {
+      "name": "synthetic_classroom",
+      "status": 200,
+      "mode": "mock",
+      "durationMs": 876
+    },
+    {
+      "name": "live_candidate",
+      "status": 200,
+      "mode": "live",
+      "resultStatus": "success",
+      "durationMs": 5267
+    },
+    {
+      "name": "live_prepare",
+      "status": 200,
+      "mode": "live",
+      "stage": "prepared",
+      "durationMs": 4265
+    },
+    {
+      "name": "live_complete",
+      "status": 200,
+      "mode": "live",
+      "stage": "completed",
+      "durationMs": 7174
+    }
+  ],
+  "inputPreserved": true,
+  "evidenceInCurrentClassroom": true,
+  "candidateDecision": "candidate"
+}

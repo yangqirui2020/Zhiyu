@@ -1,0 +1,29 @@
+{
+  "origin": "http://localhost:3007",
+  "results": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/classroom/q_learn_programming",
+      "status": 200
+    },
+    {
+      "path": "/classroom/q_projects_and_foundations",
+      "status": 200
+    },
+    {
+      "path": "/classroom/q_learning_with_ai",
+      "status": 200
+    },
+    {
+      "path": "/classroom/q_missing",
+      "status": 404
+    },
+    {
+      "path": "/api/v1/classrooms/q_missing",
+      "status": 404
+    }
+  ]
+}

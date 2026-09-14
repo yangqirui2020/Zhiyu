@@ -121,7 +121,7 @@ export function ClusterDetailSheet({
               <li key={source.id}>
                 <strong>{source.title}</strong>
                 <span>{source.excerpt}</span>
-                <small>{source.id} · Mock 搜索摘要</small>
+                <small>{source.id} · {classroom.provenance.mode === "mock" ? "合成演示材料" : "知乎回答摘要"}</small>
               </li>
             ))}
           </ul>

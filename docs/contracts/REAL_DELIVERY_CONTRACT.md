@@ -21,3 +21,13 @@
 ## 资产验收
 
 Manifest sourceCount 等于 Classroom 去重来源数；files 只允许相对安全文件名，checksum 是文件原始 UTF-8 bytes 的 SHA256。真实教室不能含 Mock provenance。最低来源 8、最高 50；课堂过少返回材料不足，超大需离线缩小并披露筛选。Sample 回退精确匹配规范化笔记 hash，学习结果还要精确回应 hash。
+
+## TASK-026：目录与合成课堂扩展
+
+依据 PDR-0005。`src/domain/schemas/catalog.ts` 是教室目录的可执行合同，要求三个唯一 number/questionId，nextQuestionId 指向另一间已登记教室。首页、静态路由、门牌与后续问题共同使用 `data/classrooms/catalog.ts`。
+
+rc.2 兼容增加 `SourceContent.provider=synthetic` 与 `textKind=synthetic_excerpt`，二者必须共同出现且只允许 `Classroom.provenance.mode=mock`；真实 Snapshot 验证拒绝合成来源。102/103 在生产目录里明确开放，既有开发 fixture 限制保持。新增材料不写入 `data/snapshots`。
+
+Candidate Sample ID 从单一 literal 扩展为 `sample_*`；样例仍严格绑定 questionId、revision、规范化 hash 与原文。示例观点、参考回应及签名追问精确匹配后返回 sample（真实课堂）或 mock（合成课堂）。其他输入调用 Live，来源模式在课堂与 warnings 中分别保留；Live 不能暗示合成材料是真实知乎数据。未知题、跨题 token、旧 revision 与引用越界均拒绝。
+
+新增下载为用户主动保存 Markdown 课堂笔记，包含原观点、系统追问、实际回应、整理草稿、短提纲和本次证据。无账户存储、自动保存、自动知乎发布；合成题链接只提供明确标注的知乎问题搜索。

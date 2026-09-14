@@ -1,599 +1,137 @@
 "use client";
-
-import { useEffect, useMemo, useRef, useState } from "react";
-import ForceGraph2D, {
-  type ForceGraphMethods,
-  type GraphData,
-  type NodeObject,
-} from "react-force-graph-2d";
-
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ForceGraph2D, { type ForceGraphMethods, type GraphData, type NodeObject } from "react-force-graph-2d";
 import type { Classroom } from "@/domain/schemas";
-
-import {
-  getStudentDetails,
-  studentSeatNumber,
-} from "./classroom-selectors";
-import {
-  paintPixelCandidateSeat,
-  paintPixelSeatedUser,
-  paintPixelStudent,
-} from "./pixel-character";
+import { getStudentDetails, studentSeatNumber } from "./classroom-selectors";
+import { paintPixelCandidateSeat, paintPixelSeatedUser, paintPixelStudent } from "./pixel-character";
+import { classroomPresentation } from "./presentation-layout";
 import styles from "./classroom.module.css";
 
-const CLUSTER_COLORS = [
-  "#637F96",
-  "#5E8B83",
-  "#8075A1",
-  "#9A7C58",
-  "#9B6F78",
-] as const;
-
-type GraphNode = {
-  id: string;
-  studentId: string;
-  seatNumber: string;
-  clusterId: string;
-  color: string;
-  displaySeed: number;
-  entryIndex: number;
-};
-
-type ForceGraphCanvasProps = {
-  classroom: Classroom;
-  width: number;
-  height: number;
-  selectedStudentId: string | null;
-  candidateVisible: boolean;
-  candidatePosition: { x: number; y: number };
-  seatmateStudentId: string;
-  seatClaimed: boolean;
-  blackboardExpanded: boolean;
-  roundtable: {
-    active: boolean;
-    speakerIds: string[];
-    currentSpeakerId: string | null;
-  };
+const COLORS = ["#637F96", "#5E8B83", "#8075A1", "#9A7C58", "#9B6F78"];
+type GraphNode = { id: string; studentId: string; seatNumber: string; clusterId: string; color: string; displaySeed: number; entryIndex: number };
+type Props = {
+  classroom: Classroom; width: number; height: number; selectedStudentId: string | null;
+  candidateVisible: boolean; candidatePosition: { x: number; y: number }; seatmateStudentId: string; seatClaimed: boolean; blackboardExpanded: boolean;
+  roundtable: { active: boolean; speakerIds: string[]; currentSpeakerId: string | null };
   onSelectStudent: (studentId: string) => void;
 };
 
-function hexWithAlpha(hex: string, alpha: string) {
-  return `${hex}${alpha}`;
-}
-
-function paintClippedZone(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  cut: number,
-) {
-  context.beginPath();
-  context.moveTo(x + cut, y);
-  context.lineTo(x + width - cut, y);
-  context.lineTo(x + width, y + cut);
-  context.lineTo(x + width, y + height - cut);
-  context.lineTo(x + width - cut, y + height);
-  context.lineTo(x + cut, y + height);
-  context.lineTo(x, y + height - cut);
-  context.lineTo(x, y + cut);
-  context.closePath();
-}
-
-export default function ForceGraphCanvas({
-  classroom,
-  width,
-  height,
-  selectedStudentId,
-  candidateVisible,
-  candidatePosition,
-  seatmateStudentId,
-  seatClaimed,
-  blackboardExpanded,
-  roundtable,
-  onSelectStudent,
-}: ForceGraphCanvasProps) {
+export default function ForceGraphCanvas({ classroom, width, height, selectedStudentId, candidateVisible, seatmateStudentId, seatClaimed, blackboardExpanded, roundtable, onSelectStudent }: Props) {
   const graphRef = useRef<ForceGraphMethods<GraphNode> | undefined>(undefined);
-  const fitPadding = width < 500 ? 12 : 42;
-  const [hoveredStudentId, setHoveredStudentId] = useState<string | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [candidateRevealProgress, setCandidateRevealProgress] = useState(0);
-  const [seatRevealProgress, setSeatRevealProgress] = useState(0);
-  const [entranceProgress, setEntranceProgress] = useState(0);
-  const [lifeFrame, setLifeFrame] = useState(0);
+  const presentation = useMemo(() => classroomPresentation(classroom, width, height, blackboardExpanded), [classroom, width, height, blackboardExpanded]);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [entrance, setEntrance] = useState(0);
+  const [candidateReveal, setCandidateReveal] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const blackboardAnchorY = blackboardExpanded
-    ? width < 500
-      ? -42
-      : -18
-    : width < 500
-      ? -14
-      : -7;
-  const floorSafeAnchorY = width < 500 ? 96 : blackboardExpanded ? 102 : 98;
-
-  const colorByClusterId = useMemo(
-    () =>
-      new Map(
-        classroom.clusters.map((cluster, index) => [
-          cluster.id,
-          CLUSTER_COLORS[index % CLUSTER_COLORS.length],
-        ]),
-      ),
-    [classroom.clusters],
-  );
-
-  const graphData = useMemo<GraphData<GraphNode>>(
-    () => ({
-      nodes: [
-        {
-          id: "__blackboard_anchor",
-          studentId: "__blackboard_anchor",
-          seatNumber: "",
-          clusterId: "anchor",
-          color: "transparent",
-          displaySeed: 0,
-          entryIndex: -1,
-          x: 50,
-          y: blackboardAnchorY,
-          fx: 50,
-          fy: blackboardAnchorY,
-        },
-        {
-          id: "__floor_safe_anchor",
-          studentId: "__floor_safe_anchor",
-          seatNumber: "",
-          clusterId: "anchor",
-          color: "transparent",
-          displaySeed: 0,
-          entryIndex: -1,
-          x: 50,
-          y: floorSafeAnchorY,
-          fx: 50,
-          fy: floorSafeAnchorY,
-        },
-        ...classroom.students.map((student, entryIndex) => {
-          const clusterId =
-            student.assignment.kind === "cluster"
-              ? student.assignment.clusterId
-              : "independent";
-
-          return {
-            id: student.id,
-            studentId: student.id,
-            seatNumber: studentSeatNumber(classroom, student.id),
-            clusterId,
-            color: colorByClusterId.get(clusterId) ?? "#627080",
-            displaySeed: student.displaySeed,
-            entryIndex,
-            x: student.layout.x,
-            y: student.layout.y,
-            fx: student.layout.x,
-            fy: student.layout.y,
-          };
-        }),
-        // 隐形锚点：让 zoomToFit 在候选座出现后把它纳入取景，避免贴边裁切
-        ...(candidateVisible
-          ? [{
-              id: "__candidate_anchor",
-              studentId: "__candidate_anchor",
-              seatNumber: "",
-              clusterId: "anchor",
-              color: "transparent",
-              displaySeed: 0,
-              entryIndex: -1,
-              x: candidatePosition.x,
-              y: candidatePosition.y + 4,
-              fx: candidatePosition.x,
-              fy: candidatePosition.y + 4,
-            }]
-          : []),
-      ],
-      links: [],
-    }),
-    [
-      blackboardAnchorY,
-      classroom,
-      colorByClusterId,
-      candidateVisible,
-      candidatePosition,
-      floorSafeAnchorY,
-    ],
-  );
-
-  const clusterCenters = useMemo(
-    () =>
-      classroom.clusters.map((cluster, index) => ({
-        x: cluster.layout.centerX,
-        y: cluster.layout.centerY,
-        color: CLUSTER_COLORS[index % CLUSTER_COLORS.length],
-        label: cluster.label,
-        count: cluster.studentIds.length,
-      })),
-    [classroom.clusters],
-  );
-
-  const selectedStudent = selectedStudentId
-    ? classroom.students.find((student) => student.id === selectedStudentId)
-    : undefined;
-  const selectedClusterId =
-    selectedStudent?.assignment.kind === "cluster"
-      ? selectedStudent.assignment.clusterId
-      : null;
-  const seatmateStudent = classroom.students.find(
-    (student) => student.id === seatmateStudentId,
-  );
-  const seatmateClusterId =
-    seatmateStudent?.assignment.kind === "cluster"
-      ? seatmateStudent.assignment.clusterId
-      : null;
-  const hovered = hoveredStudentId
-    ? getStudentDetails(classroom, hoveredStudentId)
-    : null;
-
-  useEffect(() => {
-    graphRef.current?.zoomToFit(0, fitPadding);
-  }, [blackboardExpanded, fitPadding, height, width]);
-
-  // 候选座出现 / 入席后重新取景，把琥珀座位纳入画面
-  useEffect(() => {
-    const timer = window.setTimeout(
-      () => graphRef.current?.zoomToFit(380, fitPadding),
-      80,
-    );
-    return () => window.clearTimeout(timer);
-  }, [blackboardExpanded, candidateVisible, seatClaimed, fitPadding]);
-
+  const hovered = hoveredId ? getStudentDetails(classroom, hoveredId) : null;
+  const selectedCluster = getStudentDetails(classroom, selectedStudentId ?? "")?.cluster?.id;
+  const graphData = useMemo<GraphData<GraphNode>>(() => ({ nodes: classroom.students.map((student, entryIndex) => {
+    const clusterId = student.assignment.kind === "cluster" ? student.assignment.clusterId : "independent";
+    const index = classroom.clusters.findIndex(group => group.id === clusterId);
+    const position = presentation.people.get(student.id)!;
+    return { id: student.id, studentId: student.id, seatNumber: studentSeatNumber(classroom, student.id), clusterId, color: COLORS[Math.max(index, 0) % COLORS.length], displaySeed: student.displaySeed, entryIndex, x: position.x, y: position.y, fx: position.x, fy: position.y };
+  }), links: [] }), [classroom, presentation]);
+  const fitStage = useCallback(() => { graphRef.current?.zoom(1, 0); graphRef.current?.centerAt(width / 2, height / 2, 0); }, [width, height]);
+  useEffect(() => { fitStage(); }, [fitStage, blackboardExpanded]);
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncPreference = () => setReducedMotion(media.matches);
-    syncPreference();
-    media.addEventListener("change", syncPreference);
-
-    if (media.matches) {
-      return () => media.removeEventListener("change", syncPreference);
-    }
-
-    const timer = window.setInterval(() => {
-      setLifeFrame((frame) => (frame + 1) % 117);
-    }, 860);
-
-    return () => {
-      window.clearInterval(timer);
-      media.removeEventListener("change", syncPreference);
-    };
-  }, [reducedMotion]);
-
+    const sync = () => setReducedMotion(media.matches);
+    sync(); media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
   useEffect(() => {
-    let frameId = 0;
-    const storageKey = `zhiyu-classroom-entered:${classroom.question.id}:${classroom.revision}`;
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (media.matches || window.sessionStorage.getItem(storageKey) === "1") {
-      frameId = window.requestAnimationFrame(() => setEntranceProgress(1));
-      return () => window.cancelAnimationFrame(frameId);
-    }
-
-    const startedAt = performance.now();
-    const reveal = (time: number) => {
-      const progress = Math.min(1, (time - startedAt) / 2200);
-      setEntranceProgress(progress);
-      if (progress < 1) {
-        frameId = window.requestAnimationFrame(reveal);
-      } else {
-        window.sessionStorage.setItem(storageKey, "1");
-      }
+    let frame = 0;
+    const key = `zhiyu-classroom-entered:${classroom.question.id}:${classroom.revision}`;
+    let entered = false;
+    try { entered = sessionStorage.getItem(key) === "1"; } catch { /* A blocked browser storage must not block the lesson. */ }
+    const start = performance.now();
+    const animate = (now: number) => {
+      const progress = reducedMotion || entered ? 1 : Math.min(1, (now - start) / 1800);
+      setEntrance(progress);
+      if (progress < 1) frame = requestAnimationFrame(animate);
+      else { try { sessionStorage.setItem(key, "1"); } catch { /* The state is optional. */ } }
     };
-    frameId = window.requestAnimationFrame(reveal);
-    return () => window.cancelAnimationFrame(frameId);
-  }, [classroom.question.id, classroom.revision]);
-
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [classroom.question.id, classroom.revision, reducedMotion]);
   useEffect(() => {
-    let frameId = 0;
-
-    if (!candidateVisible) {
-      frameId = window.requestAnimationFrame(() => setCandidateRevealProgress(0));
-      return () => window.cancelAnimationFrame(frameId);
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      frameId = window.requestAnimationFrame(() => setCandidateRevealProgress(1));
-      return () => window.cancelAnimationFrame(frameId);
-    }
-
-    const startedAt = performance.now();
-    const reveal = (time: number) => {
-      const progress = Math.min(1, (time - startedAt) / 1900);
-      setCandidateRevealProgress(progress);
-      if (progress < 1) frameId = window.requestAnimationFrame(reveal);
+    let frame = 0;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const progress = !candidateVisible ? 0 : reducedMotion ? 1 : Math.min(1, (now - start) / 1500);
+      setCandidateReveal(progress);
+      if (candidateVisible && progress < 1) frame = requestAnimationFrame(animate);
     };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [candidateVisible, reducedMotion]);
 
-    frameId = window.requestAnimationFrame(reveal);
-    return () => window.cancelAnimationFrame(frameId);
-  }, [candidateVisible]);
-
-  useEffect(() => {
-    let frameId = 0;
-
-    if (!seatClaimed) {
-      frameId = window.requestAnimationFrame(() => setSeatRevealProgress(0));
-      return () => window.cancelAnimationFrame(frameId);
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      frameId = window.requestAnimationFrame(() => setSeatRevealProgress(1));
-      return () => window.cancelAnimationFrame(frameId);
-    }
-
-    const startedAt = performance.now();
-    const reveal = (time: number) => {
-      const progress = Math.min(1, (time - startedAt) / 420);
-      setSeatRevealProgress(progress);
-      if (progress < 1) frameId = window.requestAnimationFrame(reveal);
-    };
-
-    frameId = window.requestAnimationFrame(reveal);
-    return () => window.cancelAnimationFrame(frameId);
-  }, [seatClaimed]);
-
-  function paintStudent(
-    node: NodeObject<GraphNode>,
-    context: CanvasRenderingContext2D,
-    globalScale: number,
-  ) {
-    if (node.clusterId === "anchor") return;
-    if (typeof node.x !== "number" || typeof node.y !== "number") return;
-
-    const isSelected = node.studentId === selectedStudentId;
-    const isSeatmate = candidateVisible && node.studentId === seatmateStudentId;
-    const isInFocusedGroup = Boolean(
-      selectedClusterId && node.clusterId === selectedClusterId,
-    );
-    const isRelated = Boolean(
-      candidateVisible &&
-        seatmateClusterId &&
-        node.clusterId === seatmateClusterId &&
-        Math.hypot(node.x - candidatePosition.x, node.y - candidatePosition.y) < 22,
-    );
-    // 课代表圆桌：发言人聚焦，其余课代表保持可读，普通学生降噪
-    const isSpeaker = roundtable.active && roundtable.speakerIds.includes(node.studentId);
-    const isCurrentSpeaker =
-      roundtable.active && node.studentId === roundtable.currentSpeakerId;
-    const mutedByRoundtable = roundtable.active && !isSpeaker;
-
-    const batch = Math.floor(node.entryIndex / 8);
-    const arrivalProgress = Math.max(
-      0,
-      Math.min(1, (entranceProgress - 0.16 - batch * 0.065) / 0.42),
-    );
-    const easedArrival = 1 - Math.pow(1 - arrivalProgress, 3);
-    const entryX = 96;
-    const entryY = 95;
-    const renderX = entryX + (node.x - entryX) * easedArrival;
-    const renderY = entryY + (node.y - entryY) * easedArrival;
-
+  function paintStudent(node: NodeObject<GraphNode>, context: CanvasRenderingContext2D, scale: number) {
+    if (node.x === undefined || node.y === undefined) return;
+    const progress = Math.max(0, Math.min(1, (entrance - Math.floor(node.entryIndex / 8) * .08) / .7));
+    const eased = 1 - (1 - progress) ** 3;
     context.save();
-    context.translate(renderX, renderY);
-    paintPixelStudent(context, globalScale, {
-      color: node.color,
-      seed: node.displaySeed,
-      seatNumber: node.seatNumber,
-      selected: isSelected || isCurrentSpeaker,
-      hovered: node.studentId === hoveredStudentId,
-      inFocusedGroup:
-        (isInFocusedGroup && !isSelected) || (isSpeaker && !isCurrentSpeaker),
-      seatmate: isSeatmate,
-      related: isRelated && !isSeatmate,
-      muted:
-        mutedByRoundtable ||
-        Boolean(selectedStudentId && !isSelected && !isInFocusedGroup),
-      opacity: arrivalProgress,
-      lifeFrame,
-      reducedMotion,
+    context.translate((width - 40) + (node.x - width + 40) * eased, (height - 40) + (node.y - height + 40) * eased);
+    const speaker = roundtable.active && roundtable.speakerIds.includes(node.id);
+    paintPixelStudent(context, scale / presentation.characterScale, {
+      color: node.color, seed: node.displaySeed, seatNumber: node.seatNumber,
+      selected: node.id === selectedStudentId || (roundtable.active && node.id === roundtable.currentSpeakerId),
+      hovered: node.id === hoveredId, inFocusedGroup: node.clusterId === selectedCluster || speaker,
+      seatmate: candidateVisible && node.id === seatmateStudentId, related: false,
+      muted: (roundtable.active && !speaker) || Boolean(selectedStudentId && node.id !== selectedStudentId && node.clusterId !== selectedCluster),
+      opacity: progress, lifeFrame: 0, reducedMotion: true,
     });
     context.restore();
   }
-
-  function paintPointerArea(
-    node: NodeObject<GraphNode>,
-    paintColor: string,
-    context: CanvasRenderingContext2D,
-    globalScale: number,
-  ) {
-    if (node.clusterId === "anchor" || entranceProgress < 1) return;
-    if (typeof node.x !== "number" || typeof node.y !== "number") return;
-    context.fillStyle = paintColor;
-    context.fillRect(
-      node.x - 23 / globalScale,
-      node.y - 23 / globalScale,
-      46 / globalScale,
-      46 / globalScale,
-    );
-  }
-
-  function paintClassroomScene(
-    context: CanvasRenderingContext2D,
-    globalScale: number,
-  ) {
-    const unit = 1 / globalScale;
-    context.save();
-    context.imageSmoothingEnabled = false;
-
-    context.fillStyle = "#F1E9DA";
-    context.fillRect(-4, -6, 108, 110);
-
-    context.fillStyle = "#E9E0D2";
-    context.fillRect(47, 8, 6, 92);
-
-    context.strokeStyle = "rgba(125, 111, 91, 0.16)";
-    context.lineWidth = 0.6 * unit;
-    for (let x = -4; x <= 104; x += 5) {
-      context.beginPath();
-      context.moveTo(x, -6);
-      context.lineTo(x, 104);
-      context.stroke();
-    }
-    for (let y = -6; y <= 104; y += 5) {
-      context.beginPath();
-      context.moveTo(-4, y);
-      context.lineTo(104, y);
-      context.stroke();
-    }
-
-    const clusterProgress = Math.max(0, Math.min(1, (entranceProgress - 0.58) / 0.42));
-    for (const center of clusterCenters) {
-      context.save();
-      context.globalAlpha = clusterProgress;
-      const zoneWidth = 27;
-      const zoneHeight = 22;
-      const zoneX = center.x - zoneWidth / 2;
-      const zoneY = center.y - zoneHeight / 2;
-
-      paintClippedZone(context, zoneX, zoneY, zoneWidth, zoneHeight, 2.2);
-      context.fillStyle = hexWithAlpha(center.color, "16");
-      context.fill();
-      context.lineWidth = 1.2 * unit;
-      context.strokeStyle = hexWithAlpha(center.color, "62");
-      context.stroke();
-
-      context.fillStyle = "#A99479";
-      context.fillRect(center.x - 8, center.y - 2.4, 16, 1.5);
-      context.fillRect(center.x - 8, center.y + 4.4, 16, 1.5);
-      context.fillStyle = "#D8CCBA";
-      context.fillRect(center.x - 7.6, center.y - 2.1, 15.2, 0.8);
-      context.fillRect(center.x - 7.6, center.y + 4.7, 15.2, 0.8);
-
-      const label = `${center.label} · ${center.count} 位`;
-      context.font = `700 ${9 * unit}px ui-sans-serif, system-ui`;
-      const labelWidth = context.measureText(label).width;
-      const labelX = center.x - labelWidth / 2;
-      const labelY = center.y < 40 ? center.y + 14.6 : center.y - 14.5;
-      context.fillStyle = "#FFF9EE";
-      context.fillRect(
-        labelX - 4 * unit,
-        labelY - 7 * unit,
-        labelWidth + 8 * unit,
-        14 * unit,
-      );
-      context.fillStyle = center.color;
-      context.fillRect(labelX - 4 * unit, labelY - 7 * unit, 3 * unit, 14 * unit);
-      context.fillStyle = "#27333E";
-      context.textAlign = "left";
-      context.textBaseline = "middle";
-      context.fillText(label, labelX, labelY);
+  function paintScene(context: CanvasRenderingContext2D) {
+    context.save(); context.imageSmoothingEnabled = false;
+    context.fillStyle = "#F1E9DA"; context.fillRect(0, 0, width, height);
+    context.strokeStyle = "rgba(125,111,91,.12)"; context.lineWidth = .6;
+    for (let x = 0; x <= width; x += 32) { context.beginPath(); context.moveTo(x, 0); context.lineTo(x, height); context.stroke(); }
+    for (let y = 0; y <= height; y += 32) { context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke(); }
+    for (const [index, group] of presentation.groups.entries()) {
+      const color = COLORS[index % COLORS.length];
+      context.save(); context.globalAlpha = Math.min(1, entrance * 2);
+      context.fillStyle = `${color}16`; context.strokeStyle = `${color}65`; context.lineWidth = 1.2;
+      context.beginPath(); context.roundRect(group.x - group.width / 2, group.y - group.height / 2, group.width, group.height, 8); context.fill(); context.stroke();
+      for (let row = 0; row < group.rows; row++) {
+        const y = group.y + (row - (group.rows - 1) / 2) * group.spacingY + 24;
+        context.fillStyle = "#A99479"; context.fillRect(group.x - group.width / 2 + 16, y, group.width - 32, 7);
+        context.fillStyle = "#D8CCBA"; context.fillRect(group.x - group.width / 2 + 18, y + 1, group.width - 36, 3);
+      }
+      context.font = `600 ${width < 500 ? 10 : 13}px ui-sans-serif, system-ui`;
+      context.fillStyle = "#27333E"; context.textAlign = "center"; context.textBaseline = "middle";
+      context.fillText(group.label, group.x, group.y - group.height / 2 + 13);
+      context.font = `${width < 500 ? 9 : 11}px ui-sans-serif, system-ui`; context.fillStyle = color;
+      context.fillText(`${group.studentIds.length} 位 · ${classroom.provenance.mode === "mock" ? "合成观点" : "真实摘要"}`, group.x, group.y - group.height / 2 + 28);
       context.restore();
     }
-
-    if (candidateVisible && seatmateStudent && candidateRevealProgress > 0.64) {
-      const midpointX = (candidatePosition.x + seatmateStudent.layout.x) / 2;
-      context.beginPath();
-      context.moveTo(candidatePosition.x, candidatePosition.y);
-      context.lineTo(midpointX, candidatePosition.y);
-      context.lineTo(midpointX, seatmateStudent.layout.y);
-      context.lineTo(seatmateStudent.layout.x, seatmateStudent.layout.y);
-      context.setLineDash([3 * unit, 3 * unit]);
-      context.lineWidth = 2 * unit;
-      context.strokeStyle = "#D5912ACC";
-      context.stroke();
-      context.setLineDash([]);
+    const peer = presentation.people.get(seatmateStudentId);
+    if (candidateVisible && peer && candidateReveal > .6) {
+      context.beginPath(); context.moveTo(presentation.candidate.x, presentation.candidate.y); context.lineTo(peer.x, peer.y);
+      context.setLineDash([4, 4]); context.strokeStyle = "#D5912A99"; context.lineWidth = 2; context.stroke(); context.setLineDash([]);
     }
-
     context.restore();
   }
-
-  function paintCandidateSeat(
-    context: CanvasRenderingContext2D,
-    globalScale: number,
-  ) {
+  function paintCandidate(context: CanvasRenderingContext2D, scale: number) {
     if (!candidateVisible) return;
     context.save();
-    if (seatClaimed) {
-      context.translate(candidatePosition.x, candidatePosition.y);
-      paintPixelSeatedUser(
-        context,
-        globalScale,
-        seatRevealProgress,
-        lifeFrame,
-        reducedMotion,
-      );
-    } else {
-      const travelProgress = Math.min(1, candidateRevealProgress / 0.52);
-      const easedTravel = 1 - Math.pow(1 - travelProgress, 3);
-      const startX = 58;
-      const startY = blackboardExpanded ? -2 : 4;
-      const tokenX = startX + (candidatePosition.x - startX) * easedTravel;
-      const tokenY = startY + (candidatePosition.y - startY) * easedTravel;
-      if (candidateRevealProgress < 0.58) {
-        const unit = 1 / globalScale;
-        context.fillStyle = "#D5912A";
-        context.fillRect(tokenX - 3 * unit, tokenY - 3 * unit, 6 * unit, 6 * unit);
-      }
-      const seatProgress = Math.max(
-        0,
-        Math.min(1, (candidateRevealProgress - 0.42) / 0.58),
-      );
-      context.translate(candidatePosition.x, candidatePosition.y);
-      paintPixelCandidateSeat(context, globalScale, seatProgress);
-    }
+    context.translate(presentation.candidate.x, presentation.candidate.y);
+    if (seatClaimed) paintPixelSeatedUser(context, scale / presentation.characterScale, 1, 0, true);
+    else paintPixelCandidateSeat(context, scale / presentation.characterScale, candidateReveal);
     context.restore();
   }
-
-  function handleHover(node: NodeObject<GraphNode> | null) {
-    if (node?.clusterId === "anchor") return;
-    setHoveredStudentId(node?.studentId ?? null);
-
-    if (
-      node &&
-      typeof node.x === "number" &&
-      typeof node.y === "number" &&
-      graphRef.current
-    ) {
-      const position = graphRef.current.graph2ScreenCoords(node.x, node.y);
-      setTooltipPosition({
-        x: Math.min(Math.max(16, position.x), Math.max(16, width - 296)),
-        y: Math.max(148, position.y),
-      });
-    }
-  }
-
-  return (
-    <div className={styles.canvasViewport} aria-hidden="true">
-      <ForceGraph2D<GraphNode>
-        ref={graphRef}
-        width={width}
-        height={height}
-        graphData={graphData}
-        backgroundColor="#F1E9DA"
-        cooldownTicks={0}
-        warmupTicks={0}
-        enableNodeDrag={false}
-        enablePanInteraction={false}
-        enableZoomInteraction={false}
-        nodeLabel={() => ""}
-        nodeCanvasObject={paintStudent}
-        nodePointerAreaPaint={paintPointerArea}
-        onRenderFramePre={paintClassroomScene}
-        onRenderFramePost={paintCandidateSeat}
-        onNodeHover={handleHover}
-        onNodeClick={(node) => {
-          if (node.clusterId === "anchor") return;
-          setHoveredStudentId(null);
-          onSelectStudent(node.studentId);
-        }}
-        onEngineStop={() => graphRef.current?.zoomToFit(0, fitPadding)}
-      />
-
-      {hovered ? (
-        <div
-          className={styles.canvasTooltip}
-          style={{ left: tooltipPosition.x, top: tooltipPosition.y }}
-        >
-          <span className={styles.tooltipEyebrow}>
-            学生 {studentSeatNumber(classroom, hovered.student.id)} ·{" "}
-            {hovered.cluster?.label ?? "独立观点"}
-          </span>
-          <strong>{hovered.source.author.displayName}</strong>
-          <span>{hovered.argument.conclusion}</span>
-        </div>
-      ) : null}
-    </div>
-  );
+  const tooltip = hoveredId ? presentation.people.get(hoveredId) : null;
+  return <div className={styles.canvasViewport} aria-hidden="true">
+    <ForceGraph2D<GraphNode> ref={graphRef} width={width} height={height} graphData={graphData} backgroundColor="#F1E9DA" cooldownTicks={0} warmupTicks={0}
+      enableNodeDrag={false} enablePanInteraction={false} enableZoomInteraction={false} nodeLabel={() => ""}
+      nodeCanvasObject={paintStudent}
+      nodePointerAreaPaint={(node, color, context) => { if (entrance < 1 || node.x === undefined || node.y === undefined) return; const size = Math.max(44, 36 * presentation.characterScale); context.fillStyle = color; context.fillRect(node.x - size / 2, node.y - size / 2, size, size); }}
+      onRenderFramePre={paintScene} onRenderFramePost={paintCandidate} onNodeHover={node => setHoveredId(node?.id ?? null)}
+      onNodeClick={node => { setHoveredId(null); onSelectStudent(node.id); }} onEngineStop={fitStage} />
+    {hovered && tooltip ? <div className={styles.canvasTooltip} style={{ left: Math.min(Math.max(8, tooltip.x - 100), width - 290), top: Math.max(150, tooltip.y - 18) }}>
+      <span className={styles.tooltipEyebrow}>学生 {studentSeatNumber(classroom, hovered.student.id)} · {hovered.cluster?.label ?? "独立观点"}</span>
+      <strong>{hovered.source.author.displayName}</strong><span>{hovered.argument.conclusion}</span>
+    </div> : null}
+  </div>;
 }

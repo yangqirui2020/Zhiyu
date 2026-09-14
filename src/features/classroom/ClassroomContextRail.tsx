@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { findClassroom } from "../../../data/classrooms/catalog";
+import { DownloadClassNote } from "./DownloadClassNote";
 
 import type { AnalysisResult, Classroom } from "@/domain/schemas";
 import type { DemoScenarioV3 } from "../../../data/fixtures/scenarios/learn-programming-demo-v3";
@@ -61,7 +63,8 @@ export function ClassroomContextRail({
 }: ClassroomContextRailProps) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
-  const real = classroom.provenance.mode !== "mock";
+  const real = classroom.schemaVersion === "1.0.0-rc.2";
+  const room = findClassroom(classroom.question.id)!;
   const learningPending = state.learning.status === "preparing" || state.learning.status === "completing";
   const prepared = "prepared" in state.learning ? state.learning.prepared : null;
   const seatmate = !real || prepared ? getStudentDetails(classroom, scenario.seatmate.studentId) : null;
@@ -73,7 +76,7 @@ export function ClassroomContextRail({
     state.answerText.trim() === scenario.seatmate.sampleAnswer.trim();
   const canSubmitOpinion = state.opinionText.trim().length >= 50;
   const analysisMeta = state.candidate.status === "resolved" || state.candidate.status === "no_candidate" ? state.candidate.meta : undefined;
-  const analysisMode = analysisMeta ? <p className={styles.sampleResultDisclosure}>{analysisMeta.mode === "live" ? "本次观点分析：实时 AI" : analysisMeta.mode === "sample" ? "本次观点分析：精确示例结果" : "本次观点分析：开发 Mock"}{analysisMeta.fallbackFrom ? ` · 实时分析未完成，已显示同一示例的结果：${analysisMeta.fallbackReason}` : ""}</p> : null;
+  const analysisMode = analysisMeta ? <p className={styles.sampleResultDisclosure}>{analysisMeta.mode === "live" ? "本次观点分析：实时 AI" : analysisMeta.mode === "sample" ? "本次观点分析：精确示例结果" : "本次观点分析：合成示例结果"}{analysisMeta.fallbackFrom ? ` · 实时分析未完成，已显示同一示例的结果：${analysisMeta.fallbackReason}` : ""}</p> : null;
   const seatmateClusterIndex = seatmate?.cluster
     ? classroom.clusters.findIndex((cluster) => cluster.id === seatmate.cluster?.id)
     : -1;
@@ -86,79 +89,16 @@ export function ClassroomContextRail({
     <NoteProgressStrip state={state} onOpenNote={onOpenNote} />
   ) : null;
 
-  // ── 走廊门牌（正交 panel）────────────────────────────────
-  const panel = state.panel;
-  if (panel.kind === "campus") {
-    const roomNumber = panel.roomNumber;
-    const targetRoom = scenario.campus.rooms.find((item) => item.number === roomNumber);
-    const isNextRoom = roomNumber === scenario.nextClassroom.number;
-
-    return (
-      <aside className={styles.contextRail} aria-labelledby="campus-panel-title">
-        <RailHeader
-          id="campus-panel-title"
-          eyebrow={`${scenario.campus.building} · ${scenario.campus.floor}`}
-          title={`走廊上的 Classroom ${roomNumber}`}
-        />
-        <div className={styles.railBody}>
-          <section className={styles.roomPreviewCard}>
-            <span className={styles.roomPreviewNumber}>{roomNumber}</span>
-            <div>
-              <p>{targetRoom?.note ?? "走廊预告"}</p>
-              <h3>{targetRoom?.title ?? "另一间认知教室"}</h3>
-            </div>
-          </section>
-          {isNextRoom ? (
-            <div className={styles.causalNote}>
-              <strong>为什么推荐它</strong>
-              <p>{scenario.nextClassroom.causalNote}</p>
-              <p className={styles.causalQuestion}>
-                本班尚未解决：{scenario.blackboard.openQuestion}
-              </p>
-            </div>
-          ) : null}
-          <p className={styles.railLead}>
-            {isNextRoom
-              ? scenario.nextClassroom.statusNote + "；门牌用于演示「一个答案会长出新问题」，不会伪装成已加载的课堂。"
-              : "这一轮只完整开放 Classroom 101。其他门牌用于建立认知校园的入口感，不会伪装成已经加载的数据。"}
-          </p>
-          <div className={styles.floorDirectory} aria-label="楼层教室目录">
-            {scenario.campus.rooms.map((item) => (
-              <div
-                key={item.number}
-                className={item.status === "current" ? styles.floorRoomCurrent : styles.floorRoom}
-              >
-                <strong>{item.number}</strong>
-                <span>{item.title}</span>
-                <small>{item.note}</small>
-              </div>
-            ))}
-          </div>
-        </div>
-        <footer className={styles.railFooter}>
-          <button
-            type="button"
-            className={styles.primaryAction}
-            onClick={() => onOpenCampusRoom("101", true)}
-          >
-            返回 Classroom 101
-            <span aria-hidden="true">→</span>
-          </button>
-        </footer>
-      </aside>
-    );
-  }
-
   // ── Phase: roundtable ────────────────────────────────────
   if (state.phase === "roundtable") {
     return (
       <aside className={styles.contextRail} aria-labelledby="roundtable-panel-title">
         <RailHeader
           id="roundtable-panel-title"
-          eyebrow="Classroom 101 · 课代表圆桌"
+          eyebrow={`Classroom ${room.number} · 课代表圆桌`}
           title={`${classroom.clusters.length} 个小组正在互相听对方说话`}
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           <p className={styles.railLead}>
             每个学习组派一名课代表，把本组最核心的一句话摆到讲台上。讨论结束后，黑板会写下全班的三项结论。
           </p>
@@ -211,10 +151,10 @@ export function ClassroomContextRail({
           eyebrow="黑板已经写下三件事"
           title="听完他们，你现在怎么看？"
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           <div className={styles.blackboardRecap}>
             <section>
-              <span>{classroom.provenance.mode === "mock" ? "全班共识" : "样本共同点"}</span>
+              <span>样本共同点</span>
               <p>{scenario.blackboard.consensus}</p>
             </section>
             <section>
@@ -281,7 +221,7 @@ export function ClassroomContextRail({
           ) : null}
           <div className={styles.privacyNote}>
             <strong>演示边界</strong>
-            <span>{classroom.provenance.mode === "mock" ? "开发模式使用本地 Mock；输入不持久化。" : "提交后将由 DeepSeek 分析一条主要主张；输入不保存到数据库。请勿填写个人敏感信息。"}</span>
+            <span>{!real ? "开发模式使用本地 Mock；输入不持久化。" : `示例使用精确匹配的预设结果；自己的观点将由 DeepSeek 分析一条主要主张，输入不保存到数据库。${classroom.provenance.mode === "mock" ? "本班仅与合成材料比较。" : ""}`}</span>
           </div>
           {analysisMode}
         </div>
@@ -318,7 +258,7 @@ export function ClassroomContextRail({
           eyebrow="Candidate Seat · 空位已亮起"
           title={candidateSeat.title}
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           {analysisMode}
           {learningError}
           {learningPending ? <p role="status">正在根据你的观点选择同桌并准备追问…</p> : null}
@@ -330,7 +270,7 @@ export function ClassroomContextRail({
           <div className={styles.evidenceChecklist}>
             <CandidateEvidenceItem
               index={1}
-              label="相关性"
+              label="与问题相关"
               explanation={assessment.relevance.explanation}
               evidenceIds={candidateSeat.evidencePanel.relevanceEvidenceIds}
               classroom={classroom}
@@ -338,7 +278,7 @@ export function ClassroomContextRail({
             />
             <CandidateEvidenceItem
               index={2}
-              label="笔记支持"
+              label="来自你的笔记"
               explanation={assessment.noteSupport.explanation}
               evidenceIds={candidateSeat.evidencePanel.noteSupportEvidenceIds}
               classroom={classroom}
@@ -346,7 +286,7 @@ export function ClassroomContextRail({
             />
             <CandidateEvidenceItem
               index={3}
-              label="样本覆盖"
+              label="当前覆盖较少"
               explanation={assessment.coverage.explanation}
               evidenceIds={candidateSeat.evidencePanel.coverageEvidenceIds}
               classroom={classroom}
@@ -394,7 +334,7 @@ export function ClassroomContextRail({
           eyebrow="你的同桌 · 邻座关系已成立"
           title={`坐在你旁边的学生 ${seatNumber}`}
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           {learningMode}
           <section className={styles.seatmateIdentityCard}>
             <PixelStudentPortrait
@@ -462,7 +402,7 @@ export function ClassroomContextRail({
           eyebrow="同桌追问 · 一次认知摩擦"
           title="他指出了你还没想完整的地方"
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           {learningMode}
           {learningError}
           <section className={styles.challengeCard}>
@@ -522,7 +462,7 @@ export function ClassroomContextRail({
           eyebrow="课堂笔记 → 沉淀"
           title="《我的一席》"
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           {learningMode}
           <section className={styles.mySeatBlock}>
             <span>我的观点（整理草稿）</span>
@@ -571,10 +511,11 @@ export function ClassroomContextRail({
         <RailHeader
           id="exits-title"
           eyebrow={`你已入席 · 本班 ${classroom.students.length + 1} 人`}
-          title="这一席，接下来可以去两个地方"
+          title="这一课，留下了你的观点"
         />
-        <div className={styles.railBody}>
+        <div className={styles.railBody} data-lesson-content>
           {learningMode}
+          <div className={styles.lessonTakeaway}><span>带走这一课</span><h3>{scenario.mySeat.viewpoint}</h3><p>{scenario.mySeat.addedCondition}</p><DownloadClassNote classroom={classroom} scenario={scenario} originalNote={state.opinionText} answerText={state.answerText} /><small>切换教室会开始新的一课。笔记可下载留存。</small></div>
           <section className={styles.exitCard}>
             <div className={styles.exitCardHeading}>
               <span>A</span>
@@ -623,7 +564,7 @@ export function ClassroomContextRail({
               target="_blank"
               rel="noreferrer"
             >
-              打开知乎，亲自完成回答 <span aria-hidden="true">↗</span>
+              {classroom.question.externalId ? "打开知乎，亲自完成回答" : "去知乎搜索这个问题"} <span aria-hidden="true">↗</span>
             </a>
           </section>
 
@@ -664,12 +605,12 @@ export function ClassroomContextRail({
     <aside className={styles.contextRail} aria-labelledby="overview-panel-title">
       <RailHeader
         id="overview-panel-title"
-        eyebrow="Classroom 101 · 正在上课"
+        eyebrow={`Classroom ${room.number} · 正在上课`}
         title="先认识这间像素教室"
       />
-      <div className={styles.railBody}>
+      <div className={styles.railBody} data-lesson-content>
         <p className={styles.railLead}>
-          每位像素学生代表一条来源。学生围桌而坐；位置越近，论证越相似。
+          {classroom.provenance.mode === "mock" ? "每位学生代表一条合成观点材料，没有真实作者。" : "每位学生代表一条真实知乎回答摘要。"} 学生围桌而坐，同组观点共享相近的论证路径。
         </p>
         <div className={styles.overviewStats}>
           <span><strong>{classroom.students.length}</strong> 位学生</span>
@@ -698,7 +639,7 @@ export function ClassroomContextRail({
           <p>听各组课代表交流，再写下你怎么看。</p>
         </div>
         <p className={styles.campusHint}>
-          门外还有 Classroom 102–103；102 是本班「尚未解决的问题」长出来的下一间教室。
+          这一课之后：{room.connection} 在 {scenario.nextClassroom.number} 教室继续讨论。
         </p>
       </div>
       <footer className={styles.railFooter}>
@@ -774,12 +715,12 @@ function CandidateEvidenceItem({
       const excerpt = evidence.text.length > 68
         ? `${evidence.text.slice(0, 68)}…`
         : evidence.text;
-      return [`${evidence.id} · 你的笔记 ${evidence.start}–${evidence.end} 字：「${excerpt}」`];
+      return [`你的笔记 ${evidence.start}–${evidence.end} 字：「${excerpt}」`];
     }
     const source = classroom.sources.find(
       (item) => item.id === evidence.sourceContentId,
     );
-    return [`${evidence.id} · ${source?.title ?? evidence.sourceContentId}：「${evidence.text}」`];
+    return [`${source?.title ?? evidence.sourceContentId}：「${evidence.text}」`];
   });
 
   return (
